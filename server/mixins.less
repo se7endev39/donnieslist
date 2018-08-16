@@ -1,0 +1,164 @@
+
+// Import system ui font
+@import 'sqs-ui-font';
+
+.border-box,
+.border-box:before,
+.border-box:after {
+	-moz-box-sizing:    border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing:         border-box;
+}
+
+.box-shadow(@offset-x: 1px, @offset-y: 1px, @blur-rad: 2px, @spread-rad: 0, @color: #1b1b1b) {
+	-webkit-box-shadow: @arguments;
+  	 -moz-box-shadow: @arguments;
+	        box-shadow: @arguments;
+}
+
+.transition (@transition) {
+	-webkit-transition: @transition;
+	-moz-transition:    @transition;
+	-ms-transition:     @transition;
+	-o-transition:      @transition;
+	transition:    		  @transition;
+}
+
+.transition2 (@transition1, @transition2) {
+	-webkit-transition: @transition1, @transition2;
+	-moz-transition:    @transition1, @transition2;
+	-ms-transition:     @transition1, @transition2;
+	-o-transition:      @transition1, @transition2;
+	transition:    		  @transition1, @transition2;
+}
+
+.transition3 (@transition1, @transition2, @transition3) {
+	-webkit-transition: @transition1, @transition2, @transition3;
+	-moz-transition:    @transition1, @transition2, @transition3;
+	-ms-transition:     @transition1, @transition2, @transition3;
+	-o-transition:      @transition1, @transition2, @transition3;
+	transition:    		  @transition1, @transition2, @transition3;
+}
+
+.transform(@string){
+	-webkit-transform: @string;
+	-moz-transform: 	 @string;
+	-ms-transform: 		 @string;
+	-o-transform: 		 @string;
+	transform: 				 @string;
+}
+
+.scale (@x, @y: 1.0) {
+	-webkit-transform: scale(@x, @y);
+	-moz-transform: 	 scale(@x, @y);
+	-ms-transform: 		 scale(@x, @y);
+	-o-transform: 		 scale(@x, @y);
+  transform: 				 scale(@x, @y);
+}
+
+.rotate (@deg) {
+	-webkit-transform: rotate(@deg);
+	-moz-transform: 	 rotate(@deg);
+	-ms-transform: 		 rotate(@deg);
+	-o-transform: 		 rotate(@deg);
+  transform: 				 rotate(@deg);
+}
+
+.skew (@deg, @deg2) {
+	-webkit-transform: skew(@deg, @deg2);
+	-moz-transform: 	 skew(@deg, @deg2);
+	-ms-transform: 		 skew(@deg, @deg2);
+	-o-transform: 		 skew(@deg, @deg2);
+  transform: 				 skew(@deg, @deg2);
+}
+
+.translate (@x, @y:0) {
+	-webkit-transform:	translate(@x, @y);
+	-moz-transform:			translate(@x, @y);
+	-ms-transform:			translate(@x, @y);
+	-o-transform:				translate(@x, @y);
+  transform:					translate(@x, @y);
+}
+
+.translate3d (@x, @y: 0, @z: 0) {
+	-webkit-transform:	translate3d(@x, @y, @z);
+	-moz-transform:			translate3d(@x, @y, @z);
+	-ms-transform:			translate3d(@x, @y, @z);
+	-o-transform:				translate3d(@x, @y, @z);
+  transform:					translate3d(@x, @y, @z);
+}
+
+.perspective (@value: 1000) {
+	-webkit-perspective: 	@value;
+	-moz-perspective:    	@value;
+	-ms-perspective:     	@value;
+	perspective:         	@value;
+}
+
+.transform-origin (@x:center, @y:center) {
+	-webkit-transform-origin: @x @y;
+	-moz-transform-origin:    @x @y;
+	-ms-transform-origin:     @x @y;
+	-o-transform-origin:      @x @y;
+  transform-origin:    		  @x @y;
+}
+
+
+//sqs ui font mixins
+
+.sqs-simple-like .like-count {
+  .sqs-ui-font(heart-2);
+}
+
+.ss-social-button {
+  .sqs-ui-font(share);
+}
+
+.entry-actions .entry-comments,
+.entry-actions .sqs-disqus-comment-link {
+  .sqs-ui-font(bubble);
+}
+
+.pagination {
+	.newer a {
+    .sqs-ui-font(left);
+    &:before {
+      font-size: inherit;
+      width: 2em;
+      height: 1em;
+      line-height: 1em;
+      vertical-align: middle;
+    }
+  }
+  .older a {
+    .sqs-ui-font(right, after);
+    &:after {
+      font-size: inherit;
+      width: 2em;
+      height: 1em;
+      line-height: 1em;
+      vertical-align: middle;
+    }
+  }
+}
+
+.collection-type-index:not(.design-grid) .index-gallery {
+  .arrow {
+    &.previous-slide {
+      .sqs-ui-font(left);
+      .sqs-ui-font-size(24px, 24px);
+    }
+
+    &.next-slide {
+      .sqs-ui-font(right);
+      .sqs-ui-font-size(24px, 24px);
+    }
+  }
+}
+
+.collection-type-index.design-slideshow .index-gallery .slide-meta .hide-meta-toggle {
+  .sqs-ui-font(eye);
+  .sqs-ui-font-size(24px, 24px);
+}
+
+
