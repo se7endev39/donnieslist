@@ -38,9 +38,11 @@ exports.setUserInfo = function setUserInfo(request) {
     instagramURL  : request.instagramURL,
     snapchatURL  : request.snapchatURL,
     websiteURL  : request.websiteURL,
+    endorsements  : request.endorsements,
+    myFavorite  : request.myFavorite,
     customerId: request.stripe ? request.stripe.customerId : '',
     stripe_connect_id: request.stripeId ? request.stripeId : '',
-
+    
   };
 
   return getUserInfo;

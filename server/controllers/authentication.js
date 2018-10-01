@@ -34,9 +34,30 @@ exports.login = function (req, res, next) {
 };
 
 
+//= =======================================
+// Logout Route
+//= =======================================
+exports.logout = function (req, res, next) {
+    const userId = req.params.userId;
+
+    if (!userId) { return res.status(401).json({ error: 'You are not authorized to view this user profile.' }); }
+    User.findById(userId, (err, user) => {
+
+        if (err) {
+            res.status(400).json({ error: 'No user could be found for this ID.' });
+            return next(err);
+        }
+
+        user.onlineStatus = "OFFLINE";
+        user.save();
+
+        return res.status(200).json({});
+    });
+};
+
+
 exports.loginFacebookUser = function (req, res, next) {
 
-  //console.log('response: ',req.body.response);
 
   if(req.body.response){
 
@@ -44,8 +65,9 @@ exports.loginFacebookUser = function (req, res, next) {
           if (err)
               return done(err);
 
-          // if the user is found, then log them in
+
           if (user) {
+
             const userInfo = setUserInfo(user);
             //user.fbLoginAccessToken  = token;
             user.jwtLoginAccessToken = `JWT ${generateToken(userInfo)}`;
@@ -81,6 +103,7 @@ exports.loginFacebookUser = function (req, res, next) {
             });
               //return done(null, user); // user found, return that user
           } else {
+
               var unixTimeStamp         = Date.now();
               var newUser               = new User();
               var slug                  = req.body.response.email.substring(0, req.body.response.email.lastIndexOf("@"))+'-'+unixTimeStamp;
@@ -93,6 +116,7 @@ exports.loginFacebookUser = function (req, res, next) {
               newUser.loginSource       = 'Facebook';
               newUser.onlineStatus      = 'ONLINE';
               newUser.role              = 'User';
+              newUser.profileImage = req.body.response.picture.data.url,
               newUser.save(function(err,doc) {
                 if (err){
                       console.log('error occured while saving: '+err);
@@ -372,10 +396,17 @@ exports.signupExpertSendSignupLink = function (req, res, next) {
   // Check for registration errors
   const email = req.body.email;
   const expertemail = req.body.expertemail;
+  // let emailtest1=new RegExp("@stanford.edu").test(email);
+  // let emailtest2=new RegExp("@harvard.edu").test(email);
   // Return error if no email provided
   if (!email) {
     return res.json({ error: 'You must enter an email address.', email: email, expertemail: expertemail });
   }
+
+  // if(!(emailtest1 || emailtest2)){
+  //   return res.status(422).send({ error: 'Email Should start with @stanford.edu  or @harvard.edu' });
+  // }
+
   // else if( !/.+@stanford\.edu/.test(email) || !/.+@harvard\.edu/.test(email) ){
   //   return res.json({error: 'Email should be of @stanford.edu OR @harvard.edu', email: email, expertemail: expertemail });
   // }
@@ -401,10 +432,9 @@ exports.signupExpertSendSignupLink = function (req, res, next) {
               });
               expertSignupToken.save((err, user) => {
                 if (err) {
-                  return next(err); 
+                  return next(err);
                 }
                 if(user){
-                  console.log('mailsending =======>')
                   sendExpertSignupTokenEmail(user);
                 }
                 return res.json({ message:'Congrats! We have sent you link on your email. Please check your email.' });

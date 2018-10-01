@@ -54,7 +54,7 @@ class HomePage extends Component {
         </div>
       );
   }
-  
+
   getClassName(categoryName) {
       /*if(categoryName == 'Music Lessons' || categoryName == 'Computer Skills' || categoryName == 'Academic Tutoring' || categoryName == 'Academic Advising/ Career Advice'){
         return 'col-md-3 cat-visible';
@@ -65,11 +65,11 @@ class HomePage extends Component {
       return 'col-md-3 cat-visible';
   }
 
-  getCategoryLink(categorySlug, categoryName){
+  getCategoryLink(categorySlug, categoryName, expertNumbers){
     if(categorySlug == 'forum'){
-      return <Link to={`/${categorySlug}`}>{categoryName}</Link>;
+      return <Link to={`/${categorySlug}`}>{categoryName} {(expertNumbers > 0) ? '('+expertNumbers+')' : ''}</Link>;
     }else{
-      return <Link to={`/list/${categorySlug}`}>{categoryName}</Link>;
+      return <Link to={`/list/${categorySlug}`}>{categoryName} {(expertNumbers > 0) ? '('+expertNumbers+')' : ''}</Link>;
     }
   }
 
@@ -84,11 +84,11 @@ class HomePage extends Component {
            <div id="experts-list" className="experts-list">
               <div className="container">
                   <div className="row">
-                    <div className="row">
+                      {/*<div className="row">
                       <div className="col-md-12">
                         <div className="text-center text-choose">Choose your subject</div>
                       </div>
-                    </div>
+                    </div>*/}
                       <div className="col-md-12">
                           <Masonry
                         className={'my-gallery-class'}
@@ -105,10 +105,15 @@ class HomePage extends Component {
                     <span className="short-dash"></span>
                     <span className="short-dash"></span>
                   </h4>
+                                    <h4 className={'community-news-parent'}>
+                                        <Link to={'community-news'} className={'community-news-link'}>
+                                            Community
+                                        </Link>
+                                    </h4>
                                     <ul className="topics">
-                                      {post.subcategory.map(subcat =>
+                                      {post.subcategory.map((subcat, index) =>
                                         <li key={subcat.id}>
-                                          {this.getCategoryLink(subcat.slug, subcat.name)}
+                                          {this.getCategoryLink(subcat.slug, subcat.name, post.subcategory_experts[index].length)}
                                         </li>
                                       )}
                                     </ul>

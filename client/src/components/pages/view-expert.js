@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link, IndexLink, browserHistory } from 'react-router';
 import { connect } from 'react-redux';
-import { API_URL, CLIENT_ROOT_URL,Image_URL, errorHandler, tokBoxApikey, stripeKey } from '../../actions/index';
+import { API_URL, CLIENT_ROOT_URL, Image_URL, errorHandler, tokBoxApikey, stripeKey } from '../../actions/index';
 import { Field, reduxForm } from 'redux-form';
 import { sendEmail, sendTextMessage, checkBeforeSessionStart, createAudioSession, startRecording, stopRecording, rechargeVideoSession } from '../../actions/expert';
 import axios from 'axios';
@@ -50,6 +50,7 @@ class ViewExpert extends Component {
       expert: "",
       firstName: "",
       lastName: "",
+      resume_path:'',
       expertEmail: "",
       sessionBtnText: "",
       loading: false,
@@ -79,10 +80,11 @@ class ViewExpert extends Component {
       audioCalling: false,
       newConAudioId: '',
       userConnectionId: '',
-
+      university:'',
       totalSeconds: 0,
       refreshIntervalId: '',
       profileImage:"",
+      endorsements:[],
       selectMins : 0
     };
 
@@ -331,11 +333,29 @@ class ViewExpert extends Component {
         this.setState({expertEmail : res.data[0].email });
         this.setState({onlineStatus : res.data[0].onlineStatus });
         this.setState({profileImage : res.data[0].profileImage });
+        this.setState({resume_path : res.data[0].resume_path });
+        this.setState({university : res.data[0].university });
 		    this.setState({
 		      expert,
 		      loading: false,
 		      error: null
 		    });
+
+        const data = res.data[0].endorsements;
+        axios.post(`${API_URL}/getEndorsements/`,{"slug":data})
+          .then(res => {
+            this.setState({
+              endorsements:res.data,
+              loading: false,
+              error: null
+            });
+          })
+          .catch(err => {
+            this.setState({
+              loading: false,
+              error: err
+            });
+          });
 		  })
 		  .catch(err => {
 		    // Something went wrong. Save the error in state and re-render.
@@ -344,6 +364,8 @@ class ViewExpert extends Component {
 		      error: err
 		    });
 	  	});
+
+    
 
       $(document).ready(function(){
         jQuery("#send_email_form").validate({
@@ -458,13 +480,9 @@ class ViewExpert extends Component {
     }
   }
 
-  getOnlineStatus(onlineStatus){
-    if(onlineStatus === "ONLINE"){
-      return "user-online fa fa-circle";
-    }else{
-      return "user-offline fa fa-circle";
+    getOnlineStatus(onlineStatus){
+        return (onlineStatus === "ONLINE") ? true : false;
     }
-  }
 
   getOnlineStatusTitle(onlineStatus){
     if(onlineStatus === "ONLINE"){
@@ -534,6 +552,16 @@ class ViewExpert extends Component {
     }
     console.log('sessionBtnText: '+this.state.sessionBtnText);
     */
+    
+    const endorsements_render = this.state.endorsements.map((endorsement, index) => {
+          const url = `${Image_URL}`+endorsement.profileImage;
+          const defaul_url = "/src/public/img/profile.png";
+          return (
+              <img className="endorsement-image" height="30" width="30" 
+              src={endorsement.profileImage && endorsement.profileImage!=null && endorsement.profileImage!=undefined && endorsement.profileImage!=""? url: defaul_url} />
+          );
+      }) 
+    
     if(this.state.error) {
       return this.renderError();
     }
@@ -575,7 +603,7 @@ class ViewExpert extends Component {
                              <div className="expert-img">
                                 {this.state.profileImage && this.state.profileImage!=null && this.state.profileImage!=undefined && this.state.profileImage!=""?<img height="" width="" src={`${Image_URL}`+this.state.profileImage} />:""}
                                 {this.state.profileImage==null || this.state.profileImage==undefined || this.state.profileImage==""?<img src="/src/public/img/profile.png"/>:""}
-                                {/*}<i data-toggle="title" title={this.getOnlineStatusTitle(this.state.onlineStatus)} className={this.getOnlineStatus(this.state.onlineStatus)} aria-hidden="true"></i>{*/}
+                                 {this.getOnlineStatus(this.state.onlineStatus) && <i data-toggle="title" title="Online" className={'user-online-o fa fa-circle'} aria-hidden="true"></i>}
                              </div>
                              <ul className="Action_icon">
                                <li>
@@ -583,7 +611,7 @@ class ViewExpert extends Component {
                                </li>
                                <li><Link title="Send E-Mail" data-toggle="modal" data-target="#myModalEmail" className="Send_E-Mail"> Send E-Mail</Link></li>
                                <li><Link title="Send Text Message" data-toggle="modal" data-target="#myModalTextMessage" className="Send-Text-Message"> Send Text Message</Link></li>
-                               <li><Link data-toggle="tooltip" title="Download Resume" className="Download-Resume"> Download Resume</Link></li>
+                               <li><a  href={`${Image_URL}`+this.state.resume_path} title="Download Resume" download className="Download-Resume"> Download Resume</a></li>
                                <li>
                                   {currentUser ? <Link title="Audio Call" onClick={this.audioCallNowButtonClick.bind(this)} className="Audio-Call">  Audio Call </Link> : <Link title="Audio Call" to="javascript:void(0)" data-toggle="modal" data-target="#myModalAudio" className="Audio-Call"> Audio Call</Link>}
                                </li>
@@ -672,6 +700,10 @@ class ViewExpert extends Component {
                                          </dd>
                                       </div>
                                       <div className="profile-bor-detail">
+                                         <dt>University</dt>
+                                         <dd>{this.state.expert.university}</dd>
+                                      </div>
+                                      <div className="profile-bor-detail">
                                          <dt>Area of expertise</dt>
                                          <dd>{this.state.expert.expertCategories}</dd>
                                       </div>
@@ -691,7 +723,8 @@ class ViewExpert extends Component {
                                          <dt>Rating</dt>
                                          <dd>{this.state.expert.expertRating && this.state.expert.expertRating!=null && this.state.expert.expertRating!=undefined && this.state.expert.expertRating!=""?this.state.expert.expertRating:"No Ratings Available"} {this.state.expert.expertRating && this.state.expert.expertRating!=null && this.state.expert.expertRating!=undefined && this.state.expert.expertRating!="" && <i className="fa fa-star" aria-hidden="true"></i>}</dd>
                                       </div>
-                                      <div className="profile-bor-detail">
+
+                                      {/*<div className="profile-bor-detail">
                                           <dt>About Expert </dt>
                                           <dd>{this.state.expert.userBio && this.state.expert.userBio!=null && this.state.expert.userBio!=undefined && this.state.expert.userBio!="" ? this.state.expert.userBio : "-"}</dd>
                                       </div>
@@ -706,7 +739,7 @@ class ViewExpert extends Component {
                                       <div className="profile-bor-detail">
                                           <dt>City </dt>
                                           <dd>{this.state.expert.locationCity && this.state.expert.locationCity!=null && this.state.expert.locationCity!=undefined && this.state.expert.locationCity!="" ? this.state.expert.locationCity : "-"}</dd>
-                                      </div>
+                                      </div>*/}
                                       <div className="profile-bor-detail expert-social-links">
                                           <dt>Social link </dt>
                                           <dd>
@@ -716,7 +749,16 @@ class ViewExpert extends Component {
                                             {this.state.expert.instagramURL && this.state.expert.instagramURL!=null && this.state.expert.instagramURL!=undefined && this.state.expert.instagramURL!="" &&<a target="_blank" href={ this.state.expert.instagramURL ? this.state.expert.instagramURL : '#'} title="instagram"><i className="fa fa-instagram" aria-hidden="true"></i></a>}
                                             {this.state.expert.snapchatURL && this.state.expert.snapchatURL!=null && this.state.expert.snapchatURL!=undefined && this.state.expert.snapchatURL!="" &&<a target="_blank" href={ this.state.expert.snapchatURL ? this.state.expert.snapchatURL : '#'} title="snapchat"><i className="fa fa-snapchat" aria-hidden="true"></i></a>}
                                             {this.state.expert.websiteURL && this.state.expert.websiteURL!=null && this.state.expert.websiteURL!=undefined && this.state.expert.websiteURL!="" &&<a target="_blank" href={ this.state.expert.websiteURL ? this.state.expert.websiteURL : '#'} title="website"><i className="fa fa-anchor" aria-hidden="true"></i></a>}
-                                            {this.state.expert.facebookURL=="" && this.state.expert.twitterURL=="" && this.state.expert.linkedinURL=="" && this.state.expert.instagramURL=="" && this.state.expert.snapchatURL=="" && this.state.expert.websiteURL=="" && "No Social Links Available Yet"}
+                                            {this.state.expert.googleURL && this.state.expert.googleURL!=null && this.state.expert.googleURL!=undefined && this.state.expert.googleURL!="" &&<a target="_blank" href={ this.state.expert.googleURL ? this.state.expert.googleURL : '#'} title="google"><i className="fa fa-google" aria-hidden="true"></i></a>}
+                                            {this.state.expert.youtubeURL && this.state.expert.youtubeURL!=null && this.state.expert.youtubeURL!=undefined && this.state.expert.youtubeURL!="" &&<a target="_blank" href={ this.state.expert.youtubeURL ? this.state.expert.youtubeURL : '#'} title="youtube"><i className="fa fa-youtube" aria-hidden="true"></i></a>}
+                                            {this.state.expert.soundcloudURL && this.state.expert.soundcloudURL!=null && this.state.expert.soundcloudURL!=undefined && this.state.expert.soundcloudURL!="" &&<a target="_blank" href={ this.state.expert.soundcloudURL ? this.state.expert.soundcloudURL : '#'} title="soundcloud"><i className="fa fa-soundcloud" aria-hidden="true"></i></a>}
+                                            {this.state.expert.facebookURL=="" && this.state.expert.twitterURL=="" && this.state.expert.linkedinURL=="" && this.state.expert.instagramURL=="" && this.state.expert.snapchatURL=="" && this.state.expert.websiteURL==""  && this.state.expert.googleURL=="" && "No Social Links Available Yet"}
+                                          </dd>
+                                      </div>
+                                      <div className="profile-bor-detail expert-endorsements" >
+                                          <dt>Endorsements </dt>
+                                          <dd>
+                                            {endorsements_render}
                                           </dd>
                                       </div>
                                    </dl>

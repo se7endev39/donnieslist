@@ -13,6 +13,7 @@ exports.viewProfile = function (req, res, next) {
 
   if (req.user._id.toString() !== userId) { return res.status(401).json({ error: 'You are not authorized to view this user profile.' }); }
   User.findById(userId, (err, user) => {
+
     if (err) {
       res.status(400).json({ error: 'No user could be found for this ID.' });
       return next(err);
@@ -30,8 +31,8 @@ exports.viewMyProfile = function (req, res, next) {
 
   if (req.user._id.toString() !== userId) { return res.status(401).json({ error: 'You are not authorized to view this user profile.' }); }
   User.findById(userId,{email:1, profile:1, expertCategories:1,locationCity:1,locationState:1,locationCountry:1,expertRating:1,expertCategories:1,
-                        expertRates:1,expertFocusExpertise:1,yearsexpertise:1,password:1,contact:1,userBio:1,facebookURL:1,twitterURL:1,instagramURL:1,
-                        linkedinURL:1,snapchatURL:1,profileImage:1, role:1, websiteURL:1,stripeId:1}, (err, user) => {
+                        expertRates:1,expertContactCC:1,expertFocusExpertise:1,googleURL:1,university:1,resume_path:1,yearsexpertise:1,password:1,contact:1,userBio:1,facebookURL:1,twitterURL:1,instagramURL:1,
+                        linkedinURL:1,soundcloudURL:1,youtubeURL:1,snapchatURL:1,profileImage:1, role:1, websiteURL:1,stripeId:1}, (err, user) => {
     if (err) {
       res.status(400).json({ error: 'No user could be found for this ID.' });
       return next(err);
@@ -119,29 +120,27 @@ exports.getUserReviews = function(req, res, next){
     });
 }
 
-exports.UpdateMyOwnProfile =function(req, res){
+exports.UpdateMyOwnProfile = function(req, res){
 
-          // console.log(req.body)
-          const {email,firstName,lastName,password,userBio,expertRates,expertCategories,expertContact,expertRating,expertFocusExpertise,yearsexpertise,locationCountry,locationState,locationCity,facebookURL,twitterURL,instagramURL,linkedinURL,snapchatURL,websiteURL} = req.body.body
-          // console.log(email)
-          User.findOne({"email":email},function(err, user){
+    const {email,firstName,university,isMusician,lastName,password,confirm_password,userBio,expertRates,expertCategories,expertContact,expertRating,expertFocusExpertise,yearsexpertise,locationCountry,locationState,locationCity,facebookURL,twitterURL,instagramURL,soundcloudURL,youtubeURL,linkedinURL,snapchatURL,websiteURL,googleURL} = req.body.body
+let passchange=false;
+
+    User.findOne({"email":email},function(err, user){
               if (err){
                 res.json({errorMessage:"Sorry Something Went Wrong"})
-              }
-              else{
+              }else{
                 user.profile.firstName=firstName;
                 user.profile.lastName=lastName;
                 // user.password  = password
 
-                if(user.password!=password){
-                  // user.password=password
-                  console.log("Pass is different")
-                  user.password = password
-                }
-                else{
-                  console.log("Pass is same")
+                if(confirm_password.length>0){
+                  console.log("11111111111")
+                   user.password=confirm_password
+                   passchange=true
                 }
 
+
+                user.university=university;
                 user.userBio = userBio;
                 user.expertRates=expertRates
                 user.expertCategories=expertCategories
@@ -151,36 +150,121 @@ exports.UpdateMyOwnProfile =function(req, res){
                 user.locationCountry=locationCountry
                 user.locationState=locationState
                 user.locationCity=locationCity
-                if(facebookURL && facebookURL!=null && facebookURL!=undefined && facebookURL!=""){
-                    user.facebookURL= facebookURL
-                }
-                if(twitterURL && twitterURL!=null && twitterURL!=undefined && twitterURL!=""){
-                    user.twitterURL= twitterURL
-                }
-                if(instagramURL && instagramURL!=null && instagramURL!=undefined && instagramURL!=""){
-                    user.instagramURL= instagramURL
-                }
-                if(linkedinURL && linkedinURL!=null && linkedinURL!=undefined && linkedinURL!=""){
-                    user.linkedinURL= linkedinURL
-                }
-                if(snapchatURL && snapchatURL!=null && snapchatURL!=undefined && snapchatURL!=""){
-                    user.snapchatURL= snapchatURL
-                }
-                if(websiteURL && websiteURL!=null && websiteURL!=undefined && websiteURL!=""){
-                    user.websiteURL= websiteURL
-                }
-                user.save()
+                user.googleURL= googleURL
+                user.facebookURL= facebookURL
+                user.linkedinURL= linkedinURL
+                user.twitterURL= twitterURL
+                user.isMusician=isMusician;
+
+                if(!user.isMusician){
+                 User.update({_id:user._id},{$unset: {soundcloudURL:1,instagramURL:1,youtubeURL:1}},{multi: true},function(err,response){
+                   console.log(response)
+                 });
+               }else{
+
+                 if(instagramURL && instagramURL!=null && instagramURL!=undefined && instagramURL!=""){
+                     user.instagramURL= instagramURL
+                 }
+
+                 if(soundcloudURL && soundcloudURL!=null && soundcloudURL!=undefined && soundcloudURL!=""){
+                     user.soundcloudURL= soundcloudURL
+                 }
+
+                 if(snapchatURL && snapchatURL!=null && snapchatURL!=undefined && snapchatURL!=""){
+                     user.snapchatURL= snapchatURL
+                 }
+                 if(websiteURL && websiteURL!=null && websiteURL!=undefined && websiteURL!=""){
+                     user.websiteURL= websiteURL
+                 }
+
+                 if(youtubeURL && youtubeURL!=null && youtubeURL!=undefined && youtubeURL!=""){
+                     user.youtubeURL= youtubeURL
+                 }
+               }
+
+                user.save(function(err,user){
+                  if(err){
+                    res.json({code:422,success:false,"message":"Something went wrong!"})
+                  }else{
+                    if(passchange){
+                      res.json({code:200,success:true,"message":"Profile Update Successfully.",passchange:true})
+                    }else{
+                      res.json({code:200,success:true,"message":"Profile Update Successfully."})
+
+                    }
+                  }
+                })
               }
           })
-        res.json({"message":"Working"})
+      }
+
+
+exports.UpdateMyOwnResume = function(req, res){
+        if(req.body.expertEmail && req.files){
+          const resume_path=req.files?'/uploads/'+Date.now() + '-' +req.files.resume.name:''
+          if(req.files.resume){
+            let file = req.files.resume;
+                file.mv('./public'+resume_path, function(err,res) {
+                  if (err){
+                     res.json({code:422,success:false,"errorMessage":"Something Went Wrong"})
+                  }else{
+                     console.log('file uploaded');
+                    }
+                });
+          }
+
+          User.findOne({email:req.body.expertEmail}, function(err, user){
+
+            if(err){
+                res.json({code:422,success:false,"errorMessage":"Something Went Wrong"})
+            }
+            else if(!user || user==undefined){
+            res.json({code:422,success:false,"errorMessage":"Sorry user Doesn't exist"})
+            }
+            else{
+              user.resume_path=resume_path
+              user.save(function(err){
+                if(err){
+                  res.json({code:422,success:false,"errorMessage":"Sorry Couldnt Save"})
+                }
+                else{
+                   res.json({code:200,success:true,"SuccessMessage":"Successfully Updated"})
+                }
+              })
+            }
+          })
+        }
+
 }
 
 
 exports.UpdateMyOwnProfilePicture = function(req, res){
-        console.log(req.body)
-        console.log("**********************************")
-        // console.log(JSON.stringify(req.files))
-        if(req.body.expertEmail && req.body.expertEmail!=null && req.body.expertEmail!=undefined && req.body.expertEmail!="" && req.files && req.files!=null && req.files!=undefined && req.files.RelatedImages1 && req.files.RelatedImages1!=null && req.files.RelatedImages1[0] && req.files.RelatedImages1[0]!=null && req.files.RelatedImages1[0]!=undefined){
+        if(!req.body.expertEmail){
+            res.json({code:422,success:false,"errorMessage":"Something Went Wrong"})
+        }
+
+        if(!req.files){
+            res.json({code:422,success:false,"errorMessage":"Something Went Wrong"})
+        }
+
+        if(!req.files.profileImage){
+            res.json({code:422,success:false,"errorMessage":"Something Went Wrong"})
+        }
+
+        const profile_path='/uploads/'+Date.now() + '-' +req.files.profileImage.name
+        if(req.files.profileImage){
+            let file = req.files.profileImage;
+                file.mv('./public'+profile_path, function(err,res) {
+                  if (err){
+                     res.json({code:422,success:false,"errorMessage":"Something Went Wrong"})
+                  }else{
+                     console.log('file uploaded');
+                    }
+                });
+          }
+
+        if(req.body.expertEmail &&  req.files.profileImage){
+
           User.findOne({email:req.body.expertEmail}, function(err, user){
             if(err){
                 res.json({"errorMessage":"Something Went Wrong"})
@@ -189,22 +273,18 @@ exports.UpdateMyOwnProfilePicture = function(req, res){
               res.json({"errorMessage":"Sorry user Doesn't exist"})
             }
             else{
-              var path =req.files.RelatedImages1[0].path
-              path = path.replace("public", "")
-              console.log(path)
-              user.profileImage=path
+              user.profileImage=profile_path
               user.save(function(err){
                 if(err){
                   res.json({"errorMessage":"Sorry Couldnt Save"})
                 }
                 else{
-                  res.json({"SuccessMessage":"Successfully Updated"})
+                  res.json({code:200,success:true,"SuccessMessage":"Successfully Updated"})
                 }
               })
             }
           })
         }
-
 }
 
 exports.addAccountInfo = function(req, res, next){

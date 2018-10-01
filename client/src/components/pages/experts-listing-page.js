@@ -44,6 +44,21 @@ class ExpertsListingPage extends Component {
     )
   }
 
+  addEndorsements = (slug) =>{
+    const currentUser = cookie.load('user');
+    const fromSlug = currentUser.slug;
+    
+    const data = {'toSlug':slug,'fromSlug':fromSlug};
+    
+    axios.post(`${API_URL}/addEndorsements/`,data)
+      .then(res => {
+        console.log(res.message);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
   componentDidMount() {
     var category = this.props.params.category;
     // Remove the 'www.' to cause a CORS error (and see the error state)
@@ -108,11 +123,7 @@ class ExpertsListingPage extends Component {
   }
 
   getOnlineStatus(onlineStatus){
-    if(onlineStatus === "ONLINE"){
-      return "user-online-o fa fa-circle";
-    }else{
-      return "user-offline-o fa fa-circle";
-    }
+    return (onlineStatus === "ONLINE") ? true : false;
   }
 
   getOnlineStatusTitle(onlineStatus){
@@ -160,6 +171,10 @@ class ExpertsListingPage extends Component {
         </div>
       )
     }
+    let imageStyle={
+      background:'#ffffff',
+      padding:15
+    }
 
     return (
          <div id="experts-list" className="experts-list">
@@ -188,20 +203,22 @@ class ExpertsListingPage extends Component {
                                <div className="row">
                                   <div className="col-sm-8">
                                      <div className="row">
-                                        <div className="col-sm-2">
+                                        <div className="col-sm-2"  style={imageStyle}>
                                            <div className="img-exper">
                                               {/*post.profileImage && post.profileImage!=null && post.profileImage!=undefined && post.profileImage!=""?<img width="100" height="64" src={"http://localhost:3000"+post.profileImage} />:<img src="/src/public/img/pro1.png"/>*/}
-                                              {post.profileImage && post.profileImage!=null && post.profileImage!=undefined && post.profileImage!=""?<img width="100" height="64" src={`${Image_URL}`+post.profileImage} />:<img src="/src/public/img/pro1.png"/>}
-                                           </div>
+                                              {post.profileImage && post.profileImage!=null && post.profileImage!=undefined && post.profileImage!=""?<img width="100"  src={`${Image_URL}`+post.profileImage} />:<img src="/src/public/img/pro1.png"/>}
+                                               {this.getOnlineStatus(post.onlineStatus) && <i data-toggle="title" title="Online" className={'user-online-o fa fa-circle'} aria-hidden="true"></i>}
+                                          </div>
                                         </div>
                                         <div className="col-sm-10">
                                            <div className="person-per-info">
                                               <Link to={`/expert/${this.props.params.category}/${post.slug}`}><h2>{post.profile.firstName} {post.profile.lastName} {/*}<i title={this.getOnlineStatusTitle(post.onlineStatus)} className={this.getOnlineStatus(post.onlineStatus)} aria-hidden="true"></i>{*/}</h2> </Link>
-                                              <p>About Expert: {post.userBio && post.userBio!=null && post.userBio!=undefined && post.userBio!="" ? post.userBio : '-'}</p>
+                                            {/*  <p>About Expert: {post.userBio && post.userBio!=null && post.userBio!=undefined && post.userBio!="" ? post.userBio : '-'}</p>*/}
+                                              <p>University: {post.university}</p>
                                               <p>Area of Expertise: {post.expertCategories}</p>
-                                              <p>Country: {post.locationCountry && post.locationCountry!="" && post.locationCountry!=null && post.locationCountry!=undefined?post.locationCountry:"-"}</p>
+                                            {/*  <p>Country: {post.locationCountry && post.locationCountry!="" && post.locationCountry!=null && post.locationCountry!=undefined?post.locationCountry:"-"}</p>
                                               <p>State: {post.locationState && post.locationState!="" && post.locationState!=null && post.locationState!=undefined ?post.locationState:"-"}</p>
-                                              <p>City: {post.locationCity && post.locationCity!="" && post.locationCity!=null && post.locationCity!=undefined ? post.locationCity : "-"}</p>
+                                              <p>City: {post.locationCity && post.locationCity!="" && post.locationCity!=null && post.locationCity!=undefined ? post.locationCity : "-"}</p>*/}
                                               <p>Focus of Expertise: {post.expertFocusExpertise}</p>
                                               <p>Years of Expertise: {post.yearsexpertise}</p>
                                               <p>Rating: {post.expertRating && post.expertRating!=null && post.expertRating!=undefined && post.expertRating!=""? post.expertRating: "No Ratings Available Yet"} {post.expertRating && post.expertRating!="" && <i className="fa fa-star" aria-hidden="true"></i>}</p>
@@ -218,7 +235,7 @@ class ExpertsListingPage extends Component {
                                      </div>
                                      <div className="btn-expertise">
                                        {/*}<Link to={`/expert/${this.props.params.category}/${post.slug}`} className="btn-strt-session btn btn-primary pull-right">Start Video Session</Link>{*/}
-                                       {currentUser ? <Link data-toggle="modal" title="Start Video Session" data-target="#notificationModal" to="javascript:;" onClick={this.selectVideoSessionMinutes.bind(this, post)} data-slug={post.slug} className="Start-Session btn-strt-session btn btn-primary pull-right">Start Video Session</Link> : <div><Link title="Start Video Session" to="#" onClick={this.redirectToLogin.bind(this)} className="Start-Session btn-strt-session btn btn-primary pull-right">Start Video Session</Link></div> }
+                                       {currentUser ? <Link data-toggle="modal" title="Start Video Session" data-target="#notificationModal" to="javascript:;" onClick={this.selectVideoSessionMinutes.bind(this, post)} data-slug={post.slug} className="Start-Session btn-strt-session btn btn-primary pull-right">Connect</Link> : <div><Link title="Start Video Session" to="#" onClick={this.redirectToLogin.bind(this)} className="Start-Session btn-strt-session btn btn-primary pull-right">Connect</Link></div> }
                                      </div>
                                   </div>
                                </div>
@@ -242,15 +259,16 @@ class ExpertsListingPage extends Component {
                                <div className="row">
                                   <div className="col-sm-8">
                                      <div className="row">
-                                        <div className="col-sm-2">
+                                        <div className="col-sm-2" style={imageStyle}>
                                            <div className="img-exper">
-                                              {/*post.profileImage && post.profileImage!=null && post.profileImage!=undefined && post.profileImage!=""?<img width="100" height="64" src={"http://localhost:3000"+post.profileImage} />:<img src="/src/public/img/pro1.png"/>*/}
-                                              {post.profileImage && post.profileImage!=null && post.profileImage!=undefined && post.profileImage!=""?<img width="100" height="64" src={`${Image_URL}`+post.profileImage} />:<img src="/src/public/img/pro1.png"/>}
-                                           </div>
+                                               {/*post.profileImage && post.profileImage!=null && post.profileImage!=undefined && post.profileImage!=""?<img width="100" height="64" src={"http://localhost:3000"+post.profileImage} />:<img src="/src/public/img/pro1.png"/>*/}
+                                              {post.profileImage && post.profileImage!=null && post.profileImage!=undefined && post.profileImage!=""?<img width="100"  src={`${Image_URL}`+post.profileImage} />:<img src="/src/public/img/pro1.png"/>}
+                                               {this.getOnlineStatus(post.onlineStatus) && <i data-toggle="title" title="Online" className={'user-online-o fa fa-circle'} aria-hidden="true"></i>}
+                                            </div>
                                         </div>
                                         <div className="col-sm-10">
                                            <div className="person-per-info">
-                                              <Link to={`/expert/${this.props.params.category}/${post.slug}`}><h2>{post.profile.firstName} {post.profile.lastName} <i title={this.getOnlineStatusTitle(post.onlineStatus)} className={this.getOnlineStatus(post.onlineStatus)} aria-hidden="true"></i></h2> </Link>
+                                              <Link to={`/expert/${this.props.params.category}/${post.slug}`}><h2>{post.profile.firstName} {post.profile.lastName} {/*<i title={this.getOnlineStatusTitle(post.onlineStatus)} className={this.getOnlineStatus(post.onlineStatus)} aria-hidden="true"></i>*/}</h2> </Link>
                                               <p>About Expert: {post.userBio}</p>
                                               <p>Area of Expertise: {post.expertCategories}</p>
                                               <p>Country: {post.locationCountry && post.locationCountry!="" && post.locationCountry!=null && post.locationCountry!=undefined?post.locationCountry:"-"}</p>
@@ -271,7 +289,7 @@ class ExpertsListingPage extends Component {
                                        </span>
                                      </div>
                                      <div className="btn-expertise">
-                                       <Link to={`/expert/${this.props.params.category}/${post.slug}`} className="btn-strt-session btn btn-primary pull-right">Start Video Session</Link>
+                                       <Link to={`/expert/${this.props.params.category}/${post.slug}`} className="btn-strt-session btn btn-primary pull-right" onClick={e=>this.addEndorsements(post.slug)}>Connect</Link>
                                      </div>
                                   </div>
                                </div>

@@ -69,6 +69,8 @@ const UserSchema = new Schema({
   expertCategories      : {type: Array, default: [] },
   expertRates           : {type: Array, default: [] },
   expertFocusExpertise  : {type: String, default: ''},
+  endorsements          : {type: Array, default: [] },
+  myFavorite            : {type: Array, default: [] },
   yearsexpertise        : {type: String, default: ''},
   fbLoginAccessToken    : {type: String, default: ''},
   jwtLoginAccessToken   : {type: String, default: ''},
