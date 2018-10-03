@@ -15,7 +15,7 @@ import NotificationModal from './notification-modal';
 import { Modal, Button, Panel } from 'react-bootstrap';
 import $ from 'jquery';
 import StripeCheckout from 'react-stripe-checkout';
-
+import Carousel from 'react-image-carousel';
 
 const form = reduxForm({
   form: 'email-form'
@@ -565,6 +565,11 @@ class ViewExpert extends Component {
     if(this.state.error) {
       return this.renderError();
     }
+    let images = [
+        'https://grace951.github.io/react-image-carousel/img/landing1.jpg',
+        'https://grace951.github.io/react-image-carousel/img/landing3.jpg',
+        'https://grace951.github.io/react-image-carousel/img/landing5.jpg',
+    ];
     const { handleSubmit } = this.props;
     return (
     <div id="view-experts" className="view-experts">
@@ -768,7 +773,17 @@ class ViewExpert extends Component {
                        </div>
                     </div>
                  </div>
-                 <ExpertReviews expertSlug={this.props.params.slug} />
+                 <div className="col-md-12">
+                  <div className="col-md-3">
+                    <ExpertReviews expertSlug={this.props.params.slug} />
+                  </div>
+                  <div className="col-md-8">
+                    <Carousel images={images} 
+                        thumb={true}
+                        loop={true}
+                        autoplay={5000}/>
+                  </div>
+                  </div>                 
                </div>
             </div>
         </div>
