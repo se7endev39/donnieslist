@@ -501,3 +501,26 @@ ul.Action_icon li:last-child a:not(.start-audio-recording):not(.stop-audio-recor
 .session-page-container .chatwait-spinner{height: 25px;}
 .val-error{color: red;}
 .val-success{color: green;}
+.community-news-link, .community-news-link:hover, .community-news-link:focus{
+    color: rgb(58, 155, 250);
+    cursor: pointer;
+    text-decoration: none;
+}
+h4.community-news-parent {
+    font-size: 16px;
+    margin-bottom: 0px !important;
+}
+.maintenance-mode {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.expert-endorsements dd img {
+    border-radius: 50%;
+    border: 1px solid #fff;
+}
+.expert-endorsements dd img:not(:first-child) {
+    margin-left: -15px;
+}

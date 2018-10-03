@@ -176,6 +176,7 @@ module.exports = function (app) {
   
   apiRoutes.post('/addEndorsements',ExpertsController.addEndorsements);
   apiRoutes.post('/getEndorsements',ExpertsController.getEndorsements);
+  apiRoutes.post('/getMyExpertsListing',ExpertsController.getMyExpertsListing);
   //= ========================
   // Session Routes
   //= ========================

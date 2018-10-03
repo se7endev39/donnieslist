@@ -18,6 +18,7 @@ import ExpertSessionPage from './components/dashboard/expert-session-page';
 import TokboxPage from './components/dashboard/tokbox-page';
 import ComponentSamplesPage from './components/pages/component-samples';
 import HowItWorks from './components/pages/how-it-works';
+import CommunityNews from './components/pages/CommunityNews';
 import ExpertSignupPage from './components/auth/expert-signup';
 
 // Import authentication related pages
@@ -66,6 +67,7 @@ export default (
   <Route path="/" component={App}>
     <IndexRoute component={HomePage} />
     <Route path="how-it-works" component={HowItWorks} />
+    <Route path="community-news" component={CommunityNews} />
     <Route path="testpage" component={TestPage} />
     <Route path="forum" component={Forum} />
     <Route path="privacy-policy" component={PrivacyPolicy} />

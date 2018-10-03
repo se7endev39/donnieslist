@@ -71,13 +71,13 @@ class HeaderTemplate extends Component {
         </li>,
         <li key={3}>
           <Link onClick={this.handleOnClick} to="register">Signup</Link>
-        </li>,
-        <li key={4}>
-          <Link onClick={this.handleOnClick} to="how-it-works">how it works</Link>
-        </li>,
-        <li key={5}>
-          <Link onClick={this.handleOnClick} to="contact-us">contact</Link>
         </li>
+        //<li key={4}>
+        //  <Link onClick={this.handleOnClick} to="how-it-works">how it works</Link>
+        //</li>,
+        //<li key={5}>
+        //  <Link onClick={this.handleOnClick} to="contact-us">contact</Link>
+        //</li>
       ];
     }
   }
@@ -111,7 +111,7 @@ class HeaderTemplate extends Component {
                 <span className="icon-bar" />
               </button>
               <div className="logo-tag"> <IndexLink className="navbar-brand" to="/">donnie's list</IndexLink>
-                <span className="navbar-caption">$1/min live video education, lessons and instant advice from top experts.</span>
+                  {/*<span className="navbar-caption">$1/min live video education, lessons and instant advice from top experts.</span>*/}
               </div>
             </div>
             <div className="collapse navbar-collapse" id="nav-collapse">

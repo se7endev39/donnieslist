@@ -59,12 +59,19 @@ class FooterTemplate extends Component {
       /*}else{
         this.state = {
           show: true
-        };  
+        };
       }*/
     }
   }
 
-  handleFormSubmit(formProps){ 
+  componentDidMount(){
+    let path=location.pathname.substring(1,15);
+    if(path==='expert-signup/'){
+       this.setState({ show: false })
+    }
+  }
+
+  handleFormSubmit(formProps){
     try{
       this.props.signupExpertSendSignupLink(formProps).then(
         (response)=>{
@@ -82,7 +89,7 @@ class FooterTemplate extends Component {
       )
     }catch(e){}
   }
-  
+
   renderLinks() {
     if (this.props.authenticated) {
       return [];
@@ -91,25 +98,35 @@ class FooterTemplate extends Component {
     }
   }
 
+  handleOnClick(){
+    let linksEl = document.querySelector('#nav-collapse');
+    linksEl.classList.remove("in");
+  }
+
+
   handleClose() { this.setState({ show: false }); }
   handleShow() { this.setState({ show: true }); }
 
   render() {
-    const { error, handleSubmit, pristine, reset, submitting } = this.props;
+    const { error, handleSubmit, pristine, reset, submitting ,authenticated} = this.props;
+
     return (
-      <footer className="footer"><center>A Dey • Hale Production <div className="pull-right exprt-lgn-btn" onClick={this.handleShow}>Expert Login</div></center>
+      <footer className="footer">
+        <center>A Donny Dey Production
+            {/*<div className="pull-right exprt-lgn-btn" >
+           <Link onClick={this.handleOnClick} to="login">{!authenticated && 'Expert Login'}</Link>
+         </div>*/}
+       </center>
         {/*}<ExpertLoginPopup showStatus={this.state.show} onHide={this.handleClose}/>{*/}
-        <Modal 
-          show={this.state.show} 
-          onHide={this.handleClose} 
+        <Modal
+          show={this.state.show}
+          onHide={this.handleClose}
           dialogClassName="custom-modal text-center"
           bsSize="small">
           <form onSubmit={handleSubmit(this.handleFormSubmit.bind(this))}>
             <Modal.Body>
               <h5><p>Everybody is an expert at something.</p>
-              
-              <p>What is your expertise?</p>
-              </h5><br/>
+              <p><b>What's your expertise?</b></p></h5><br/>
               <p><Field
                 name="email"
                 component={renderField}

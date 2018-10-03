@@ -27,8 +27,8 @@ var   config =require ("../config/main")
 
 
 exports.theAdminsUserList = function(req, res) {
-	    console.log("this")
-	      User.find({role:{$ne :["Admin"]}}, (err, users) => {
+
+	      User.find({role:{$ne :["Admin"]} ,isDeleted:false}, (err, users) => {
 	        if (err) {
 	          res.status(400).json({ error: 'No user could be found for this ID.' });
 	          return next(err);
@@ -37,7 +37,7 @@ exports.theAdminsUserList = function(req, res) {
 	        	console.log(JSON.stringify(users))
 	        	return res.status(200).json({ user: users });
 	        }
-	        
+
 	      });
     }
 exports.AdminGetUserInfo = function(req,res){
@@ -55,37 +55,102 @@ exports.AdminGetUserInfo = function(req,res){
 }
 exports.UpdateUserInfo =function(req,res){
 
-      const {email,firstName,lastName,password,userBio,expertRates,expertCategories,expertContact, expertContactCC,expertRating,expertFocusExpertise,yearsexpertise} = req.body
+      const {email,firstName,lastName,password,
+        university,expertCategories,expertContact,
+        expertContactCC,expertRating,expertFocusExpertise,yearsexpertise,
+        facebookLink,
+        profile,
+        resume,
+        isMusician,
+        linkedinLink,
+        instagramLink,
+        youtubeLink,
+        soundcloudLink,
+        twitterLink,
+        googleLink
+      } = req.body
+
+      const profileImage=req.files ?'/uploads/'+Date.now()+ '-' +req.files.profile.name:''
+      const resume_path=req.files?'/uploads/'+Date.now() + '-' +req.files.resume.name:''
+
+let passchange=false;
 
       User.findOne({"email":email}, function(err, user){
+        if(req.files){
+          let file = req.files.profile;
+              file.mv('./public'+profileImage, function(err,res) {
+                if (err){
+                   console.log('Error',err);
+                }else{
+                   console.log('file uploaded');
+                  }
+              });
+        }
+
+        if(req.files){
+          let file = req.files.resume;
+              file.mv('./public'+resume_path, function(err,res) {
+                if (err){
+                   console.log('Error',err);
+                }else{
+                   console.log('file uploaded');
+                  }
+              });
+        }
+
         user.profile.firstName  = firstName
         user.profile.lastName   = lastName
-        if(user.password!=password){
-          // user.password=password
-          console.log("Pass is different")
-          // console.log(MainSettings.SALT_FACTOR)
-          // var hash = bcrypt.hashSync(password, MainSettings.SALT_FACTOR);
-          // console.log(hash)
-          // var z= bcrypt.compareSync(password, hash);
-          user.password = password
-          //console.log("))))))))))))))))))))))) "+z)
+        if(password){
+          user.comparePassword(password,function(err,pass){
+            if(!pass){
+              user.password=password
+              passchange=true
+            }
+        })
         }
-        else{
-          console.log("Pass is same")
+
+        if(req.files !=null && req.files.resume !=null ){
+          user.resume_path= resume_path
         }
-        user.userBio            	= userBio
-        user.expertRates        	= expertRates  
-        user.expertCategories   	= expertCategories
-        user.contact           		= expertContact
-        user.expertContactCC		= expertContactCC
+        if(req.files  && req.files.profile !=null ){
+          user.profileImage=profileImage
+        }
+
+        // user.userBio            	= userBio
+        // user.expertRates        	= expertRates
+        user.expertCategories     	= expertCategories
+        user.contact           	  	= expertContact
+        user.expertContactCC	    	= expertContactCC
         user.expertRating           = expertRating
         user.expertFocusExpertise   = expertFocusExpertise
         user.yearsexpertise         = yearsexpertise
-        user.save()
+        user.university             =university;
+        user.isMusician             =isMusician;
 
+        user.facebookURL            = facebookLink
+        user.linkedinURL            = linkedinLink,
+        user.twitterURL             = twitterLink,
+        user.googleURL              = googleLink,
+
+        user.soundcloudURL=soundcloudLink,
+        user.instagramURL=instagramLink,
+        user.youtubeURL=youtubeLink
+
+      user.save(function(err,updateUser){
+          if(err){
+            console.log(err)
+              return res.json({code:402,success:false,message:'Something went worng!'})
+          }else{
+            if(passchange){
+              return res.json({code:200,success:true,"message":"Profile Update Successfully.",passchange:true})
+            }else{
+            return   res.json({code:200,success:true,"message":"Profile Update Successfully."})
+
+            }
+          }
       })
 
-      res.json({"m":"working"})
+      })
 
     }
 
@@ -105,7 +170,7 @@ exports.AdminToBanOrUnBanUser=function(req, res){
 				    to: 'test4rvtech@gmail.com, '+users.email, // list of receivers
 				    // to: "test4rvtech@gmail.com, "+email, // list of receivers
 				    subject: 'DonnysList Youve Been Banned', // Subject line
-				    
+
 				    html: '<b> Hello '+users.profile.firstName+".</b> You've been banned", // html body
 				};
 
@@ -118,7 +183,7 @@ exports.AdminToBanOrUnBanUser=function(req, res){
                     else{
                     	console.log('Message sent to user: ' /*+ JSON.stringify(info)*/);
                     }
-                    
+
                 });
 
           }
@@ -131,7 +196,7 @@ exports.AdminToBanOrUnBanUser=function(req, res){
 				    to: 'test4rvtech@gmail.com, '+users.email, // list of receivers
 				    // to: "test4rvtech@gmail.com, "+email, // list of receivers
 				    subject: "DonnysList- Congratulations You've Been UnBanned", // Subject line
-				    
+
 				    html: '<b> Hello '+users.profile.firstName+".</b> You've been Unbanned", // html body
 				};
 
@@ -144,10 +209,10 @@ exports.AdminToBanOrUnBanUser=function(req, res){
                     else{
                     	console.log('Message sent to user: ' /*+ JSON.stringify(info)*/);
                     }
-                    
+
                 });
           }
-          
+
           users.save(function(err){
             if(err){
               res.status(400).json({ error: 'Something Went Wrong' });
@@ -158,3 +223,45 @@ exports.AdminToBanOrUnBanUser=function(req, res){
           })
       })
    }
+
+  exports.deleteHim=function(req, res){
+       var message = ""
+       var state = ""
+       // console.log(JSON.stringify(req.body.data))
+         User.findById(req.body.id, (err, users) => {
+             // console.log(JSON.stringify(users))
+               users.isDeleted=true
+              users.enableAccount=false
+               message="Successfully Delete the User"
+               state="Deleted"
+   				let mailOptions = {
+   				    from: '"DonnysList" <test4rvtech@gmail.com>', // sender address
+   				    to: 'test4rvtech@gmail.com, '+users.email, // list of receivers
+   				    // to: "test4rvtech@gmail.com, "+email, // list of receivers
+   				    subject: 'DonnysList, You have Been Deleted', // Subject line
+
+   				    html: '<b> Hello '+users.profile.firstName+".</b> You've been Delete", // html body
+   				};
+
+                   transporter.sendMail(mailOptions, function(error, info){
+                       if(error){
+                           console.log("In error of nodemailer")
+                           console.log(error);
+                       }
+                       else{
+                       	console.log('Message sent to user: ' /*+ JSON.stringify(info)*/);
+                       }
+
+                   });
+
+
+             users.save(function(err){
+               if(err){
+                 res.status(400).json({ error: 'Something Went Wrong' });
+               }
+               else{
+                 res.json({SuccessMessage:message, state:state})
+               }
+             })
+         })
+      }

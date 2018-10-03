@@ -24,14 +24,16 @@ class ViewProfile extends Component {
       onlineStatus:"",
       expert:"",
       loading: false,
-
+      university:'',
       RelatedImages1:[],
       successMessage:"",
       errorMessage:"",
       role:'',
+      resume_path:'',
+      Image_other_UrlContain:false
     }
     this.onDrop = this.onDrop.bind(this);
-    this.uploadImage = this.uploadImage.bind(this)
+    this.uploadImage = this.uploadImage.bind(this);
   }
 
 
@@ -43,14 +45,22 @@ class ViewProfile extends Component {
 
     this.props.fetchUser(userId._id).then(
         (response)=>{
-          //console.log(JSON.stringify(response.data.user))
+          const pattern = new RegExp('^(https?:\/\/)?'+
+              '((([a-z\d]([a-z\d-]*[a-z\d])*)\.)+[a-z]{2,}|'+
+              '((\d{1,3}\.){3}\d{1,3}))');
+
+              if(pattern.test(response.data.user.profileImage)) {
+                this.setState({Image_other_UrlContain:true})
+               }
             const expert = response.data.user;
             this.setState({firstName : response.data.user.firstName });
             this.setState({lastName : response.data.user.lastName });
             this.setState({expertEmail : response.data.user.email });
             this.setState({onlineStatus : response.data.user.onlineStatus });
-            this.setState({profileImage:response.data.user.profileImage});
+            this.setState({profileImage : response.data.user.profileImage });
             this.setState({role:role})
+            this.setState({university:response.data.user.university})
+            this.setState({resume_path:response.data.user.resume_path})
             this.setState({
               expert,
               loading: false,
@@ -69,6 +79,10 @@ class ViewProfile extends Component {
         RelatedImages1: acceptedFiles
       });
     }
+
+
+
+
     uploadImage(){
           const {expertEmail, RelatedImages1} = this.state
 
@@ -124,12 +138,12 @@ class ViewProfile extends Component {
           // this.props.uploadImage({email:this.state.expertEmail, RelatedImages1:this.state.RelatedImages1})
     }
 
-
   render() {
 
   const renderLoading=(
     <img className="loader-center" src="/src/public/img/ajax-loader.gif"/>
   )
+
 
   const renderPosts=(
         <div id="view-experts" className="view-experts">
@@ -152,20 +166,34 @@ class ViewProfile extends Component {
                        <div className="row">
 
                           <div className="col-md-3 col-sm-4">
-                             {this.state.profileImage && this.state.profileImage!=null && this.state.profileImage!=undefined && this.state.profileImage!=""?
-                              <div className="expert-img">
-                                                             <img src={`${Image_URL}`+this.state.profileImage}/>
-                                                             <i data-toggle="title" title="Online" className="user-online fa fa-circle" aria-hidden="true"></i>
-                                                          </div>:""}
+
+
+                            {this.state.Image_other_UrlContain && this.state.profileImage && this.state.profileImage!=null && this.state.profileImage!=undefined && this.state.profileImage!=""?
+                             <div className="expert-img">
+                                <img src={this.state.profileImage}/>
+                                <i data-toggle="title" title="Online" className="user-online fa fa-circle" aria-hidden="true"></i>
+                             </div>:""
+                            }
+
+
+
+
+                            {!this.state.Image_other_UrlContain && this.state.profileImage && this.state.profileImage!=null && this.state.profileImage!=undefined && this.state.profileImage!=""?
+                             <div className="expert-img">
+                                <img src={`${Image_URL}`+this.state.profileImage}/>
+                                <i data-toggle="title" title="Online" className="user-online fa fa-circle" aria-hidden="true"></i>
+                             </div>:""
+                            }
+
+
 
 
                              {this.state.profileImage==null || this.state.profileImage==undefined || this.state.profileImage==""?
                               <div className="expert-img">
-                                                             <img src="/src/public/img/profile.png"/>
-                                                             <i data-toggle="title" title="Online" className="user-online fa fa-circle" aria-hidden="true"></i>
-                                                          </div>:""}
+                               <img src="/src/public/img/profile.png"/>
+                               <i data-toggle="title" title="Online" className="user-online fa fa-circle" aria-hidden="true"></i>
+                            </div>:""}
                            </div>
-
 
 
                             <div className="col-md-9 col-sm-8">
@@ -202,12 +230,12 @@ class ViewProfile extends Component {
                                           </div>
                                         }
 
-                                        {this.state.role && this.state.role=="Expert" &&
+                                        {/*this.state.role && this.state.role=="Expert" &&
                                           <div className="profile-bor-detail">
                                              <dt>Rates</dt>
                                              <dd>{this.state.expert.expertRates}</dd>
                                           </div>
-                                        }
+                                        */}
 
                                         {this.state.role && this.state.role=="Expert" &&
                                           <div className="profile-bor-detail">
@@ -215,6 +243,8 @@ class ViewProfile extends Component {
                                            <dd>{this.state.expert.expertRating} <i className="fa fa-star" aria-hidden="true"></i></dd>
                                           </div>
                                         }
+                                      {this.state.role && (this.state.role=="Admin" || this.state.role=="User") &&
+                                        <div>
                                         <div className="profile-bor-detail">
                                             <dt>About</dt>
                                             <dd>{this.state.expert.userBio && this.state.expert.userBio!=null && this.state.expert.userBio!=undefined && this.state.expert.userBio!="" ? this.state.expert.userBio: "-"}</dd>
@@ -231,6 +261,8 @@ class ViewProfile extends Component {
                                             <dt>City </dt>
                                             <dd>{this.state.expert.locationCity && this.state.expert.locationCity!=null && this.state.expert.locationCity!=undefined && this.state.expert.locationCity!="" ? this.state.expert.locationCity : "-"}</dd>
                                         </div>
+                                      </div>
+                                      }
 
                                         {this.state.role == "Expert" && <div className="profile-bor-detail expert-social-links">
                                                                                     <dt>Social link </dt>
@@ -241,9 +273,29 @@ class ViewProfile extends Component {
                                                                                       {this.state.expert.instagramURL && this.state.expert.instagramURL!=null && this.state.expert.instagramURL!=undefined && this.state.expert.instagramURL!="" && <a target="_blank" href={ this.state.expert.instagramURL ? this.state.expert.instagramURL : '#'} title="instagram"><i className="fa fa-instagram" aria-hidden="true"></i></a>}
                                                                                       {this.state.expert.snapchatURL && this.state.expert.snapchatURL!=null && this.state.expert.snapchatURL!=undefined && this.state.expert.snapchatURL!="" &&<a target="_blank" href={ this.state.expert.snapchatURL ? this.state.expert.snapchatURL : '#'} title="snapchat"><i className="fa fa-snapchat" aria-hidden="true"></i></a>}
                                                                                       {this.state.expert.websiteURL && this.state.expert.websiteURL!=null && this.state.expert.websiteURL!=undefined && this.state.expert.websiteURL!="" &&<a target="_blank" href={ this.state.expert.websiteURL ? this.state.expert.websiteURL : '#'} title="website"><i className="fa fa-anchor" aria-hidden="true"></i></a>}
-                                                                                      {this.state.expert.facebookURL=="" && this.state.expert.twitterURL=="" && this.state.expert.linkedinURL=="" && this.state.expert.instagramURL=="" && this.state.expert.snapchatURL==""&& this.state.expert.websiteURL=="" && "No Links Added yet"}
+                                                                                      {this.state.expert.googleURL && this.state.expert.googleURL!=null && this.state.expert.googleURL!=undefined && this.state.expert.googleURL!="" &&<a target="_blank" href={ this.state.expert.googleURL ? this.state.expert.googleURL : '#'} title="google"><i className="fa fa-google" aria-hidden="true"></i></a>}
+                                                                                      {this.state.expert.soundcloudURL && this.state.expert.soundcloudURL!=null && this.state.expert.soundcloudURL!=undefined && this.state.expert.soundcloudURL!="" &&<a target="_blank" href={ this.state.expert.soundcloudURL ? this.state.expert.soundcloudURL : '#'} title="soundcloud"><i className="fa fa-soundcloud" aria-hidden="true"></i></a>}
+                                                                                      {this.state.expert.youtubeURL && this.state.expert.youtubeURL!=null && this.state.expert.youtubeURL!=undefined && this.state.expert.youtubeURL!="" &&<a target="_blank" href={ this.state.expert.youtubeURL ? this.state.expert.youtubeURL : '#'} title="youtube"><i className="fa fa-youtube" aria-hidden="true"></i></a>}
+                                                                                      {this.state.expert.facebookURL=="" && this.state.expert.twitterURL=="" && this.state.expert.linkedinURL=="" && this.state.expert.instagramURL=="" && this.state.expert.snapchatURL==""&& this.state.expert.websiteURL==""&& this.state.expert.googleUrl=="" && "No Links Added yet"}
+
                                                                                     </dd>
-                                                                                </div>}
+                                                                                </div>
+                                                                              }
+                                            {
+                                              this.state.role && this.state.role=="Expert" &&
+                                              <div className="profile-bor-detail">
+                                               <dt>University</dt>
+                                               <dd>{this.state.university}</dd>
+                                              </div>
+                                            }
+                                            {
+                                              this.state.role && this.state.role=="Expert" &&
+                                              <div className="profile-bor-detail">
+                                               <dt>Download Resume</dt>
+                                               <dd> <a href={`${Image_URL}`+this.state.resume_path} title="Download" download className="fa fa-file-pdf-o"></a></dd>
+                                              </div>
+                                            }
+
 
                                      </dl>
                                   </div>

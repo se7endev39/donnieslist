@@ -70,6 +70,9 @@ export function registerUser({ email, firstName, lastName, password }) {
 
 export function logoutUser(error) {
   return function (dispatch) {
+    const userId = cookie.load('user');
+    var user_id = userId._id;
+    axios.get(`${API_URL}/auth/logout/${user_id}`);
     dispatch({ type: UNAUTH_USER, payload: error || '' });
     cookie.remove('token', { path: '/' });
     cookie.remove('user', { path: '/' });

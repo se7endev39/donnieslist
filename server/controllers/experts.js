@@ -789,6 +789,7 @@ exports.addEndorsements = function(req, res, next){
     })
 }
 /* API endpoint to get endorsements */
+
 exports.getEndorsements = function(req, res, next){
   
   const {slug} = req.body
@@ -804,6 +805,51 @@ exports.getEndorsements = function(req, res, next){
          $in: slug 
       },
     }, { profileImage: 1, slug: 1 },
+    function(err, expertsList) {
+      if (expertsList) {
+        res.json(expertsList);
+      } else {
+        res.json({
+          success: false,
+          data: {},
+          code: 404
+        });
+      }
+    });
+
+  
+}
+
+exports.getMyExpertsListing = function(req, res, next){
+  
+  const {slug,category} = req.body
+  
+  
+  if (!slug) {
+    res.status(422).send({
+      error: 'Please choose expert slug'
+    });
+    return next();
+  }
+  User.find({
+    'expertCategories': {
+      $regex: new RegExp(category, "i")
+    },
+    'role': "Expert",
+    'slug': {
+         $in: slug 
+      }
+    // 'expertRating' : ['5','4']
+  }, { '_id': 0,
+    'accountCreationDate': 0,
+    'createdAt': 0,
+    'enableAccount': 0,
+    // locationCity :0,
+    // locationCountry : 0,
+    // locationState : 0,
+    locationZipcode: 0,
+    password: 0,
+    websiteURL: 0 },
     function(err, expertsList) {
       if (expertsList) {
         res.json(expertsList);

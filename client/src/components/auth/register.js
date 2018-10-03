@@ -37,7 +37,7 @@ class Register extends Component {
     this.state = {
         recaptcha_value: '',
     };
-    
+
   }
 
   responseFacebook(response) {
@@ -184,10 +184,10 @@ class Register extends Component {
         <div className="page-title text-center"><h2>Signup</h2></div>
         <p className="text-center">Sign up to start a session.</p>
         <form id="signup_form" onSubmit={handleSubmit(this.handleFormSubmit.bind(this))}>
-          {this.state.errorMessage && this.state.errorMessage!=null && this.state.errorMessage!=undefined && this.state.errorMessage!="" && 
+          {this.state.errorMessage && this.state.errorMessage!=null && this.state.errorMessage!=undefined && this.state.errorMessage!="" &&
             <div className="alert alert-danger">{this.state.errorMessage}</div>
           }
-          {this.state.successMessage && this.state.successMessage!=null && this.state.successMessage!=undefined && this.state.successMessage!="" && 
+          {this.state.successMessage && this.state.successMessage!=null && this.state.successMessage!=undefined && this.state.successMessage!="" &&
             <div className="alert alert-success">{this.state.successMessage}</div>
           }
           <div className="row">
@@ -214,7 +214,7 @@ class Register extends Component {
           </div>
 
           <div className="form-group text-center g-recaptcha-wrapper">
-            <input type="text" class="form-control g-recaptcha" id="hiddenRecaptcha" name="hiddenRecaptcha"  value={ this.state.recaptcha_value } />
+            <input type="text" className="form-control g-recaptcha" id="hiddenRecaptcha" name="hiddenRecaptcha"  value={ this.state.recaptcha_value } />
             <Recaptcha  sitekey="6LeMERsUAAAAACSYqxDZEOOicHM8pG023iDHZiH5"  render="explicit" onloadCallback={callback} verifyCallback={this.verifyCallback.bind(this)} />
           </div>
 

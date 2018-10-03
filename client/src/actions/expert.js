@@ -140,12 +140,12 @@ export function rechargeVideoSession({stripeToken, expertSlug, userEmail, amount
   };
 }
 
-// add money to wallet 
+// add money to wallet
 export function addMoneyToWallet({customer_id, expertSlug, userEmail, amount}) {
   return function (dispatch) {
     return axios.post(`${API_URL}/videosession/add-money-to-wallet`, {customer_id, userEmail, amount})
 		  .then(response => {
-                      
+
                       return response.data;
 //        console.log('action expert response: '+JSON.stringify(response));
 //        if(response.data.response.stripePaymentStatus === "succeeded"){
@@ -223,7 +223,7 @@ export function stopRecording({expertEmail, userEmail, archiveID}){
           errorHandler(dispatch, error.response, AUTH_ERROR);
         });
   };
-} 
+}
 
 export function sendRecording({ expertEmail, userEmail, archiveID }){
     return function (dispatch) {
@@ -278,7 +278,7 @@ export function playRecordedAudio({ archiveId }){
           errorHandler(dispatch, error.response, AUTH_ERROR);
         });
     };
-} 
+}
 
 export function deleteRecordedAudio({ archiveId, id }){
     return function (dispatch) {

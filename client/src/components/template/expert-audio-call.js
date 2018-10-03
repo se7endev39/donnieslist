@@ -6,7 +6,7 @@ import { Modal, Button, Panel } from 'react-bootstrap';
 import * as actions from '../../actions/messaging';
 import $ from 'jquery';
 import { audioCallTokenRequest } from '../../actions/expert';
-import { tokBoxApikey } from '../../actions/index';
+import { tokBoxApikey } from './../../actions/index';
 
 const socket = actions.socket;
 const currentUser = cookie.load('user');

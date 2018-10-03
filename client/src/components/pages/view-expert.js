@@ -337,7 +337,7 @@ class ViewExpert extends Component {
         this.setState({university : res.data[0].university });
 		    this.setState({
 		      expert,
-		      loading: false,
+		      loading: true,
 		      error: null
 		    });
 
@@ -557,7 +557,7 @@ class ViewExpert extends Component {
           const url = `${Image_URL}`+endorsement.profileImage;
           const defaul_url = "/src/public/img/profile.png";
           return (
-              <img className="endorsement-image" height="30" width="30" 
+              <img className="endorsement-image" height="50" width="50" 
               src={endorsement.profileImage && endorsement.profileImage!=null && endorsement.profileImage!=undefined && endorsement.profileImage!=""? url: defaul_url} />
           );
       }) 

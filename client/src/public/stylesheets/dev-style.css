@@ -10,7 +10,7 @@
 .homepage h4 a { color: #fff; }
 .homepage h4 a:hover { color: white; }
 .homepage h4 { text-align: center; padding: 8px 5px; text-transform: uppercase; color: #fff; float: left; width: 100%; }
-.center_h4 { float: left; width: 100%; padding: 0; margin-bottom: 5px; margin-top: 20px; }
+.center_h4 { float: left; width: 100%; padding: 0; margin-bottom: 15px; margin-top: 20px; }
 .center_h4 a {
   color: #000;
   display: inline-block;
@@ -765,3 +765,14 @@ a.Start-Session {
 .pad15{padding-bottom: 25px;margin-top: 40px;}
 .pad15 div.icon{font-size:15px;    margin-left: 10px; }
 .label-align{display: block;}
+
+.img-exper {
+    position: relative;
+    display: inline-block;
+}
+.img-exper > i {
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    padding: 4px;
+}

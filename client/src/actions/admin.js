@@ -61,6 +61,20 @@ export function BanMe(data){
 	}
 
 }
+
+export function deleteMe(data){
+	return dispatch =>{
+		return fetch(`${API_URL}/deleteHim`, {
+    method: 'POST',
+    headers: {'Content-Type':'application/x-www-form-urlencoded'}, // this line is important, if this content-type is not set it wont work
+    body: 'id='+data
+}).then(function(res){
+			var x = res.json()
+			return x
+		}).then(function(res){/*console.log(res);*/ return res})
+	}
+
+}
 // to unban any banned user
 export function UnBanMe(data){
 	console.log("HIIIII" +data)

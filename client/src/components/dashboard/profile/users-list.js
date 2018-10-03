@@ -10,7 +10,7 @@ import SidebarMenuAdmin from '../sidebar-admin';
 import SidebarMenuExpert from '../sidebar-expert';
 import SidebarMenuUser from '../sidebar-user';
 
-import {BanMe, UnBanMe} from "../../../actions/admin"
+import {BanMe, UnBanMe,deleteMe} from "../../../actions/admin"
 
 
 class UsersList extends Component {
@@ -25,6 +25,7 @@ class UsersList extends Component {
     this.props.protectedTest();
     this.BanMe = this.BanMe.bind(this);
     this.UnBanMe = this.UnBanMe.bind(this);
+    this.deleteMe=this.deleteMe.bind(this);
   }
 
 
@@ -50,31 +51,55 @@ class UsersList extends Component {
     return false;
   }
   componentWillMount(){
-  	// console.log("HERE");
-
-  	try{
-      	this.props.getUsersList().then(
-      		(response)=>{
-             const userRole = cookie.load('user').role;
-             this.setState({role:userRole})
-             if(userRole=="Admin"){
-                this.setState({users:response.user})
-             }
-             else{
-              this.setState({users:[]})
-              this.setState({errorMessage:"Sorry You Are Not Authorized To See This List"})
-             }
-      			
-  			},
-      		(err) => err.response.json().then(({errors})=> {
-				// console.log("err");
-  			})
-  		);
-  	}catch(e){console.log('exception '+e);}
-
+   this.getList();
   }
+
+ getList(){
+   try{
+       this.props.getUsersList().then(
+         (response)=>{
+            const userRole = cookie.load('user').role;
+            this.setState({role:userRole})
+            if(userRole=="Admin"){
+               this.setState({users:response.user})
+            }
+            else{
+             this.setState({users:[]})
+             this.setState({errorMessage:"Sorry You Are Not Authorized To See This List"})
+            }
+
+       },
+         (err) => err.response.json().then(({errors})=> {
+       // console.log("err");
+       })
+     );
+   }catch(e){console.log('exception '+e);}
+ }
+
+
+  deleteMe(e){
+  e.preventDefault();
+
+  this.props.deleteMe(e.target.value).then(
+      (response)=>{
+        if(response.SuccessMessage && response.SuccessMessage!==null && response.SuccessMessage!=undefined){
+
+          if(response.state && response.state!==null && response.state!=undefined && response.state=="Deleted"){
+            this.setState({SuccessMessage:response.SuccessMessage})
+            this.getList();
+          }
+          else{
+              this.setState({SuccessMessage:response.SuccessMessage})
+          }
+        }
+      }
+    )
+  }
+
+
   BanMe(e){
   	e.preventDefault()
+
   	var id = e.target.value
     var confirm=false
     var confirm2= false
@@ -147,6 +172,9 @@ class UsersList extends Component {
       }
     }
   }
+
+
+
   UnBanMe(e){
   	e.preventDefault()
   	var id = e.target.value
@@ -159,7 +187,7 @@ class UsersList extends Component {
   	this.props.UnBanMe(id).then(
   			(response)=>{
   				if(response.SuccessMessage && response.SuccessMessage!==null && response.SuccessMessage!=undefined){
-           this.setState({SuccessMessage:"Successfully Un-Baned The User"}) 
+           this.setState({SuccessMessage:"Successfully Un-Baned The User"})
   				}
   			}
 
@@ -208,7 +236,7 @@ class UsersList extends Component {
                             <th style={{"width":50+"%"}}>Enabled</th>
                             <th style={{"width":50+"%"}}>Action</th>
                           </tr>
-                          {this.state.users && this.state.users!==null && this.state.users!==undefined ? this.state.users.map((user, index) => <TableRow index={index} data={user} BanMe={this.BanMe} UnBanMe={this.UnBanMe} />):"y"}
+                          {this.state.users && this.state.users!==null && this.state.users!==undefined ? this.state.users.map((user, index) => <TableRow index={index} data={user} BanMe={this.BanMe} UnBanMe={this.UnBanMe} deleteMe={this.deleteMe}/>):"y"}
                         </table>}
                       </div>
                   </div>
@@ -237,13 +265,13 @@ class TableRow extends React.Component{
 		// debugger
 		return(
 			<tr style={{background:color(this.props.index)}}>
-
-				<td><h4 style={{"paddingLeft":10+"px"}}>{this.props.data.profile.firstName}</h4></td>
+        <td><h4 style={{"paddingLeft":10+"px"}}>{this.props.data.profile.firstName}</h4></td>
 				<td><h4>{this.props.data.role && this.props.data.role!=null && this.props.data.role!=undefined && this.props.data.role==="Expert"?<a href={"/dashboard/userslist/"+this.props.data._id}>{this.props.data.profile.lastName}</a>:this.props.data.profile.lastName}</h4></td>
 				<td><h4>{this.props.data.email}</h4></td>
 				<td><h4>{this.props.data.role}</h4></td>
 				<td><h4>{this.props.data.enableAccount===true? "Yes":"No"}</h4></td>
 				<td>{this.props.data.enableAccount===true? <button className="btn "dataToggle="tooltip" title="Disable" style={{borderColor: "white", height: 50+"px",width: 72+"px"}} onClick={this.props.BanMe} value={this.props.data._id}><h4 value={this.props.data._id} style={{color:"red"}}>X</h4></button>:<button className="btn " dataToggle="tooltip" title="Enable" style={{borderColor: "white", height: 50+"px",width: 72+"px"}} onClick={this.props.BanMe} value={this.props.data._id}><h4 style={{color:"green"}}>X</h4></button>}</td>
+        <td  title="Delete"><button className="btn btn-danger" onClick={this.props.deleteMe} value={this.props.data._id}>Delete</button></td>
 			</tr>
 			)
 	}
@@ -252,5 +280,4 @@ function mapStateToProps(state) {
   return { content: state.auth.content };
 }
 
-export default connect(mapStateToProps, {protectedTest, getUsersList, BanMe, UnBanMe})(UsersList);
-
+export default connect(mapStateToProps, {protectedTest, getUsersList, BanMe, UnBanMe,deleteMe})(UsersList);

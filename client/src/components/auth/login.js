@@ -26,7 +26,7 @@ class Login extends Component {
         errorMessage:""
     };
   }
-   
+
   responseFacebook(response) {
     if(response != undefined && response != ""){
       this.props.facebookLoginUser(response);
@@ -113,11 +113,11 @@ class Login extends Component {
               <label>Password</label>
               <Field name="password" className="form-control" required component="input" type="password" />
             </div>
-            <div className="form-group text-center g-recaptcha-wrapper">
-            {/* <Field id="hiddenRecaptcha" name="hiddenRecaptcha" className="g-recaptcha" required component="input" type="text" /> */}
-                <input type="text" name="hiddenRecaptcha" value={ this.state.recaptcha_value } id="hiddenRecaptcha" class="g-recaptcha error" required="" />
+              {/*<div className="form-group text-center g-recaptcha-wrapper">
+                <Field id="hiddenRecaptcha" name="hiddenRecaptcha" className="g-recaptcha" required component="input" type="text" />
+                <input type="text" name="hiddenRecaptcha" value={ this.state.recaptcha_value } id="hiddenRecaptcha" className="g-recaptcha error" required="" />
               <Recaptcha sitekey="6LeMERsUAAAAACSYqxDZEOOicHM8pG023iDHZiH5" render="explicit" onloadCallback={callback} verifyCallback={this.verifyCallback.bind(this)} />
-            </div>
+            </div>*/}
             <div className="form-group text-center">
               <button type="submit" className="btn btn-primary">Login</button>
             </div>
@@ -127,7 +127,7 @@ class Login extends Component {
             <p>OR</p>
 
             <FacebookLogin
-                appId="979601722141411"
+                appId= "979601722141411"
                 autoLoad={false}
                 fields="name,email,picture"
                 scope="email,public_profile,user_friends"
