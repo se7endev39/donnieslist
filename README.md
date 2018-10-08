@@ -1,6 +1,8 @@
 # Donny's List
 Project based on providing online coaching. Build on top of MERN platform using Javascript ES6 Features.
 
+## Branch `oct1-merged` has most recented changes merged in from master branch as well as the other branches. It is possible that I missed something while diffing and merging, so please bring up any issues. --As of Oct 8,2018.
+
 ## Setting up
 1) Clone the project
 `git clone https://<your login on bitbucket>@bitbucket.org/donnydey/donnies-list.git`
