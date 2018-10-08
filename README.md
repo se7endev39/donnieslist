@@ -6,13 +6,18 @@ Project based on providing online coaching. Build on top of MERN platform using 
 ## Setting up
 1) Clone the project
 `git clone https://<your login on bitbucket>@bitbucket.org/donnydey/donnies-list.git`
-2) Setup mongo db
-*(this step is not needed since we will be using online database)*
-- Import the monodb database files in 10-09-2018 or select the most updated folder
-- Make sure that mongodb is running and configured properly in the server folder.
-3) Connect remote mondodb to local port using `ssh` command in terminal:
-`ssh -L 127.0.0.1:27017:localhost:27017 <username>@45.55.254.21`
-*(you need to obtain user name and password from Donny)*
+2) Setup mongo db.
+- install the database
+- create a database folder, e.g. `~/mongodb`
+- run the databse from terminal `mongod --dbpath ~/mongodb`
+3) Clone mongo database from 'live' server using the following script (macOS or Linux):
+```
+#!/bin/sh
+
+# This command will create mongodb dump archive on the remote computer, send it back to local machine and install on local mondodb.
+ssh -i <your private key, must be registered on 45.55.254.21> <your user name>@45.55.254.21 '( mongodump --archive )' | mongorestore --archive
+```
+Every time you need to sync the data, you can delete the old database, e.g. - stop mongod, do `rm -rf ~/mongodb/*`, then start mogod and sync with remote 'live' db.
 4) Setup server
 - open either cmd (on Windows) or terminal (on macOS/Linux) window
 - `cd` into the `server` folder
