@@ -25,3 +25,76 @@ Every time you need to sync the data, you can delete the old database, e.g. - st
 - run server api using `yarn start` or `yarn dev`
 5) Do the same on the `client` folder to start React application
 8) You can check the `live-code-server` for main.js and index.js files if they are missing in your repo
+
+## How to set up ssh with key access
+
+### User setup
+
+Note that these instructinons are for macOS/Linux users. There is a separate process for Windows, which I might describe later if needed.
+
+1) Open terminal and choose a directory where you will keep your private keys for the remote access.
+
+2) Run the following command:
+
+`ssh-keygen -t rsa -b 4096 -C "your_email@example.com" -f donnieslist`
+
+It will ask you for a password then create two files:
+
+- "donnieslist", a private key, that you shoudl keep secure
+- "donnieslist.pub", a public key
+
+You may choose to use a passphrase or just leave it without a password. Note however that in later case everyone who has access to the key will be able to login to the server.
+
+3) Send you public key, "donnieslist.pub" to Donny or a system administrator who will add the key to a list of trusted keys
+
+4) When the key is updated on the server you can login using the following command:
+
+`ssh -i <path to donnieslist generate above> <username>@45.55.254.21`
+
+In place of `username` you will need to use the name that will be created for you another user
+
+
+### Server setup
+
+1) Create a new user or select a user which already exists, e.g. - 'ubuntu'
+
+`sudo adduser <username>`
+
+You will be asked to provide a password. Even though he will be able to login with a key, he still need a password to do certain tasks, like perform `sudo` commands.
+
+Then there will be a bunch of other self-explanatory questions.
+
+2) Then pretend you are a new user:
+
+`sudo su <username>`
+
+3) Now you will act as a new user and can add his keys.
+
+- go to his home directory:
+
+`cd`
+
+- make sure .ssh folder exists:
+
+`mkdir .ssh`
+
+you may get an error message saying that the directory already exists
+
+- open or create the file:
+
+`vi .ssh/authorized_keys`
+
+- if the file contains no data then paste the content of the user public key, which you should have received
+
+- if you are adding keys to an existing account add the key as a new line in the end
+
+- save the file
+
+4) Make sure nobody except the current user has acceess to the key:
+
+`chmod 700 .ssh`
+
+`chmod 600 .ssh/authorized_keys`
+
+5) Type `exit` to return back to your account. That's it. Now the user should be able to login with his private key as described above.
+
