@@ -48,6 +48,7 @@ class HomePage extends Component {
   }
 
   renderError() {
+    console.log(this.state)
       return (
         <div className="error-message">
           Uh oh: {this.state.error.message}
@@ -81,48 +82,51 @@ class HomePage extends Component {
       const imagesLoadedOptions = { background: '.my-bg-image-el' }
 
       return (
-           <div id="experts-list" className="experts-list">
-              <div className="container">
-                  <div className="row">
-                      {/*<div className="row">
-                      <div className="col-md-12">
-                        <div className="text-center text-choose">Choose your subject</div>
-                      </div>
-                    </div>*/}
-                      <div className="col-md-12">
-                          <Masonry
-                        className={'my-gallery-class'}
-                        elementType={'div'}
-                        options={masonryOptions}
-                        disableImagesLoaded={false}
-                        updateOnEachImageLoad={false}
-                        imagesLoadedOptions={imagesLoadedOptions}>
-                       {this.state.posts.map((post, index) => (
-                                <div key={post.id} className={this.getClassName(post.name)}>
-                                    <h4 className="center_h4">
-                    <a href="javascript:void()">{post.name}</a>
-                    <span className="long-dash"></span>
-                    <span className="short-dash"></span>
-                    <span className="short-dash"></span>
-                  </h4>
-                                    <h4 className={'community-news-parent'}>
-                                        <Link to={'community-news'} className={'community-news-link'}>
-                                            Community
-                                        </Link>
-                                    </h4>
-                                    <ul className="topics">
-                                      {post.subcategory.map((subcat, index) =>
-                                        <li key={subcat.id}>
-                                          {this.getCategoryLink(subcat.slug, subcat.name, post.subcategory_experts[index].length)}
-                                        </li>
-                                      )}
-                                    </ul>
-                                </div>
-                              ))}
-                    </Masonry>
-                      </div>
+        <div id="experts-list" className="experts-list">
+          <div className="container">
+            <div className="row">
+              {/*<div className="row">
+                  <div className="col-md-12">
+                    <div className="text-center text-choose">Choose your subject</div>
                   </div>
+                </div>*/
+              }
+              <div className="col-md-12">
+                <Masonry
+                  className={'my-gallery-class'}
+                  elementType={'div'}
+                  options={masonryOptions}
+                  disableImagesLoaded={false}
+                  updateOnEachImageLoad={false}
+                  imagesLoadedOptions={imagesLoadedOptions}>
+                  {
+                    this.state.posts.map((post, index) => (
+                      <div key={ post.id } className={this.getClassName(post.name)}>
+                        <h4 className="center_h4">
+                          <a href="javascript:void()">{post.name}</a>
+                          <span className="long-dash"></span>
+                          <span className="short-dash"></span>
+                          <span className="short-dash"></span>
+                        </h4>
+                        <h4 className={'community-news-parent'}>
+                            <Link to={'community-news'} className={'community-news-link'}>
+                                Community
+                            </Link>
+                        </h4>
+                        <ul className="topics">
+                          { post.subcategory.map((subcat, index) =>
+                            <li key={ subcat.id }>
+                              {this.getCategoryLink(subcat.slug, subcat.name, post.subcategory_experts[index].length)}
+                            </li>
+                          )}
+                        </ul>
+                      </div>
+                    ))
+                  }
+                </Masonry>
               </div>
+            </div>
+          </div>
         </div>
       );
     }

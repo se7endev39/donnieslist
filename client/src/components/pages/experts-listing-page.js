@@ -53,7 +53,7 @@ class ExpertsListingPage extends Component {
     cookie.save('user', currentUser, { path: '/' });
 
     const data = {'toSlug':slug,'fromSlug':fromSlug};
-    
+
     axios.post(`${API_URL}/addEndorsements/`,data)
       .then(res => {
         console.log(res.message);
@@ -74,6 +74,7 @@ class ExpertsListingPage extends Component {
         const posts = res.data;
         const category = res.data.name;
         // Clear any errors, and turn off the loading indiciator.
+        console.log(posts)
         this.setState({
           posts,
           category,
@@ -130,6 +131,7 @@ class ExpertsListingPage extends Component {
   }
 
   renderError() {
+    console.log(this.state.posts)
     if(this.state.posts == undefined){
       return (<div className="alert-danger alert">Alas, No expert found in this category!</div>);
     }else{
@@ -383,8 +385,8 @@ class ExpertsListingPage extends Component {
                                     <div className="alert alert-danger">No expert found in this section!</div>
                                    </div>
                                 </div>
-                            } 
-                        </div>                     
+                            }
+                        </div>
                       </div>
                    </div>
                 </div>

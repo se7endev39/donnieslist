@@ -172,8 +172,12 @@ module.exports = function (app) {
 
   apiRoutes.get('/getExpertReviews/:expertSlug', ExpertsController.getExpertReviews);
 
+  apiRoutes.get('/getExpertStories/:expertEmail', ExpertsController.getExpertStories);
+
+  apiRoutes.get('/getExpertStoriesBasedOnRole/:expertRole', ExpertsController.getExpertStoriesBasedOnRole);
+
   apiRoutes.get('/getExpertEmailFromToken:token',ExpertsController.getExpertEmailFromToken);
-  
+
   apiRoutes.post('/addEndorsements',ExpertsController.addEndorsements);
   apiRoutes.post('/getEndorsements',ExpertsController.getEndorsements);
   apiRoutes.post('/getMyExpertsListing',ExpertsController.getMyExpertsListing);
