@@ -1,5 +1,6 @@
 const AuthenticationController = require('./controllers/authentication');
 const UserController = require('./controllers/user');
+const CommentController = require('./controllers/comment')
 const ExpertsController = require('./controllers/experts');
 const VideoSessionController = require('./controllers/videosession');
 const AudioSessionController = require('./controllers/audiosession');
@@ -295,47 +296,50 @@ module.exports = function (app) {
 
 // /GetActiveSessions
   apiRoutes.post('/GetActiveSessions', function(req,res){
-
-        User.aggregate(
-                        [
-                            {
-                                $match: { role: 'Expert', videoSessionAvailability:true }
-                            },
-                            {
-                              $lookup:
-                                 {
-                                    from: "videosessions",
-                                    localField: "email",
-                                    foreignField: "expertEmail",
-                                    as: "AggregatedDetails"
-                                }
-                              },
-                              { $match:{
-                                    "AggregatedDetails.sessionCompletionStatus":"UNCOMPLETED","AggregatedDetails.sessionStatus":"ACTIVE"
-                                  }
-                              },
-                               { $sort: { sessionCreationDate: -1 } },
-                               {$limit:1}
-                          ], function(err, allusers){
-                                // console.log(JSON.stringify(allusers))
-                                 res.json({AllUsers:allusers})
-                             }
-
-                             )
-
+    User.aggregate([
+      {
+          $match: { role: 'Expert', videoSessionAvailability:true }
+      },
+      {
+        $lookup: {
+          from: "videosessions",
+          localField: "email",
+          foreignField: "expertEmail",
+          as: "AggregatedDetails"
+        }
+      },
+      {
+        $match: {
+          "AggregatedDetails.sessionCompletionStatus":"UNCOMPLETED","AggregatedDetails.sessionStatus":"ACTIVE"
+        }
+      },
+      { $sort: { sessionCreationDate: -1 } },
+      {$limit:1}
+    ], function(err, allusers){
+      // console.log(JSON.stringify(allusers))
+      res.json({AllUsers:allusers})
     })
-    //fetch my own profile (can be called by all the three)
-    usersOwnRoutes.get('/:userId', requireAuth, UserController.viewMyProfile);
-    usersOwnRoutes.get('/:userId/:code', requireAuth, UserController.editMyProfileStripeID);
+  })
+  //fetch my own profile (can be called by all the three)
+  usersOwnRoutes.get('/:userId', requireAuth, UserController.viewMyProfile);
+  usersOwnRoutes.get('/:userId/:code', requireAuth, UserController.editMyProfileStripeID);
 
-    // relates to profile updation by user itself
-    userRoutes.post('/update', UserController.UpdateMyOwnProfile)
+  // relates to profile updation by user itself
+  userRoutes.post('/update', UserController.UpdateMyOwnProfile)
 
-    // relates to profilePictureUpdation
-    userRoutes.post('/update/profile', upload, UserController.UpdateMyOwnProfilePicture)
+  // relates to profilePictureUpdation
+  userRoutes.post('/update/profile', upload, UserController.UpdateMyOwnProfilePicture)
 
-    // Send email from contact form
-    communicationRoutes.post('/contact', CommunicationController.sendContactForm);
+  // Send email from contact form
+  communicationRoutes.post('/contact', CommunicationController.sendContactForm);
+
+  //= ========================
+  // Comment Routes
+  //= ========================
+  apiRoutes.get('/getComments', CommentController.getComments);
+  apiRoutes.post('/addComment', CommentController.addComment);
+  apiRoutes.post('/updateComment', CommentController.updateComment);
+  apiRoutes.post('/deleteComment', CommentController.deleteComment);
 
   // Set url for API group routes
   app.use('/api', apiRoutes);

@@ -16,6 +16,7 @@ import { Modal, Button, Panel } from 'react-bootstrap';
 import $ from 'jquery';
 import StripeCheckout from 'react-stripe-checkout';
 import Carousel from 'react-image-carousel';
+import CommentBox from '../comment/CommentBox';
 
 const form = reduxForm({
   form: 'email-form'
@@ -365,7 +366,7 @@ class ViewExpert extends Component {
 		    });
 	  	});
 
-    
+
 
       $(document).ready(function(){
         jQuery("#send_email_form").validate({
@@ -552,23 +553,23 @@ class ViewExpert extends Component {
     }
     console.log('sessionBtnText: '+this.state.sessionBtnText);
     */
-    
+
     const endorsements_render = this.state.endorsements.map((endorsement, index) => {
-          const url = `${Image_URL}`+endorsement.profileImage;
-          const defaul_url = "/src/public/img/profile.png";
-          return (
-              <img className="endorsement-image" height="50" width="50" 
-              src={endorsement.profileImage && endorsement.profileImage!=null && endorsement.profileImage!=undefined && endorsement.profileImage!=""? url: defaul_url} />
-          );
-      }) 
-    
+      const url = `${Image_URL}`+endorsement.profileImage;
+      const defaul_url = "/src/public/img/profile.png";
+      return (
+        <img className="endorsement-image" height="50" width="50"
+          src={ endorsement.profileImage && endorsement.profileImage!=null && endorsement.profileImage!=undefined && endorsement.profileImage!=""? url: defaul_url} />
+      );
+    })
+
     if(this.state.error) {
       return this.renderError();
     }
     let images = [
-        'https://grace951.github.io/react-image-carousel/img/landing1.jpg',
-        'https://grace951.github.io/react-image-carousel/img/landing3.jpg',
-        'https://grace951.github.io/react-image-carousel/img/landing5.jpg',
+      'https://grace951.github.io/react-image-carousel/img/landing1.jpg',
+      'https://grace951.github.io/react-image-carousel/img/landing3.jpg',
+      'https://grace951.github.io/react-image-carousel/img/landing5.jpg',
     ];
     const { handleSubmit } = this.props;
     return (
@@ -778,12 +779,15 @@ class ViewExpert extends Component {
                     <ExpertReviews expertSlug={this.props.params.slug} />
                   </div>
                   <div className="col-md-8">
-                    <Carousel images={images} 
+                    <Carousel images={images}
                         thumb={true}
                         loop={true}
                         autoplay={5000}/>
+                    <div className="comment">
+                      <CommentBox/>
+                    </div>
                   </div>
-                  </div>                 
+                  </div>
                </div>
             </div>
         </div>
