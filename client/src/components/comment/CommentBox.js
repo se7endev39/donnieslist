@@ -1,6 +1,7 @@
 // CommentBox.js
 import React, { Component } from 'react';
 // import 'whatwg-fetch';
+import cookie from 'react-cookie';
 import { API_URL, Image_URL, errorHandler } from '../../actions/index';
 import CommentList from './CommentList';
 import CommentForm from './CommentForm';
@@ -23,6 +24,11 @@ class CommentBox extends Component {
     this.loadCommentsFromServer();
     if (!this.pollInterval) {
       this.pollInterval = setInterval(this.loadCommentsFromServer, 60000);
+    }
+    const currentUser = cookie.load('user');
+    if (currentUser) {
+      let author = currentUser.firstName + ' ' + currentUser.lastName;
+      this.setState({ author: author });
     }
   }
 
@@ -61,6 +67,7 @@ class CommentBox extends Component {
   submitComment = (e) => {
     e.preventDefault();
     const { author, text, updateId } = this.state;
+    console.log(author)
     if (!author || !text) return;
     if (updateId) {
       this.submitUpdatedComment();
@@ -108,20 +115,20 @@ class CommentBox extends Component {
   render() {
     return (
       <div className="container">
-        <div className="comments">
-          <h2>Comments:</h2>
-          <CommentList
-            data={ this.state.data }
-            handleDeleteComment={this.onDeleteComment}
-            handleUpdateComment={this.onUpdateComment}
-          />
-        </div>
+        <h2>Comments:</h2>
         <div className="form">
           <CommentForm
             author={this.state.author}
             text={this.state.text}
             handleChangeText={this.onChangeText}
             submitComment={this.submitComment}
+          />
+        </div>
+        <div className="comments">
+          <CommentList
+            data={ this.state.data }
+            handleDeleteComment={this.onDeleteComment}
+            handleUpdateComment={this.onUpdateComment}
           />
         </div>
         {this.state.error && <p>{this.state.error}</p>}

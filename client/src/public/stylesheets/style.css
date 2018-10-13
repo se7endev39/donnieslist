@@ -588,7 +588,6 @@ h4.community-news-parent {
   width: 100%;
   display: flex;
   flex-flow: column nowrap;
-  align-items: center;
   justify-content: space-between;
 }
 
@@ -610,10 +609,9 @@ h4.community-news-parent {
 
 .comment .singleCommentContent {
   min-width: 100px;
-  background-color: #fff;
-  border-radius: 25px;
-  padding: 10px;
   display: inline-block;
+  margin-top: -7px;
+  line-height: 2.5rem;
 }
 
 .comment .userImage {
@@ -624,23 +622,25 @@ h4.community-news-parent {
 
 
 .comment .singleCommentContent h3 {
+  display: inline-block;
   margin: 0;
   padding-right: 5px;
-  font-size: 12px;
+  font-size: 14px;
   color: #385997;
 }
 
 .comment .singleCommentContent p {
-  font-size: 12px;
+  font-size: 14px;
   margin: 0;
 }
 
 .comment .singleCommentButtons {
+  display: inline-block;
   padding-top: 5px;
 }
 
 .comment .time {
-  font-size: 10px;
+  font-size: 12px;
   padding-left: 5px;
   padding-right: 5px;
   color: #999;
@@ -669,10 +669,11 @@ h4.community-news-parent {
 .comment .form input {
   height: 30px;
   padding-left: 10px;
-  border: 1px solid #c1c1c1;
+  border: none;
+  border-bottom: 1px solid #c1c1c1;
   margin-right: 10px;
-  border-radius: 20px;
   flex: 3;
+  background-color: transparent;
 }
 
 .comment .form input:first-child {
@@ -680,8 +681,8 @@ h4.community-news-parent {
 }
 
 .comment .form button {
-  color: #999;
-  border-radius: 5px;
+  color: #333;
+  border-radius: 0px;
   border: 1px solid #999;
 }
 
@@ -689,4 +690,15 @@ h4.community-news-parent {
   cursor: pointer;
   color: #385997;
   border-color: #385997;
+}
+
+.comment .reply-wrapper {
+  display: inline-block;
+  color: #666;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.comment .reply-wrapper img {
+  width: 15px;
 }
