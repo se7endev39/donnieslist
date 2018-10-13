@@ -24,8 +24,14 @@ const Comment = props => (
         </div>
         <ReactMarkdown source={ props.children } />
         <div className="reply-wrapper">
-          <img src="/src/public/img/hand-like.svg"/>&nbsp;&nbsp;&nbsp;
-          <img src="/src/public/img/hand-dislike.svg"/>&nbsp;&nbsp;&nbsp;
+          <div className="number">
+            <img src="/src/public/img/hand-like.svg" onClick={ () => props.handleLike(props.id, props.num_like) }/>
+            { props.num_like ? props.num_like : '' }
+          </div>
+          <div className="number">
+            <img src="/src/public/img/hand-dislike.svg" onClick={ () => props.handleDislike(props.id, props.num_dislike) }/>
+            { props.num_dislike ? props.num_dislike : '' }
+          </div>
           <a onClick={ () => { props.handleReply(props.id, true) } }> REPLY </a>
         </div>
         <div className="form">
@@ -36,6 +42,8 @@ const Comment = props => (
               commentId = { props.commentId }
               handleChangeText={ props.handleChangeText }
               handleReply={ props.handleReply }
+              handleLike={ props.handleLike }
+              handleDislike={ props.handleDislike }
               submitReply={ props.submitReply }
             />
           ) : null
@@ -50,10 +58,14 @@ Comment.propTypes = {
   id: PropTypes.string.isRequired,
   commentId: PropTypes.string.isRequired,
   author: PropTypes.string.isRequired,
+  num_like: PropTypes.number,
+  num_dislike: PropTypes.number,
   children: PropTypes.string.isRequired,
   handleUpdateComment: PropTypes.func.isRequired,
   handleDeleteComment: PropTypes.func.isRequired,
   handleReply: PropTypes.func.isRequired,
+  handleLike: PropTypes.func.isRequired,
+  handleDislike: PropTypes.func.isRequired,
   timestamp: PropTypes.string.isRequired,
 }
 

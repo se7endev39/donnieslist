@@ -10,7 +10,9 @@ exports.getComments = (req, res, next) => {
       $project: {
         id:{ $toString:"$_id" },
         author: 1,
-        text: 1
+        text: 1,
+        num_like: 1,
+        num_dislike: 1
       }
     },
     {
@@ -24,9 +26,11 @@ exports.getComments = (req, res, next) => {
     {
       $group:{
        _id: "$_id",
-       author:{ $first:"$author" },
+       author: { $first:"$author" },
        text:{ $first:"$text" },
-       answers:{ $first:"$replyList" }
+       num_like: { $first:"$num_like" },
+       num_dislike: { $first:"$num_dislike" },
+       answers: { $first:"$replyList" }
       }
     }
   ]).exec(
@@ -118,6 +122,76 @@ exports.updateComment = (req, res, next) => {
     const { author, text } = req.body;
     if (author) comment.author = author;
     if (text) comment.text = text;
+    comment.save(error => {
+      if (error) {
+        return res.json({
+          success: false,
+          error
+        });
+      }
+      return res.json({
+        success: true
+      });
+    });
+  });
+}
+
+exports.updateLikeNum = (req, res, next) => {
+  console.log(req.body);
+  const { id, value } = req.body;
+  if (!id) {
+    return res.json({
+      success: false,
+      error: { message: 'No comment id provided' }
+    });
+  }
+  Comment.findById(id, (error, comment) => {
+    if (error) {
+      return res.json({
+        success: false,
+        error
+      });
+    }
+    if (value) {
+      comment.num_like = value + 1;
+    } else {
+      comment.num_like = 1;
+    }
+    comment.save(error => {
+      if (error) {
+        return res.json({
+          success: false,
+          error
+        });
+      }
+      return res.json({
+        success: true
+      });
+    });
+  });
+}
+
+exports.updateDislikeNum = (req, res, next) => {
+  console.log(req.body);
+  const { id, value } = req.body;
+  if (!id) {
+    return res.json({
+      success: false,
+      error: { message: 'No comment id provided' }
+    });
+  }
+  Comment.findById(id, (error, comment) => {
+    if (error) {
+      return res.json({
+        success: false,
+        error
+      });
+    }
+    if (value) {
+      comment.num_dislike = value + 1;
+    } else {
+      comment.num_dislike = 1;
+    }
     comment.save(error => {
       if (error) {
         return res.json({

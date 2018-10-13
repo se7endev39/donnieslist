@@ -767,6 +767,8 @@ h4.community-news-parent {
 
 .comment .reply-wrapper img {
   width: 15px;
+  cursor: pointer;
+  margin-right: 5px;
 }
 
 .comment .reply-wrapper a {
@@ -776,6 +778,14 @@ h4.community-news-parent {
   text-decoration: none;
   font: normal;
   cursor: pointer;
+}
+
+.comment .reply-wrapper .number {
+  display: inline-block;
+  min-width: 20px;
+  display: inline-block;
+  width: auto;
+  margin-right: 10px;
 }
 
 .comment .reply-wrapper a:hover {

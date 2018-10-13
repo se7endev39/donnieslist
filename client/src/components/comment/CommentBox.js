@@ -61,7 +61,6 @@ class CommentBox extends Component {
   onDeleteComment = (id) => {
     axios.post(`${API_URL}/deleteComment`, { id })
       .then((res) => {
-        console.log(res)
         if (!res.data.success) {
           this.setState({ error: res.error });
         } else {
@@ -74,6 +73,28 @@ class CommentBox extends Component {
     let newState = { ...this.state };
     newState.showReplyForm[id] = value
     this.setState(newState);
+  }
+
+  onLike = (id, value) => {
+    axios.post(`${API_URL}/updateLikeNum`, { id, value })
+      .then((res) => {
+        if (!res.data.success) {
+          this.setState({ error: res.error });
+        } else {
+          this.loadCommentsFromServer()
+        }
+      });
+  }
+
+  onDislike = (id, value) => {
+    axios.post(`${API_URL}/updateDislikeNum`, { id, value })
+      .then((res) => {
+        if (!res.data.success) {
+          this.setState({ error: res.error });
+        } else {
+          this.loadCommentsFromServer()
+        }
+      });
   }
 
   submitComment = (e) => {
@@ -97,16 +118,21 @@ class CommentBox extends Component {
       commentId = e.target.commentId.value
     }
     const { author, reply_text } = this.state;
-    axios.post(`${API_URL}/addCommentReply`, { author, commentId, reply_text, _id: Date.now().toString() })
-      .then((res) => {
-        if (!res.data.success) {
-          this.setState({ error: res.error.message || res.error });
-          this.onReply(replyId, false)
-        } else
-          this.setState({ reply_text: '', error: null });
-          this.onReply(replyId, false)
-          this.loadCommentsFromServer()
-      });
+    axios.post(`${API_URL}/addCommentReply`, {
+      author,
+      commentId,
+      reply_text,
+      _id: Date.now().toString()
+    })
+    .then((res) => {
+      if (!res.data.success) {
+        this.setState({ error: res.error.message || res.error });
+        this.onReply(replyId, false)
+      } else
+        this.setState({ reply_text: '', error: null });
+        this.onReply(replyId, false)
+        this.loadCommentsFromServer()
+    });
   }
 
   submitNewComment = () => {
@@ -148,7 +174,13 @@ class CommentBox extends Component {
   render() {
     return (
       <div className="container">
-        <h2>Comments:</h2>
+        <h3>
+        {
+          this.state.data.length > 1 ?
+            this.state.data.length + ' Comments' :
+            this.state.data.length + 'Comment'
+        }
+        </h3>
         <div className="form">
           <CommentForm
             author={ this.state.author }
@@ -163,16 +195,16 @@ class CommentBox extends Component {
           <CommentList
             data={ this.state.data }
             showReplyForm = { this.state.showReplyForm }
+            handleReply = { this.onReply }
+            handleLike={ this.onLike }
+            handleDislike={ this.onDislike }
+            handleChangeText = { this.onChangeText }
             handleDeleteComment={ this.onDeleteComment }
             handleUpdateComment={ this.onUpdateComment }
-            handleChangeText = { this.onChangeText }
-            handleReply = { this.onReply }
-            showReplyForm = { this.state.showReplyForm }
-            handleReplyChangeText = { this.onChangeText }
             submitReply = { this.submitReply }
           />
         </div>
-        { this.state.error && <p>{ this.state.error}</p>}
+        { this.state.error && <p>{ this.state.error }</p> }
       </div>
     );
   }
