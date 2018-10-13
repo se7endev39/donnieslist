@@ -16,6 +16,9 @@ class CommentBox extends Component {
       author: '',
       comment: '',
       updateId: null,
+      commentId: null,
+      showCommentButton: false,
+      showReplyForm: []
     };
     this.pollInterval = null;
   }
@@ -40,7 +43,13 @@ class CommentBox extends Component {
   onChangeText = (e) => {
     const newState = { ...this.state };
     newState[e.target.name] = e.target.value;
+    e.target.style.height = "1px";
+    e.target.style.height = (5 + e.target.scrollHeight) + "px";
     this.setState(newState);
+  }
+
+  onCommentFocus = (value) => {
+    this.setState({ showCommentButton: value });
   }
 
   onUpdateComment = (id) => {
@@ -50,42 +59,66 @@ class CommentBox extends Component {
   }
 
   onDeleteComment = (id) => {
-    const i = this.state.data.findIndex(c => c._id === id);
-    const data = [
-      ...this.state.data.slice(0, i),
-      ...this.state.data.slice(i + 1),
-    ];
-    this.setState({ data });
     axios.post(`${API_URL}/deleteComment`, { id })
       .then((res) => {
+        console.log(res)
         if (!res.data.success) {
           this.setState({ error: res.error });
+        } else {
+          this.loadCommentsFromServer()
         }
       });
+  }
+
+  onReply = (id, value) => {
+    let newState = { ...this.state };
+    newState.showReplyForm[id] = value
+    this.setState(newState);
   }
 
   submitComment = (e) => {
     e.preventDefault();
     const { author, text, updateId } = this.state;
-    console.log(author)
     if (!author || !text) return;
     if (updateId) {
       this.submitUpdatedComment();
     } else {
       this.submitNewComment();
     }
+    this.onCommentFocus(false)
+  }
+
+  submitReply = (e) => {
+    e.preventDefault();
+    let replyId = null;
+    let commentId = null;
+    if (e.target) {
+      replyId = e.target.replyId.value
+      commentId = e.target.commentId.value
+    }
+    const { author, reply_text } = this.state;
+    axios.post(`${API_URL}/addCommentReply`, { author, commentId, reply_text, _id: Date.now().toString() })
+      .then((res) => {
+        if (!res.data.success) {
+          this.setState({ error: res.error.message || res.error });
+          this.onReply(replyId, false)
+        } else
+          this.setState({ reply_text: '', error: null });
+          this.onReply(replyId, false)
+          this.loadCommentsFromServer()
+      });
   }
 
   submitNewComment = () => {
     const { author, text } = this.state;
-    const data = [...this.state.data, { author, text, _id: Date.now().toString() }];
-    this.setState({ data });
     axios.post(`${API_URL}/addComment`, { author, text, _id: Date.now().toString() })
       .then((res) => {
         if (!res.data.success) {
           this.setState({ error: res.error.message || res.error });
-        } else
-          this.setState({ author: '', text: '', error: null });
+        } else {
+          this.setState({ text: '', error: null });
+          this.loadCommentsFromServer()
+        }
       });
   }
 
@@ -96,7 +129,7 @@ class CommentBox extends Component {
         if (!res.data.success) {
           this.setState({ error: res.error.message || res.error });
         } else {
-          this.setState({ author: '', text: '', updateId: null });
+          this.setState({ text: '', updateId: null });
         }
       });
   }
@@ -118,20 +151,28 @@ class CommentBox extends Component {
         <h2>Comments:</h2>
         <div className="form">
           <CommentForm
-            author={this.state.author}
-            text={this.state.text}
-            handleChangeText={this.onChangeText}
-            submitComment={this.submitComment}
+            author={ this.state.author }
+            text={ this.state.text }
+            showCommentButton = { this.state.showCommentButton }
+            handleFocus = { this.onCommentFocus }
+            handleChangeText={ this.onChangeText }
+            submitComment={ this.submitComment }
           />
         </div>
-        <div className="comments">
+        <div className="comment">
           <CommentList
             data={ this.state.data }
-            handleDeleteComment={this.onDeleteComment}
-            handleUpdateComment={this.onUpdateComment}
+            showReplyForm = { this.state.showReplyForm }
+            handleDeleteComment={ this.onDeleteComment }
+            handleUpdateComment={ this.onUpdateComment }
+            handleChangeText = { this.onChangeText }
+            handleReply = { this.onReply }
+            showReplyForm = { this.state.showReplyForm }
+            handleReplyChangeText = { this.onChangeText }
+            submitReply = { this.submitReply }
           />
         </div>
-        {this.state.error && <p>{this.state.error}</p>}
+        { this.state.error && <p>{ this.state.error}</p>}
       </div>
     );
   }

@@ -54,7 +54,7 @@ exports.getExpertsCategoryList = function(req, res, next) {
       }
     },
     {
-        $unwind: '$subcategory'
+      $unwind: '$subcategory'
     },
     {
       $sort: {
@@ -63,14 +63,14 @@ exports.getExpertsCategoryList = function(req, res, next) {
       }
     },
     //{   $sort: {'subcategory.name': 1} },
-      {
-          $lookup: {
-              from: "users",
-              localField: "subcategory.slug",
-              foreignField: "expertCategories",
-              as: "subcategory_experts"
-          }
-      },
+    {
+      $lookup: {
+        from: "users",
+        localField: "subcategory.slug",
+        foreignField: "expertCategories",
+        as: "subcategory_experts"
+      }
+    },
     {
       $group: {
         _id: '$_id',
