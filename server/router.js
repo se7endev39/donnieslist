@@ -340,7 +340,6 @@ module.exports = function (app) {
   apiRoutes.post('/addComment', CommentController.addComment);
   apiRoutes.post('/updateComment', CommentController.updateComment);
   apiRoutes.post('/deleteComment', CommentController.deleteComment);
-  apiRoutes.post('/addCommentReply', CommentController.addCommentReply);
   apiRoutes.post('/updateLikeNum', CommentController.updateLikeNum);
   apiRoutes.post('/updateDislikeNum', CommentController.updateDislikeNum);
   // Set url for API group routes

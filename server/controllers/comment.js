@@ -51,43 +51,16 @@ exports.getComments = (req, res, next) => {
 
 exports.addComment = (req, res, next) => {
   const comment = new Comment();
-  const { author, text } = req.body;
-  if (!author || !text) {
+  const { author, text, parentId } = req.body;
+  if (!author || !text || !parentId) {
     return res.json({
       success: false,
-      error: { message: 'You must provide an author and comment' }
+      error: { message: 'You must provide an author, comment and parentId' }
     });
   }
   comment.author = author;
   comment.text = text;
-  comment.parentId = '-1'
-  comment.num_like = 0;
-  comment.num_dislike = 0;
-  comment.save(err => {
-    if (err) {
-      return res.json({
-        success: false,
-        error: err
-      });
-    }
-    return res.json({
-      success: true
-    });
-  });
-}
-
-exports.addCommentReply = (req, res, next) => {
-  const comment = new Comment();
-  const { author, commentId, reply_text } = req.body;
-  if (!author || !commentId || !reply_text) {
-    return res.json({
-      success: false,
-      error: { message: 'You must provide an author and commentId and reply text' }
-    });
-  }
-  comment.author = author;
-  comment.text = reply_text;
-  comment.parentId = commentId;
+  comment.parentId = parentId;
   comment.num_like = 0;
   comment.num_dislike = 0;
   comment.save(err => {
@@ -104,23 +77,20 @@ exports.addCommentReply = (req, res, next) => {
 }
 
 exports.updateComment = (req, res, next) => {
-  console.log(req.params);
-  const { commentId } = req.params;
-  if (!commentId) {
+  const { text, updateId } = req.body;
+  if (!updateId) {
     return res.json({
       success: false,
       error: { message: 'No comment id provided' }
     });
   }
-  Comment.findById(commentId, (error, comment) => {
+  Comment.findById(updateId, (error, comment) => {
     if (error) {
       return res.json({
         success: false,
         error
       });
     }
-    const { author, text } = req.body;
-    if (author) comment.author = author;
     if (text) comment.text = text;
     comment.save(error => {
       if (error) {

@@ -4,57 +4,55 @@ import PropTypes from 'prop-types';
 
 const CommentForm = props => (
   <form onSubmit={ props.submitComment }>
-    {/* <input
-      type="text"
-      name="author"
-      placeholder="Your name…"
-      value={props.author}
-      onChange={props.handleChangeText}
-    /> */}
-    <div className="input-column">
-      <div className="image-wrapper">
-        <img src="/src/public/img/person.jpg" className="comment-user"/>
-      </div>
-    </div>
+    {
+      props.updateId != props.id ? (
+        <div className="input-column">
+          <div className="image-wrapper">
+            <img className="reply-user" src="/src/public/img/person.jpg"/>
+          </div>
+        </div>
+      ) : null
+    }
     <div className="input-column full-width">
       <div className="input-row">
+        <input id="parentId" name="parentId" type="hidden" value={ props.parentId }/>
         <textarea
           name="text"
-          rows="1"
           maxLength="10000"
-          placeholder="Add a public comment..."
           autocomplete="off"
           value={ props.text }
-          onChange={ props.handleChangeText }
-          onFocus={ (e) => props.handleFocus(true) }
+          rows={ props.text ? props.text.split('\n').length : 1 }
+          placeholder="Add a public reply..."
+          onChange={ (e) => props.handleChangeText(e) }
         />
       </div>
-      {
-        props.showCommentButton ? (
-          <div className="input-row">
-            <div className="button-wrapper">
-              <button className="button-cancel" onClick={ (e) => props.handleFocus(false) }>Cancel</button>
-              <button type="submit">Comment</button>
-            </div>
-          </div>
-        ) : null
-      }
+      <div className="input-row">
+        <div className="button-wrapper">
+          <button className="button-cancel button-reply" onClick={ (e) => props.handleSetComment(e, null, '') }>Cancel</button>
+          <button className="button-reply" type="submit">Reply</button>
+        </div>
+      </div>
     </div>
   </form>
 )
 
 CommentForm.propTypes = {
-  submitComment: PropTypes.func.isRequired,
-  handleChangeText: PropTypes.func.isRequired,
-  handleFocus: PropTypes.func.isRequired,
+  id: PropTypes.string.isRequired,
   text: PropTypes.string,
   author: PropTypes.string,
-  showCommentButton: PropTypes.boolean
+  updateId: PropTypes.string,
+  parentId: PropTypes.parentId,
+  commentId: PropTypes.string.isRequired,
+  submitComment: PropTypes.func.isRequired,
+  handleSetComment: PropTypes.func.isRequired,
+  handleChangeText: PropTypes.func.isRequired,
 }
 
 CommentForm.defaultProps = {
+  id: '',
   text: '',
   author: '',
+  commentId: null
 }
 
 export default CommentForm;

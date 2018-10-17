@@ -11,18 +11,21 @@ const CommentList = (props) => {
         key={ comment._id }
         type={ 'comment' }
         author={ comment.author }
+        text={ props.text }
         num_like={ comment.num_like }
         num_dislike={ comment.num_dislike }
-        commentId={ comment._id }
+        commentId={ props.commentId }
+        parentId = { comment._id }
         timestamp={ comment.updatedAt }
-        handleReply = { props.handleReply }
+        handleSetComment = { props.handleSetComment }
         handleLike={ props.handleLike }
         handleDislike={ props.handleDislike }
         handleChangeText = { props.handleChangeText }
         handleUpdateComment={ props.handleUpdateComment }
         handleDeleteComment={ props.handleDeleteComment }
-        showReplyForm = { props.showReplyForm[comment._id] }
-        submitReply = { props.submitReply }
+        updateId = { props.updateId }
+        submitComment = { props.submitComment }
+        submitComment = { props.submitComment }
       >
         { comment.text }
       </Comment>
@@ -33,19 +36,22 @@ const CommentList = (props) => {
             id={ answer._id }
             key={ answer._id }
             type={ 'answer' }
+            text={ props.text }
             author={ answer.author }
             num_like={ answer.num_like }
             num_dislike={ answer.num_dislike }
-            commentId = { comment._id }
+            commentId = { props.commentId }
+            parentId = { comment._id }
             timestamp={ answer.updatedAt }
-            handleReply = { props.handleReply }
+            handleSetComment = { props.handleSetComment }
             handleLike={ props.handleLike }
             handleDislike={ props.handleDislike }
             handleChangeText = { props.handleChangeText }
             handleUpdateComment={ props.handleUpdateComment }
             handleDeleteComment={ props.handleDeleteComment }
-            showReplyForm = { props.showReplyForm[answer._id] }
-            submitReply = { props.submitReply }
+            updateId = { props.updateId }
+            submitComment = { props.submitComment }
+            submitComment = { props.submitComment }
           >
             { answer.text }
           </Comment>
@@ -73,19 +79,21 @@ CommentList.propTypes = {
       num_like: PropTypes.number,
       num_dislike: PropTypes.number,
       updatedAt: PropTypes.string,
-      parentId: PropTypes.string
+      commentId: PropTypes.string
     }),
     updatedAt: PropTypes.string,
   })),
-  showReplyForm: PropTypes.array,
+  text: PropTypes.string,
+  commentId: PropTypes.string,
+  updateId: PropTypes.string,
   handleDeleteComment: PropTypes.func.isRequired,
   handleUpdateComment: PropTypes.func.isRequired,
   handleChangeText: PropTypes.func.isRequired,
-  handleReply: PropTypes.func.isRequired,
-  handleReplyChangeText: PropTypes.func.isRequired,
+  handleSetComment: PropTypes.func.isRequired,
   handleLike: PropTypes.func.isRequired,
   handleDislike: PropTypes.func.isRequired,
-  submitReply: PropTypes.func.isRequired
+  submitComment: PropTypes.func.isRequired,
+  submitComment: PropTypes.func.isRequired,
 }
 
 CommentList.defaultProps = {

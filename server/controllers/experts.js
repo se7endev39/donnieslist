@@ -219,8 +219,8 @@ exports.getTopExpertsListing = function(req, res, next) {
           code: 404
         });
       }
-    });
-
+    }
+  );
 };
 /* API endpoint to send email message to expert */
 exports.sendEmailMessageToExpert = function(req, res, next) {
