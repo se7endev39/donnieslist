@@ -1,37 +1,21 @@
 // CommentList.js
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Comment from './Comment';
 import { Panel, Glyphicon } from 'react-bootstrap';
-import { Image_URL } from '../../actions/index';
 
-const CommentList = (props) => {
-  const commentNodes = props.data.map(comment => (
+const Index = _this => {
+  const commentNodes = _this.props.data.map(comment => (
     <div>
       <Comment
-        id={ comment._id }
+        data={ comment }
         key={ comment._id }
         type={ 'comment' }
-        authorId={ comment.authorId }
-        authorName={ comment.authorName ? comment.authorName.firstName + ' ' + comment.authorName.lastName : '' }
-        text={ props.text }
-        voters={ comment.voters }
-        commentId={ props.commentId }
+        author = { _this.props.author }
+        expert = { _this.props.expert }
         parentId = { comment._id }
-        menuId = { props.menuId }
-        timestamp={ comment.updatedAt }
-        profileImage={ comment.profileImage ? `${Image_URL}` + comment.profileImage : '' }
-        handleShowMenu = { props.handleShowMenu }
-        handleShowReply = { props.handleShowReply }
-        handleSetComment = { props.handleSetComment }
-        handleLike={ props.handleLike }
-        handleDislike={ props.handleDislike }
-        handleChangeText = { props.handleChangeText }
-        handleUpdateComment={ props.handleUpdateComment }
-        handleDeleteComment={ props.handleDeleteComment }
-        updateId = { props.updateId }
-        submitComment = { props.submitComment }
-        submitComment = { props.submitComment }
+        handleShowModal = { _this.props.handleShowModal }
+        handleLoadComments = { _this.props.handleLoadComments }
       >
         { comment.text }
       </Comment>
@@ -39,8 +23,8 @@ const CommentList = (props) => {
         comment.answers.length ? (
           <div className="reply-list">
             {
-              !props.replyId[props.id] ? (
-                <div className="toggle" onClick={ (e) => props.handleShowReply(e, comment._id) }>
+              !_this.state.showReplies[comment._id] ? (
+                <div className="toggle" onClick={ (e) => _this.handleShowReply(e, comment._id) }>
                   View
                   {
                     comment.answers.length == 1 ?
@@ -51,7 +35,7 @@ const CommentList = (props) => {
                   <Glyphicon glyph="chevron-down" />
                 </div>
               ) : (
-                <div className="toggle" onClick={ (e) => props.handleShowReply(e, comment._id) }>
+                <div className="toggle" onClick={ (e) => _this.handleShowReply(e, comment._id) }>
                   {
                     comment.answers.length == 1 ?
                       'Hide reply' :
@@ -62,35 +46,20 @@ const CommentList = (props) => {
                 </div>
               )
             }
-            <Panel id="collapsible-panel-example-1" expanded={ props.replyId[comment._id] }>
+            <Panel id="collapsible-panel-example-1" expanded={ _this.state.showReplies[comment._id] }>
               <Panel.Collapse>
                 <Panel.Body>
                 {
                   comment.answers.map(answer => (
                     <Comment
-                      id={ answer._id }
                       key={ answer._id }
                       type={ 'answer' }
-                      text={ props.text }
-                      authorId={ answer.authorId }
-                      authorName={ answer.authorName ? answer.authorName.firstName + ' ' + answer.authorName.lastName : '' }
-                      voters={ answer.voters }
-                      commentId = { props.commentId }
+                      data={ answer }
+                      author = { _this.props.author }
+                      expert = { _this.props.expert }
                       parentId = { comment._id }
-                      menuId = { props.menuId }
-                      timestamp={ answer.updatedAt }
-                      profileImage={ answer.profileImage ? `${Image_URL}` + answer.profileImage : '' }
-                      handleShowMenu={ props.handleShowMenu }
-                      handleShowReply = { props.handleShowReply }
-                      handleSetComment = { props.handleSetComment }
-                      handleLike={ props.handleLike }
-                      handleDislike={ props.handleDislike }
-                      handleChangeText = { props.handleChangeText }
-                      handleUpdateComment={ props.handleUpdateComment }
-                      handleDeleteComment={ props.handleDeleteComment }
-                      updateId = { props.updateId }
-                      submitComment = { props.submitComment }
-                      submitComment = { props.submitComment }
+                      handleShowModal = { _this.props.handleShowModal }
+                      handleLoadComments = { _this.props.handleLoadComments }
                     >
                       { answer.text }
                     </Comment>
@@ -111,15 +80,43 @@ const CommentList = (props) => {
   );
 }
 
+class CommentList extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      showReplies: []
+    };
+    this.handleShowReply = this.handleShowReply.bind(this);
+  }
+
+  componentDidMount() {
+  }
+
+  handleShowReply = (e, id) => {
+    e.preventDefault()
+    let _showReplies = this.state.showReplies;
+    _showReplies[id] = !_showReplies[id]
+    this.setState({
+      showReplies: _showReplies
+    });
+  }
+
+  render() {
+    return Index(this)
+  }
+}
+
 CommentList.propTypes = {
+  author: PropTypes.object,
+  expert: PropTypes.string,
   data: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.string,
+    _id: PropTypes.string,
     authorId: PropTypes.string,
     authorName: PropTypes.object,
     text: PropTypes.string,
     voters: PropTypes.array,
     answers: PropTypes.shape({
-      id: PropTypes.string,
+      _id: PropTypes.string,
       authorId: PropTypes.string,
       authorName: PropTypes.object,
       text: PropTypes.string,
@@ -129,25 +126,13 @@ CommentList.propTypes = {
     }),
     updatedAt: PropTypes.string,
   })),
-  text: PropTypes.string,
-  commentId: PropTypes.string,
-  updateId: PropTypes.string,
-  menuId: PropTypes.string,
-  replyId: PropTypes.array,
-  handleShowMenu: PropTypes.func.isRequired,
-  handleShowReply: PropTypes.func.isRequired,
-  handleDeleteComment: PropTypes.func.isRequired,
-  handleUpdateComment: PropTypes.func.isRequired,
-  handleChangeText: PropTypes.func.isRequired,
-  handleSetComment: PropTypes.func.isRequired,
-  handleLike: PropTypes.func.isRequired,
-  handleDislike: PropTypes.func.isRequired,
-  submitComment: PropTypes.func.isRequired,
-  submitComment: PropTypes.func.isRequired,
+  handleLoadComments: PropTypes.func.isRequired,
+  handleShowModal: PropTypes.func.isRequired
 }
 
 CommentList.defaultProps = {
   data: [],
+  showReplies: []
 }
 
 export default CommentList;

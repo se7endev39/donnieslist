@@ -9,7 +9,7 @@ const CommentMenu = props => (
     title=""
     bsStyle="custom"
     noCaret
-    onSelect={ (eKey, e) => eKey == 1 ? props.handleUpdateComment(e, props.id, props.text) : props.handleDeleteComment(e, props.id) }
+    onSelect={ (eKey, e) => eKey == 1 ? props.handleUpdateComment(e, true) : props.handleDeleteComment(e) }
   >
     <MenuItem eventKey="1">Edit</MenuItem>
     <MenuItem eventKey="2">Delete</MenuItem>
@@ -17,14 +17,8 @@ const CommentMenu = props => (
 )
 
 CommentMenu.propTypes = {
-  id: PropTypes.string,
-  text: PropTypes.string,
   handleUpdateComment: PropTypes.func.isRequired,
   handleDeleteComment: PropTypes.func.isRequired
-}
-
-CommentMenu.defaultProps = {
-  id: null
 }
 
 export default CommentMenu;

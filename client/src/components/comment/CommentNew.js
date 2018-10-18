@@ -3,22 +3,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 const CommentNew = props => (
-  <form onSubmit={ props.submitComment }>
-  {/* <input
-    type="text"
-    name="author"
-    placeholder="Your name…"
-    value={props.author}
-    onChange={props.handleChangeText}
-  /> */}
+  <form onSubmit={ props.handleSubmitComment }>
     <div className="input-column">
       <div className="image-wrapper">
         <img src="/src/public/img/person.jpg" className="comment-user"/>
       </div>
     </div>
-    <input type="hidden" name="parentId" id="parentId" value={ props.id }/>
     {
-      props.commentId == props.id ? (
+      props.showButton ? (
         <div className="input-column full-width">
           <div className="input-row">
             <textarea
@@ -29,12 +21,12 @@ const CommentNew = props => (
               autocomplete="off"
               value={ props.text }
               onChange={ props.handleChangeText }
-              onFocus={ (e) => props.handleSetComment(e, props.id, '') }
+              onFocus={ (e) => props.handleShowButton(e, true) }
             />
           </div>
           <div className="input-row">
             <div className="button-wrapper">
-              <button className="button-cancel" onClick={ (e) => props.handleSetComment(e, null, '') }>Cancel</button>
+              <button className="button-cancel" onClick={ (e) => props.handleShowButton(e, false) }>Cancel</button>
               <button type="submit">Comment</button>
             </div>
           </div>
@@ -49,7 +41,7 @@ const CommentNew = props => (
               placeholder="Add a public comment..."
               autocomplete="off"
               value=""
-              onFocus={ (e) => props.handleSetComment(e, props.id, '') }
+              onFocus={ (e) => props.handleShowButton(e, true) }
             />
           </div>
         </div>
@@ -59,18 +51,16 @@ const CommentNew = props => (
 )
 
 CommentNew.propTypes = {
-  id: PropTypes.string,
   text: PropTypes.string,
-  author: PropTypes.string,
-  commentId: PropTypes.string,
+  showButton: PropTypes.boolean,
   handleChangeText: PropTypes.func.isRequired,
-  handleSetComment: PropTypes.func.isRequired,
-  submitComment: PropTypes.func.isRequired
+  handleShowButton: PropTypes.func.isRequired,
+  handleSubmitComment: PropTypes.func.isRequired
 }
 
 CommentNew.defaultProps = {
   text: '',
-  author: '',
+  showButton: false
 }
 
 export default CommentNew;

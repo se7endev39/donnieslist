@@ -1,8 +1,9 @@
 // CommentBox.js
 import React, { Component } from 'react';
 // import 'whatwg-fetch';
-import axios from 'axios'
 import cookie from 'react-cookie';
+import axios from 'axios'
+import PropTypes from 'prop-types';
 import { API_URL, Image_URL, errorHandler } from '../../actions/index';
 import { browserHistory } from 'react-router';
 
@@ -17,21 +18,11 @@ class CommentBox extends Component {
       data: [],
       error: null,
       author: '',
-      name: '',
-      text: '',
-      updateId: null,
-      parentId: null,
-      commentId: null,
-      menuId: null,
-      replyId: [],
-      showModal: null,
-      modal: {
-        title: '',
-        text: ''
-      }
+      showButton: false,
+      showModal: null
     };
     this.pollInterval = null;
-    this.handleModalClose = this.handleModalClose.bind(this);
+    this.onModalClose = this.onModalClose.bind(this);
   }
 
   componentDidMount() {
@@ -46,7 +37,8 @@ class CommentBox extends Component {
         author: {
           id: currentUser.slug,
           name: currentUser.firstName + ' ' + currentUser.lastName,
-          role: currentUser.role
+          /* role: currentUser.role */
+          role: "Expert"
         }
       });
     }
@@ -63,98 +55,10 @@ class CommentBox extends Component {
     });
   }
 
-  onSetComment = (e, id, text) => {
-    e.preventDefault()
+  onModalShow = (e, value) => {
     this.setState({
-      commentId: id,
-      updateId: null,
-      text: text
-    });
-  }
-
-  onShowMenu = (e, id, authorId) => {
-    e.preventDefault()
-    if (authorId == this.state.author.id) {
-      this.setState({
-        menuId: id
-      })
-    }
-  }
-
-  onShowReply = (e, id) => {
-    e.preventDefault()
-    let _replyId = this.state.replyId;
-    _replyId[id] = !_replyId[id]
-    this.setState({
-      replyId: _replyId
+      showModal: value
     })
-  }
-
-  onUpdateComment = (e, id, text) => {
-    e.preventDefault()
-    this.setState({
-      commentId: null,
-      updateId: id,
-      text: text
-    })
-  }
-
-  onDeleteComment = (e, id) => {
-    e.preventDefault()
-    axios.post(`${API_URL}/deleteComment`, { id })
-      .then((res) => {
-        if (!res.data.success) {
-          this.setState({ error: res.error });
-        } else {
-          this.loadCommentsFromServer()
-        }
-      });
-  }
-
-  onLike = (e, id) => {
-    const { author } = this.state;
-    if (!author) {
-      this.setState({
-        showModal: 'need_login'
-      })
-      return ;
-    } else if (author.role !== 'Expert') {
-      this.setState({
-        showModal: 'need_expert'
-      })
-      return ;
-    }
-    axios.post(`${API_URL}/likeComment`, { id, author: author.id })
-      .then((res) => {
-        if (!res.data.success) {
-          this.setState({ error: res.error });
-        } else {
-          this.loadCommentsFromServer()
-        }
-      });
-  }
-
-  onDislike = (e, id) => {
-    const { author } = this.state;
-    if (!author) {
-      this.setState({
-        showModal: 'need_login'
-      })
-      return ;
-    } else if (author.role !== 'Expert') {
-      this.setState({
-        showModal: 'need_expert'
-      })
-      return ;
-    }
-    axios.post(`${API_URL}/dislikeComment`, { id, author: author.id })
-      .then((res) => {
-        if (!res.data.success) {
-          this.setState({ error: res.error });
-        } else {
-          this.loadCommentsFromServer()
-        }
-      });
   }
 
   onModalLogin = (e) => {
@@ -170,61 +74,39 @@ class CommentBox extends Component {
     })
   }
 
-  submitComment = (e) => {
-    e.preventDefault();
-    const { author, text, updateId } = this.state;
-    if (!text) return;
-
-    if (!author) {
-      this.setState({
-        showModal: 'need_login'
-      })
-      return ;
-    } else if (author.role !== 'Expert') {
-      this.setState({
-        showModal: 'need_expert'
-      })
-      return ;
-    }
-
-    if (updateId) {
-      this.submitUpdatedComment(e);
-    } else  {
-      this.submitNewComment(e);
-    }
+  onShowButton = (e, value) => {
+    this.setState({
+      showButton: value,
+      text: ''
+    })
   }
 
-  submitNewComment = (e) => {
+  onSubmitComment = (e) => {
     e.preventDefault();
-    let parentId = e.target.parentId.value;
     const { author, text } = this.state;
     const { expert } = this.props;
-    if (!text || !parentId) return;
 
+    if (!text || !expert) return;
+
+    if (!author) {
+      this.onModalShow(e, 'need_login')
+      return ;
+    } else if (author.role !== 'Expert') {
+      this.onModalShow(e, 'need_expert')
+      return ;
+    }
+
+    let parentId = '-1';
     axios.post(`${API_URL}/addComment`, { expert, author: author.id, text, parentId, _id: Date.now().toString() })
       .then((res) => {
         if (!res.data.success) {
           this.setState({ error: res.data.error.message || res.data.error });
         } else {
-          this.onSetComment(e, null, '')
+          this.onShowButton(e, false)
           this.loadCommentsFromServer()
         }
       });
   }
-
-  submitUpdatedComment = (e) => {
-    const { text, updateId } = this.state;
-    axios.post(`${API_URL}/updateComment`, { text, updateId })
-      .then((res) => {
-        if (!res.data.success) {
-          this.setState({ error: res.data.error.message || res.data.error });
-        } else {
-          this.onUpdateComment(e, null, '');
-          this.loadCommentsFromServer();
-        }
-      });
-  }
-
   loadCommentsFromServer = () => {
     let slug = this.props.expert;
     axios.get(`${ API_URL }/getComments/${ slug }`)
@@ -245,7 +127,7 @@ class CommentBox extends Component {
     browserHistory.push('/login');
   }
 
-  handleModalClose() {
+  onModalClose() {
     this.setState({
       showModal: false
     })
@@ -268,28 +150,19 @@ class CommentBox extends Component {
             id = "-1"
             text = { this.state.text }
             commentId = { this.state.commentId }
-            handleSetComment = { this.onSetComment }
+            showButton = { this.state.showButton }
+            handleShowButton = { this.onShowButton }
             handleChangeText={ this.onChangeText }
-            submitComment={ this.submitComment }
+            handleSubmitComment={ this.onSubmitComment }
           />
         </div>
         <div className="comment">
           <CommentList
             data={ this.state.data }
-            text={ this.state.text }
-            commentId = { this.state.commentId }
-            updateId = { this.state.updateId }
-            menuId = { this.state.menuId }
-            replyId = { this.state.replyId }
-            handleShowMenu = { this.onShowMenu }
-            handleShowReply = { this.onShowReply }
-            handleSetComment = { this.onSetComment }
-            handleLike={ this.onLike }
-            handleDislike={ this.onDislike }
-            handleChangeText = { this.onChangeText }
-            handleDeleteComment={ this.onDeleteComment }
-            handleUpdateComment={ this.onUpdateComment }
-            submitComment = { this.submitComment }
+            author = { this.state.author }
+            expert = { this.props.expert }
+            handleShowModal = { this.onModalShow }
+            handleLoadComments = { this.loadCommentsFromServer }
           />
         </div>
         { this.state.error && <p>{ this.state.error }</p> }
@@ -316,6 +189,10 @@ class CommentBox extends Component {
       </div>
     );
   }
+}
+
+CommentBox.propTypes = {
+  expert: PropTypes.string.isRequired
 }
 
 export default CommentBox;

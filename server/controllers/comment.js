@@ -12,7 +12,8 @@ exports.getComments = (req, res, next) => {
         id: { $toString: "$_id" },
         author: 1,
         text: 1,
-        voters: 1
+        voters: 1,
+        updatedAt: 1
       }
     },
     {
@@ -37,7 +38,8 @@ exports.getComments = (req, res, next) => {
             parentId: 1,
             author: 1,
             text: 1,
-            voters: 1
+            voters: 1,
+            updatedAt: 1
           }
         },{
           $match: { $expr: { $eq: ["$parentId", "$$parent_id"] } }
@@ -55,7 +57,8 @@ exports.getComments = (req, res, next) => {
              text:{ $first: "$text" },
              voters: { $first: '$voters' },
              authorName: { $first: { $arrayElemAt: ["$users.profile", 0] } },
-             profileImage: { $first: { $arrayElemAt: ["$users.profileImage", 0] } }
+             profileImage: { $first: { $arrayElemAt: ["$users.profileImage", 0] } },
+             updatedAt: { $first: '$updatedAt' }
           }
         }],
         as: "answers"
@@ -69,7 +72,8 @@ exports.getComments = (req, res, next) => {
        voters: { $first: "$voters" },
        answers: { $first: "$answers" },
        authorName: { $first: { $arrayElemAt: ["$users.profile", 0] } },
-       profileImage: { $first: { $arrayElemAt: ["$users.profileImage", 0] } }
+       profileImage: { $first: { $arrayElemAt: ["$users.profileImage", 0] } },
+       updatedAt: { $first: '$updatedAt' }
       }
     }
   ]).exec(
@@ -115,14 +119,14 @@ exports.addComment = (req, res, next) => {
 }
 
 exports.updateComment = (req, res, next) => {
-  const { text, updateId } = req.body;
-  if (!updateId) {
+  const { id, text } = req.body;
+  if (!id) {
     return res.json({
       success: false,
       error: { message: 'No comment id provided' }
     });
   }
-  Comment.findById(updateId, (error, comment) => {
+  Comment.findById(id, (error, comment) => {
     if (error) {
       return res.json({
         success: false,
