@@ -1,4 +1,5 @@
 const Experts = require('../models/experts');
+const ExpertStory = require('../models/expertstory');
 const ExpertsSubcategories = require('../models/expertssubcategories');
 const User = require('../models/user');
 const userReview = require('../models/userreview');
@@ -32,62 +33,69 @@ function generateToken(user) {
 //= =======================================
 // Experts Routes
 //= =======================================
+function getExpertCount(slug){
+  console.log(slug)
+  User.find({
+    "expertCategories":['$slug']
+  }, function(err, userscount) {
+    return(userscount.length)
+  });
+}
 
 /* API endpoint to render all categories list on homepage */
 exports.getExpertsCategoryList = function(req, res, next) {
-  Experts.aggregate(
-    [{
-        $project: {
-          'subcategory': 1,
-          'name': 1,
-          'slug': 1,
-          'order': 1
-        }
-      },
-      {
-          $unwind: '$subcategory'
-      },
-      {
-        $sort: {
-          'slug': -1,
-          'subcategory.slug': 1
-        }
-      },
-      //{   $sort: {'subcategory.name': 1} },
-        {
-            $lookup: {
-                from: "users",
-                localField: "subcategory.slug",
-                foreignField: "expertCategories",
-                as: "subcategory_experts"
-            }
+  Experts.aggregate([
+    {
+      $project: {
+        'subcategory': 1,
+        'name': 1,
+        'slug': 1,
+        'order': 1
+      }
+    },
+    {
+      $unwind: '$subcategory'
+    },
+    {
+      $sort: {
+        'slug': -1,
+        'subcategory.slug': 1
+      }
+    },
+    //{   $sort: {'subcategory.name': 1} },
+    {
+      $lookup: {
+        from: "users",
+        localField: "subcategory.slug",
+        foreignField: "expertCategories",
+        as: "subcategory_experts"
+      }
+    },
+    {
+      $group: {
+        _id: '$_id',
+        'name': {
+          $first: '$name'
         },
-      {
-        $group: {
-          _id: '$_id',
-          'name': {
-            $first: '$name'
-          },
-          'slug': {
-            $first: '$slug'
-          },
-          'subcategory': {
-            $push: '$subcategory'
-          },
-          'subcategory_experts': {
-            $push: '$subcategory_experts.expertCategories'
-          }
+        'slug': {
+          $first: '$slug'
+        },
+        'subcategory': {
+          $push: '$subcategory'
+        },
+        'subcategory_experts': {
+          $push: '$subcategory_experts.expertCategories'
         }
       }
-    ],
-    function(err, users) {
-      if (err) {
-        return res.status(200).json(err);
-      }
-      return res.status(200).json(users);
-    });
-};
-
+    }
+  ],
+  function(err, users) {
+    if (err) {
+      return res.status(200).json(err);
+    }
+    return res.status(200).json(users);
+  });
+}
 /* API endpoint to render all experts list by category */
 exports.getExpertsListing = function(req, res, next) {
 
@@ -107,38 +115,52 @@ exports.getExpertsListing = function(req, res, next) {
   }
 
   res.header('Access-Control-Allow-Origin', '*');
-  User.find({
-    'expertCategories': {
-      $regex: new RegExp(category, "i")
-    },
-    "role": 'Expert',
-    "isDeleted": 'false'
-  }, {
-    '_id': 0,
-    'accountCreationDate': 0,
-    'createdAt': 0,
-    'enableAccount': 0,
-    // locationCity :0,
-    // locationCountry : 0,
-    // locationState : 0,
-    locationZipcode: 0,
-    password: 0,
-    websiteURL: 0
-  }).sort({
-    "createdAt": -1
-  }).exec(
-    function(err, expertsList) {
-      //  console.log(">>>>>>>>>",expertsList)
-      if (expertsList) {
-        res.json(expertsList);
-      } else {
-        res.json({
-          success: false,
-          data: {},
-          code: 404
-        });
+  User.aggregate(
+  [
+    {
+      $match: {
+        'expertCategories' : { $regex : new RegExp(category, "i") },
+        "role":'Expert',
       }
-    });
+    },
+    {
+      $project:{
+        '_id':0,
+        'accountCreationDate':0,
+        'createdAt':0,
+        'enableAccount':0,
+        'email':0,
+        'contact':0,
+        //'onlineStatus':0,
+      }
+    },
+    {
+      $sort: {'createdAt': -1}
+    },
+    {
+      "$addFields": {
+        'onlineStatus' : { "$cond": {
+          if: {
+              '$eq': ['$onlineStatus', "ONLINE"]
+            },
+            'then': true,
+            'else': false
+          }
+        }
+      }
+    }
+  ],function (err, expertsList) {
+    if(expertsList){
+        res.json(expertsList);
+    }else{
+      console.log(err)
+        res.json({
+            success: false,
+            data: {},
+            code: 404
+        });
+    }
+  });
   /*ExpertsSubcategories.findOne({'slug':{ $regex : new RegExp(category, "i") }}, function (err, expertsList) {
       if(expertsList){
           res.json(expertsList);
@@ -197,8 +219,8 @@ exports.getTopExpertsListing = function(req, res, next) {
           code: 404
         });
       }
-    });
-
+    }
+  );
 };
 /* API endpoint to send email message to expert */
 exports.sendEmailMessageToExpert = function(req, res, next) {
@@ -688,9 +710,10 @@ exports.getExpertDetail = function(req, res, next) {
     return next();
   }
   User.find({
-      'slug': {
+      /* 'slug': {
         $regex: new RegExp(slug, "i")
-      },
+      }, */
+      'slug' : slug,
     }, {
       '_id': 0,
       'accountCreationDate': 0,
@@ -740,7 +763,7 @@ exports.getExpertDetail = function(req, res, next) {
 
 /* API endpoint to add endorsements and my favorite */
 exports.addEndorsements = function(req, res, next){
-  
+
   const {toSlug,fromSlug} = req.body
   if (!toSlug || !fromSlug) {
     res.status(422).send({
@@ -756,7 +779,7 @@ exports.addEndorsements = function(req, res, next){
           if(endorsements.indexOf(fromSlug) < 0){
             endorsements.push(fromSlug);
           }
-          
+
           user.endorsements  = endorsements;
           user.save(function(err,user){
             if(err){
@@ -771,9 +794,9 @@ exports.addEndorsements = function(req, res, next){
         if (err){
           res.json({errorMessage:"Sorry Something Went Wrong"})
         }else{
-          
+
           const myFavorite = user.myFavorite;
-          
+
           if(myFavorite.indexOf(toSlug) < 0){
             myFavorite.push(toSlug);
           }
@@ -791,7 +814,7 @@ exports.addEndorsements = function(req, res, next){
 /* API endpoint to get endorsements */
 
 exports.getEndorsements = function(req, res, next){
-  
+
   const {slug} = req.body
   console.log(slug)
   if (!slug) {
@@ -802,7 +825,7 @@ exports.getEndorsements = function(req, res, next){
   }
   User.find({
       'slug': {
-         $in: slug 
+         $in: slug
       },
     }, { profileImage: 1, slug: 1 },
     function(err, expertsList) {
@@ -817,14 +840,14 @@ exports.getEndorsements = function(req, res, next){
       }
     });
 
-  
+
 }
 
 exports.getMyExpertsListing = function(req, res, next){
-  
+
   const {slug,category} = req.body
-  
-  
+
+
   if (!slug) {
     res.status(422).send({
       error: 'Please choose expert slug'
@@ -837,7 +860,7 @@ exports.getMyExpertsListing = function(req, res, next){
     },
     'role': "Expert",
     'slug': {
-         $in: slug 
+         $in: slug
       }
     // 'expertRating' : ['5','4']
   }, { '_id': 0,
@@ -861,8 +884,31 @@ exports.getMyExpertsListing = function(req, res, next){
         });
       }
     });
+}
 
-  
+exports.getExpertStories = function(req, res, next){
+  var expertEmail = req.params.expertEmail;
+  if (!req.params.expertEmail) {
+    res.status(422).send({ error: 'Please choose expert Email' });
+    return next();
+  }
+  ExpertStory.find({
+    'expert.email' : expertEmail,
+  },{
+    _id:0,
+    "timestamps.updatedAt" :0,
+  },
+  function (err, expertStoryList) {
+    if(expertStoryList) {
+      res.json(expertStoryList);
+    } else {
+      res.json({
+        success: false,
+        data: {},
+        code: 404
+      });
+    }
+  });
 }
 
 exports.saveUserReview = function(req, res, next) {
@@ -923,10 +969,8 @@ exports.saveUserReview = function(req, res, next) {
 
       })
 
-
       bind.status = 1;
       bind.message = 'User review was saved successfully';
-
       // create reusable transport method (opens pool of SMTP connections)
       var smtpTransport = nodemailer.createTransport("SMTP", {
         service: "Gmail",
@@ -953,6 +997,56 @@ exports.saveUserReview = function(req, res, next) {
       smtpTransport.sendMail(mailOptions, function(error, response) {});
     }
     return res.json(bind);
+  });
+}
+
+exports.getExpertStoriesBasedOnRole = function(req, res, next){
+  var expertRole = req.params.expertRole;
+  if (!req.params.expertRole) {
+    res.status(422).send({ error: 'Please choose expert Role' });
+    return next();
+  }
+  ExpertStory.aggregate([
+    {
+      $lookup:
+        {
+          from: "users",
+          localField: "expert.email",
+          foreignField: "email",
+          as: "expert_details"
+        }
+    },
+    {
+      $match: {
+        "expert_details": { $ne: [] },
+        "expert_details.role":"Expert",
+        "expert_details.expertCategories":expertRole
+      }
+    },
+    {
+      $project:{
+        'expert_details._id':0,
+        'expert_details.email':0,
+        'expert_details.createdAt':0,
+        'expert_details.updatedAt':0,
+        'expert_details.password':0,
+        'expert_details.accountCreationDate':0,
+        'expert_details.enableAccount':0,
+        'expert_details.contact':0,
+        'expert_details.stripeId':0
+      }
+    }
+  ],
+    function (err, expertStoryList) {
+    if(expertStoryList){
+        res.json(expertStoryList);
+    }else{
+        res.json({
+            success: false,
+            data: {},
+            code: 404
+        });
+    }
   });
 }
 

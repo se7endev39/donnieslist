@@ -10,7 +10,7 @@ import { STATIC_ERROR, FETCH_USER , SEND_CONTACT_FORM} from './types';
 export const API_URL = 'http://localhost:3000/api';
 export const CLIENT_ROOT_URL = 'http://localhost:8080';
 export const Image_URL = 'https://www.donnieslist.com';
-export const SOCKET_CONNECTION = io.connect();
+export const SOCKET_CONNECTION = io.connect('http://localhost:3000');
 export const MESSAGE_INCORRECT_USERNAME_PASSWORD = 'Alas, You have entered incorrect Email/Password!';
 export const tokBoxApikey = '45801242';
 
