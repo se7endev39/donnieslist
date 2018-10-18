@@ -593,9 +593,10 @@ h4.community-news-parent {
 }
 
 .comment {
-  overflow: auto;
+  overflow: hidden;
   width: 100%;
   min-width: 200px;
+  padding-bottom: 30px;
 }
 
 .comment h2 {
@@ -603,21 +604,73 @@ h4.community-news-parent {
 }
 
 .comment .comment-user {
+  width: 40px;
   height: 40px;
   margin-right: 10px;
   border-radius: 50%;
 }
 
 .comment .reply-user {
+  width: 30px;
   height: 30px;
   margin-right: 10px;
   border-radius: 50%;
+}
+
+.comment .dropdown {
+  float: right;
+  margin-top: 10px;
+}
+
+.comment .dropdown .dropdown-menu {
+  width: 100px;
+  min-width: 100px;
+  position: absolute;
+  top: 30px;
+  left: -80px;
+}
+
+.comment .dropdown .btn {
+  padding: 0;
+  background: transparent;
+  border: none;
+}
+
+.comment .dropdown .btn:focus .dropdown {
+  background: #FF0000;
+}
+
+.open>.dropdown-menu{
+  display: block;
+}
+
+.comment .dropdown .btn:focus .dropdown {
+  display: inline-block;
+}
+
+.comment .dropdown .btn:after {
+  content: '\2807';
+  font-size: 1.5em;
+  width: 20px;
+  height: 20px;
+  border-radius: 100px;
+  color: #666;
+  margin-left: 5px;
+  margin-top: 5px;
 }
 
 .comment .singleComment {
   padding: 5px 0px;
   margin-bottom: 10px;
   display: flex;
+}
+
+.comment .singleComment:hover .dropdown {
+  display: inline-block;
+}
+
+.comment .singleComment:hover .dropdown {
+  display: inline-block;
 }
 
 .comment .singleComment .textContent {
@@ -807,4 +860,15 @@ h4.community-news-parent {
   display: block;
   width: 100%;
   padding-left: 50px;
+}
+
+.modal-container {
+  display: block;
+  width: 400px;
+  margin: auto;
+  padding-top: 150px;
+}
+
+.modal-container .modal-dialog {
+  width: 400px !important;
 }

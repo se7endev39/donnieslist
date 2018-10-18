@@ -2,35 +2,74 @@ const Comment = require('../models/comment')
 const mongoose = require('mongoose');
 
 exports.getComments = (req, res, next) => {
+  var slug = req.params.slug;
   Comment.aggregate([
     {
-      $match: { parentId: '-1' }
+      $match: { parentId: '-1', expert: slug }
     },
     {
       $project: {
-        id:{ $toString:"$_id" },
+        id: { $toString: "$_id" },
         author: 1,
         text: 1,
-        num_like: 1,
-        num_dislike: 1
+        voters: 1
+      }
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "author",
+        foreignField: "slug",
+        as: "users"
       }
     },
     {
       $lookup: {
         from: "comments",
-        localField: "id",
-        foreignField: "parentId",
-        as: "replyList"
+        let: {
+          parent_id: "$id"
+        },
+        /* localField: "id",
+        foreignField: "parentId", */
+        pipeline: [{
+          $project: {
+            id: { $toString:"$_id" },
+            parentId: 1,
+            author: 1,
+            text: 1,
+            voters: 1
+          }
+        },{
+          $match: { $expr: { $eq: ["$parentId", "$$parent_id"] } }
+        },{
+          $lookup: {
+            from: "users",
+            localField: "author",
+            foreignField: "slug",
+            as: "users"
+          }
+        },{
+          $group:{
+             _id: "$_id",
+             authorId: { $first: "$author" },
+             text:{ $first: "$text" },
+             voters: { $first: '$voters' },
+             authorName: { $first: { $arrayElemAt: ["$users.profile", 0] } },
+             profileImage: { $first: { $arrayElemAt: ["$users.profileImage", 0] } }
+          }
+        }],
+        as: "answers"
       }
     },
     {
       $group:{
        _id: "$_id",
-       author: { $first:"$author" },
-       text:{ $first:"$text" },
-       num_like: { $first:"$num_like" },
-       num_dislike: { $first:"$num_dislike" },
-       answers: { $first:"$replyList" }
+       authorId: { $first: "$author" },
+       text:{ $first: "$text" },
+       voters: { $first: "$voters" },
+       answers: { $first: "$answers" },
+       authorName: { $first: { $arrayElemAt: ["$users.profile", 0] } },
+       profileImage: { $first: { $arrayElemAt: ["$users.profileImage", 0] } }
       }
     }
   ]).exec(
@@ -51,18 +90,17 @@ exports.getComments = (req, res, next) => {
 
 exports.addComment = (req, res, next) => {
   const comment = new Comment();
-  const { author, text, parentId } = req.body;
+  const { expert, author, text, parentId } = req.body;
   if (!author || !text || !parentId) {
     return res.json({
       success: false,
       error: { message: 'You must provide an author, comment and parentId' }
     });
   }
+  comment.expert = expert;
   comment.author = author;
   comment.text = text;
   comment.parentId = parentId;
-  comment.num_like = 0;
-  comment.num_dislike = 0;
   comment.save(err => {
     if (err) {
       return res.json({
@@ -106,9 +144,8 @@ exports.updateComment = (req, res, next) => {
   });
 }
 
-exports.updateLikeNum = (req, res, next) => {
-  console.log(req.body);
-  const { id, value } = req.body;
+exports.likeComment = (req, res, next) => {
+  const { id, author } = req.body;
   if (!id) {
     return res.json({
       success: false,
@@ -122,10 +159,12 @@ exports.updateLikeNum = (req, res, next) => {
         error
       });
     }
-    if (value) {
-      comment.num_like = value + 1;
+    let voter = comment.voters.find(voter => voter.slug == author);
+    if(voter == undefined || !voter){
+      comment.voters.push({ slug: author });
+      comment.markModified('voters');
     } else {
-      comment.num_like = 1;
+      comment.voters = comment.voters.filter(voter => voter.slug != author);
     }
     comment.save(error => {
       if (error) {
@@ -141,9 +180,8 @@ exports.updateLikeNum = (req, res, next) => {
   });
 }
 
-exports.updateDislikeNum = (req, res, next) => {
-  console.log(req.body);
-  const { id, value } = req.body;
+exports.dislikeComment = (req, res, next) => {
+  const { id, author } = req.body;
   if (!id) {
     return res.json({
       success: false,
@@ -157,11 +195,7 @@ exports.updateDislikeNum = (req, res, next) => {
         error
       });
     }
-    if (value) {
-      comment.num_dislike = value + 1;
-    } else {
-      comment.num_dislike = 1;
-    }
+    comment.voters = comment.voters.filter(voter => voter.slug != author);
     comment.save(error => {
       if (error) {
         return res.json({
@@ -178,7 +212,6 @@ exports.updateDislikeNum = (req, res, next) => {
 
 exports.deleteComment = (req, res, next) => {
   const { id } = req.body;
-  console.log("requested id: " + id);
   if (!id) {
     return res.json({
       success: false,

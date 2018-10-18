@@ -1,25 +1,36 @@
 // CommentBox.js
 import React, { Component } from 'react';
 // import 'whatwg-fetch';
+import axios from 'axios'
 import cookie from 'react-cookie';
 import { API_URL, Image_URL, errorHandler } from '../../actions/index';
+import { browserHistory } from 'react-router';
+
+import CommentModal from './CommentModal';
 import CommentList from './CommentList';
 import CommentNew from './CommentNew';
-import axios from 'axios'
 
 class CommentBox extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       data: [],
       error: null,
       author: '',
+      name: '',
       text: '',
       updateId: null,
       parentId: null,
-      commentId: null
+      commentId: null,
+      menuId: null,
+      showModal: null,
+      modal: {
+        title: '',
+        text: ''
+      }
     };
     this.pollInterval = null;
+    this.handleModalClose = this.handleModalClose.bind(this);
   }
 
   componentDidMount() {
@@ -29,8 +40,14 @@ class CommentBox extends Component {
     }
     const currentUser = cookie.load('user');
     if (currentUser) {
-      let author = currentUser.firstName + ' ' + currentUser.lastName;
-      this.setState({ author: author });
+      let name = currentUser.firstName + ' ' + currentUser.lastName;
+      this.setState({
+        author: {
+          id: currentUser.slug,
+          name: currentUser.firstName + ' ' + currentUser.lastName,
+          role: currentUser.role
+        }
+      });
     }
   }
 
@@ -54,6 +71,15 @@ class CommentBox extends Component {
     });
   }
 
+  onShowMenu = (e, id, authorId) => {
+    e.preventDefault()
+    if (authorId == this.state.author.id) {
+      this.setState({
+        menuId: id
+      })
+    }
+  }
+
   onUpdateComment = (e, id, text) => {
     e.preventDefault()
     this.setState({
@@ -61,7 +87,6 @@ class CommentBox extends Component {
       updateId: id,
       text: text
     })
-    // this.setState({ author: oldComment.author, text: oldComment.text, updateId: id });
   }
 
   onDeleteComment = (e, id) => {
@@ -76,8 +101,20 @@ class CommentBox extends Component {
       });
   }
 
-  onLike = (id, value) => {
-    axios.post(`${API_URL}/updateLikeNum`, { id, value })
+  onLike = (e, id) => {
+    const { author } = this.state;
+    if (!author) {
+      this.setState({
+        showModal: 'need_login'
+      })
+      return ;
+    } else if (author.role !== 'Expert') {
+      this.setState({
+        showModal: 'need_expert'
+      })
+      return ;
+    }
+    axios.post(`${API_URL}/likeComment`, { id, author: author.id })
       .then((res) => {
         if (!res.data.success) {
           this.setState({ error: res.error });
@@ -87,8 +124,20 @@ class CommentBox extends Component {
       });
   }
 
-  onDislike = (id, value) => {
-    axios.post(`${API_URL}/updateDislikeNum`, { id, value })
+  onDislike = (e, id) => {
+    const { author } = this.state;
+    if (!author) {
+      this.setState({
+        showModal: 'need_login'
+      })
+      return ;
+    } else if (author.role !== 'Expert') {
+      this.setState({
+        showModal: 'need_expert'
+      })
+      return ;
+    }
+    axios.post(`${API_URL}/dislikeComment`, { id, author: author.id })
       .then((res) => {
         if (!res.data.success) {
           this.setState({ error: res.error });
@@ -96,12 +145,38 @@ class CommentBox extends Component {
           this.loadCommentsFromServer()
         }
       });
+  }
+
+  onModalLogin = (e) => {
+    this.setState({
+      showModal: null
+    })
+    this.redirectToLogin(e);
+  }
+
+  onModalClose = (e) => {
+    this.setState({
+      showModal: null
+    })
   }
 
   submitComment = (e) => {
     e.preventDefault();
     const { author, text, updateId } = this.state;
-    if (!author || !text) return;
+    if (!text) return;
+
+    if (!author) {
+      this.setState({
+        showModal: 'need_login'
+      })
+      return ;
+    } else if (author.role !== 'Expert') {
+      this.setState({
+        showModal: 'need_expert'
+      })
+      return ;
+    }
+
     if (updateId) {
       this.submitUpdatedComment(e);
     } else  {
@@ -113,10 +188,14 @@ class CommentBox extends Component {
     e.preventDefault();
     let parentId = e.target.parentId.value;
     const { author, text } = this.state;
-    if (!author || !text || !parentId) return;
-    axios.post(`${API_URL}/addComment`, { author, text, parentId, _id: Date.now().toString() })
+    const { expert } = this.props;
+    if (!text || !parentId) return;
+    if (!author) {
+      this.redirectToLogin(e);
+      return ;
+    }
+    axios.post(`${API_URL}/addComment`, { expert, author: author.id, text, parentId, _id: Date.now().toString() })
       .then((res) => {
-        console.log(res.data)
         if (!res.data.success) {
           this.setState({ error: res.data.error.message || res.data.error });
         } else {
@@ -128,10 +207,8 @@ class CommentBox extends Component {
 
   submitUpdatedComment = (e) => {
     const { text, updateId } = this.state;
-    console.log(updateId);
     axios.post(`${API_URL}/updateComment`, { text, updateId })
       .then((res) => {
-        console.log(res)
         if (!res.data.success) {
           this.setState({ error: res.data.error.message || res.data.error });
         } else {
@@ -142,14 +219,29 @@ class CommentBox extends Component {
   }
 
   loadCommentsFromServer = () => {
-    axios.get(`${API_URL}/getComments`)
+    let slug = this.props.expert;
+    axios.get(`${ API_URL }/getComments/${ slug }`)
       .then(res => {
         if (!res.data.success) {
           this.setState({ error: res.data.error });
         } else {
+          // console.log(res.data.data);
           this.setState({ data: res.data.data });
         }
       })
+  }
+
+  redirectToLogin(e) {
+    if(e.target) {
+      e.preventDefault()
+    }
+    browserHistory.push('/login');
+  }
+
+  handleModalClose() {
+    this.setState({
+      showModal: false
+    })
   }
 
   render() {
@@ -159,7 +251,9 @@ class CommentBox extends Component {
         {
           this.state.data.length > 1 ?
             this.state.data.length + ' Comments' :
-            this.state.data.length + 'Comment'
+            ( this.state.data.length == 1 ?
+                this.state.data.length + ' Comment' :
+                'No Comment' )
         }
         </h3>
         <div className="form">
@@ -169,7 +263,7 @@ class CommentBox extends Component {
             commentId = { this.state.commentId }
             handleSetComment = { this.onSetComment }
             handleChangeText={ this.onChangeText }
-            submitComment={ this.submitNewComment }
+            submitComment={ this.submitComment }
           />
         </div>
         <div className="comment">
@@ -178,6 +272,8 @@ class CommentBox extends Component {
             text={ this.state.text }
             commentId = { this.state.commentId }
             updateId = { this.state.updateId }
+            menuId = { this.state.menuId }
+            handleShowMenu = { this.onShowMenu }
             handleSetComment = { this.onSetComment }
             handleLike={ this.onLike }
             handleDislike={ this.onDislike }
@@ -188,6 +284,26 @@ class CommentBox extends Component {
           />
         </div>
         { this.state.error && <p>{ this.state.error }</p> }
+        {
+          this.state.showModal == 'need_login' ? (
+            <CommentModal
+              title = "Please log in..."
+              text = "You need to login to submit or reply to comment."
+              showModal = { this.state.showModal }
+              handleModalClose = { this.onModalClose }
+              handleModalLogin = { this.onModalLogin }
+            />
+          ) : (
+            this.state.showModal == 'need_expert' ? (
+              <CommentModal
+                title = "Sorry..."
+                text = "Only expert can submit or reply to comment."
+                showModal = { this.state.showModal }
+                handleModalClose = { this.onModalClose }
+              />
+            ) : null
+          )
+        }
       </div>
     );
   }

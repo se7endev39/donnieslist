@@ -2,6 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Comment from './Comment';
+import { Image_URL } from '../../actions/index';
 
 const CommentList = (props) => {
   const commentNodes = props.data.map(comment => (
@@ -10,13 +11,16 @@ const CommentList = (props) => {
         id={ comment._id }
         key={ comment._id }
         type={ 'comment' }
-        author={ comment.author }
+        authorId={ comment.authorId }
+        authorName={ comment.authorName ? comment.authorName.firstName + ' ' + comment.authorName.lastName : '' }
         text={ props.text }
-        num_like={ comment.num_like }
-        num_dislike={ comment.num_dislike }
+        voters={ comment.voters }
         commentId={ props.commentId }
         parentId = { comment._id }
+        menuId = { props.menuId }
+        handleShowMenu = { props.handleShowMenu }
         timestamp={ comment.updatedAt }
+        profileImage={ comment.profileImage ? `${Image_URL}` + comment.profileImage : '' }
         handleSetComment = { props.handleSetComment }
         handleLike={ props.handleLike }
         handleDislike={ props.handleDislike }
@@ -37,12 +41,15 @@ const CommentList = (props) => {
             key={ answer._id }
             type={ 'answer' }
             text={ props.text }
-            author={ answer.author }
-            num_like={ answer.num_like }
-            num_dislike={ answer.num_dislike }
+            authorId={ answer.authorId }
+            authorName={ answer.authorName ? answer.authorName.firstName + ' ' + answer.authorName.lastName : '' }
+            voters={ answer.voters }
             commentId = { props.commentId }
             parentId = { comment._id }
+            menuId = { props.menuId }
             timestamp={ answer.updatedAt }
+            profileImage={ answer.profileImage ? `${Image_URL}` + answer.profileImage : '' }
+            handleShowMenu={ props.handleShowMenu }
             handleSetComment = { props.handleSetComment }
             handleLike={ props.handleLike }
             handleDislike={ props.handleDislike }
@@ -70,14 +77,16 @@ const CommentList = (props) => {
 CommentList.propTypes = {
   data: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string,
-    author: PropTypes.string,
+    authorId: PropTypes.string,
+    authorName: PropTypes.object,
     text: PropTypes.string,
+    voters: PropTypes.array,
     answers: PropTypes.shape({
       id: PropTypes.string,
-      author: PropTypes.string,
+      authorId: PropTypes.string,
+      authorName: PropTypes.object,
       text: PropTypes.string,
-      num_like: PropTypes.number,
-      num_dislike: PropTypes.number,
+      voters: PropTypes.array,
       updatedAt: PropTypes.string,
       commentId: PropTypes.string
     }),
@@ -86,6 +95,8 @@ CommentList.propTypes = {
   text: PropTypes.string,
   commentId: PropTypes.string,
   updateId: PropTypes.string,
+  menuId: PropTypes.string,
+  handleShowMenu: PropTypes.func.isRequired,
   handleDeleteComment: PropTypes.func.isRequired,
   handleUpdateComment: PropTypes.func.isRequired,
   handleChangeText: PropTypes.func.isRequired,

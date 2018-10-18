@@ -302,7 +302,7 @@ class ViewExpert extends Component {
 		  .then(res => {
         const expert = res.data[0];
         // console.log("componentDidMount")
-        // console.log(res.data[0])
+        console.log(res.data[0])
         this.setState({ firstName : res.data[0].profile.firstName });
         this.setState({ lastName : res.data[0].profile.lastName });
         this.setState({ expertEmail : res.data[0].email });
@@ -715,7 +715,7 @@ class ViewExpert extends Component {
                   loop={ true }
                   autoplay={ 0/* 5000 */ }/>
                 <div className="comment">
-                  <CommentBox/>
+                  <CommentBox expert={ this.props.params.slug }/>
                 </div>
               </div>
               </div>

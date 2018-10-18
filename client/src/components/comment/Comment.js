@@ -3,18 +3,20 @@ import React from 'react';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
+
 import CommentForm from './CommentForm'
+import CommentMenu from './CommentMenu'
 
 const Comment = props => (
   <div className="singleComment">
     {
       props.type === 'comment' ? (
-        <img className="comment-user" src={ `https://picsum.photos/70?random=${props.id}` } />
+        <img className="comment-user" src={ props.profileImage ? props.profileImage : '/src/public/img/person.jpg' } />
       ) : (
-        <img className="reply-user" src={ `https://picsum.photos/70?random=${props.id}` } />
+        <img className="reply-user" src={ props.profileImage ? props.profileImage : '/src/public/img/person.jpg' } />
       )
     }
-    <div className="textContent">
+    <div className="textContent" onMouseOver={ (e) => props.handleShowMenu(e, props.id, props.authorId) }>
     {
       props.updateId == props.id ? (
         <div className="singleCommentContent">
@@ -22,6 +24,8 @@ const Comment = props => (
             <CommentForm
               id = { props.id }
               text = { props.text }
+              placeholder=""
+              buttonName = "Save"
               updateId = { props.updateId }
               parentId = { props.parentId }
               commentId = { props.commentId }
@@ -34,20 +38,29 @@ const Comment = props => (
       ) : (
         <div className="singleCommentContent">
           <div className="singleCommentButtons">
-            <h3>{ props.author }</h3>
+            <h3>{ props.authorName }</h3>
             <span className="time">{ moment(props.timestamp).fromNow() }</span>
-            <a onClick={ (e) => { props.handleUpdateComment(e, props.id, props.children); } }>update</a>
-            <a onClick={ (e) => { props.handleDeleteComment(e, props.id); } }>delete</a>
+            {/* <a onClick={ (e) => { props.handleUpdateComment(e, props.id, props.children); } }>update</a>
+            <a onClick={ (e) => { props.handleDeleteComment(e, props.id); } }>delete</a> */}
           </div>
+          {
+            props.menuId == props.id ? (
+              <CommentMenu
+                id={ props.id }
+                text={ props.children }
+                handleUpdateComment={ props.handleUpdateComment }
+                handleDeleteComment={ props.handleDeleteComment }
+              />
+            ) : null
+          }
           <ReactMarkdown source={ props.children } />
           <div className="reply-wrapper">
             <div className="number">
-              <img src="/src/public/img/hand-like.svg" onClick={ () => props.handleLike(props.id, props.num_like) }/>
-              { props.num_like ? props.num_like : '' }
+              <img src="/src/public/img/hand-like.svg" onClick={ (e) => props.handleLike(e, props.id) }/>
+              { props.voters && props.voters.length ? props.voters.length : '' }
             </div>
             <div className="number">
-              <img src="/src/public/img/hand-dislike.svg" onClick={ () => props.handleDislike(props.id, props.num_dislike) }/>
-              { props.num_dislike ? props.num_dislike : '' }
+              <img src="/src/public/img/hand-dislike.svg" onClick={ (e) => props.handleDislike(e, props.id) }/>
             </div>
             <a onClick={ (e) => { props.handleSetComment(e, props.id, '') } }> REPLY </a>
           </div>
@@ -57,7 +70,9 @@ const Comment = props => (
               <CommentForm
                 id={ props.id }
                 text={ props.text }
+                placeholder="Add a public reply..."
                 parentId = { props.parentId }
+                buttonName = "Reply"
                 handleChangeText={ props.handleChangeText }
                 handleSetComment={ props.handleSetComment }
                 submitComment={ props.submitComment }
@@ -76,12 +91,15 @@ Comment.propTypes = {
   id: PropTypes.string.isRequired,
   parentId: PropTypes.string.isRequired,
   commentId: PropTypes.string,
-  author: PropTypes.string.isRequired,
+  authorId: PropTypes.string.isRequired,
+  authorName: PropTypes.string.isRequired,
+  profileImage: PropTypes.string,
   text: PropTypes.string.isRequired,
-  num_like: PropTypes.number,
-  num_dislike: PropTypes.number,
+  voters: PropTypes.array,
   children: PropTypes.string.isRequired,
   updateId: PropTypes.string,
+  menuId: PropTypes.string,
+  handleShowMenu: PropTypes.func.isRequired,
   handleChangeText: PropTypes.func.isRequired,
   handleUpdateComment: PropTypes.func.isRequired,
   handleDeleteComment: PropTypes.func.isRequired,
@@ -91,6 +109,10 @@ Comment.propTypes = {
   timestamp: PropTypes.string.isRequired,
   submitComment: PropTypes.func.isRequired,
   submitComment: PropTypes.func.isRequired
+}
+
+Comment.defaultProps = {
+  profileImage: '/src/public/img/person.jpg'
 }
 
 export default Comment;

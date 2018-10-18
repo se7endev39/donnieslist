@@ -336,12 +336,12 @@ module.exports = function (app) {
   //= ========================
   // Comment Routes
   //= ========================
-  apiRoutes.get('/getComments', CommentController.getComments);
+  apiRoutes.get('/getComments/:slug', CommentController.getComments);
   apiRoutes.post('/addComment', CommentController.addComment);
   apiRoutes.post('/updateComment', CommentController.updateComment);
   apiRoutes.post('/deleteComment', CommentController.deleteComment);
-  apiRoutes.post('/updateLikeNum', CommentController.updateLikeNum);
-  apiRoutes.post('/updateDislikeNum', CommentController.updateDislikeNum);
+  apiRoutes.post('/likeComment', CommentController.likeComment);
+  apiRoutes.post('/dislikeComment', CommentController.dislikeComment);
   // Set url for API group routes
   app.use('/api', apiRoutes);
 };

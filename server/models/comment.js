@@ -3,11 +3,20 @@ const mongoose = require('mongoose'),
 
 const CommentsSchema = new Schema({
   author: String,
+  expert: String,
+  name: String,
   text: String,
   parentId: String,
-  num_like: Number,
-  num_dislike: Number
-}, { timestamps: true });
+  voters : [
+    {
+      slug: String,
+      createdAt: { type: Date, default: Date.now() }
+    }
+  ],
+}, {
+  timestamps: true,
+  usePushEach: true
+});
 
 // export our module to use in server.js
 module.exports = mongoose.model('Comment', CommentsSchema);

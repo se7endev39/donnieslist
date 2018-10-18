@@ -22,14 +22,14 @@ const CommentForm = props => (
           autocomplete="off"
           value={ props.text }
           rows={ props.text ? props.text.split('\n').length : 1 }
-          placeholder="Add a public reply..."
+          placeholder={ props.placeholder }
           onChange={ (e) => props.handleChangeText(e) }
         />
       </div>
       <div className="input-row">
         <div className="button-wrapper">
           <button className="button-cancel button-reply" onClick={ (e) => props.handleSetComment(e, null, '') }>Cancel</button>
-          <button className="button-reply" type="submit">Reply</button>
+          <button className="button-reply" type="submit">{ props.buttonName }</button>
         </div>
       </div>
     </div>
@@ -39,6 +39,8 @@ const CommentForm = props => (
 CommentForm.propTypes = {
   id: PropTypes.string.isRequired,
   text: PropTypes.string,
+  buttonName: PropTypes.string,
+  placeholder: PropTypes.string,
   author: PropTypes.string,
   updateId: PropTypes.string,
   parentId: PropTypes.parentId,
