@@ -24,7 +24,7 @@
     "react": "~15.2.1",
     "react-avatar-edit": "^0.5.10",
     "react-avatar-editor": "^11.0.2",
-    "react-bootstrap": "^0.30.8",
+    "react-bootstrap": "^0.32.4",
     "react-bs-notifier": "^4.3.2",
     "react-chatview": "^0.1.1",
     "react-cookie": "^0.4.7",

@@ -23,6 +23,7 @@ class CommentBox extends Component {
       parentId: null,
       commentId: null,
       menuId: null,
+      replyId: [],
       showModal: null,
       modal: {
         title: '',
@@ -78,6 +79,15 @@ class CommentBox extends Component {
         menuId: id
       })
     }
+  }
+
+  onShowReply = (e, id) => {
+    e.preventDefault()
+    let _replyId = this.state.replyId;
+    _replyId[id] = !_replyId[id]
+    this.setState({
+      replyId: _replyId
+    })
   }
 
   onUpdateComment = (e, id, text) => {
@@ -190,10 +200,7 @@ class CommentBox extends Component {
     const { author, text } = this.state;
     const { expert } = this.props;
     if (!text || !parentId) return;
-    if (!author) {
-      this.redirectToLogin(e);
-      return ;
-    }
+
     axios.post(`${API_URL}/addComment`, { expert, author: author.id, text, parentId, _id: Date.now().toString() })
       .then((res) => {
         if (!res.data.success) {
@@ -273,7 +280,9 @@ class CommentBox extends Component {
             commentId = { this.state.commentId }
             updateId = { this.state.updateId }
             menuId = { this.state.menuId }
+            replyId = { this.state.replyId }
             handleShowMenu = { this.onShowMenu }
+            handleShowReply = { this.onShowReply }
             handleSetComment = { this.onSetComment }
             handleLike={ this.onLike }
             handleDislike={ this.onDislike }

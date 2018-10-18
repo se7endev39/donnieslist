@@ -16,7 +16,11 @@ const Comment = props => (
         <img className="reply-user" src={ props.profileImage ? props.profileImage : '/src/public/img/person.jpg' } />
       )
     }
-    <div className="textContent" onMouseOver={ (e) => props.handleShowMenu(e, props.id, props.authorId) }>
+    <div
+      className="textContent"
+      onMouseOver={ (e) => props.handleShowMenu(e, props.id, props.authorId) }
+      onMouseLeave={ (e) => props.handleShowMenu(e, 0, props.authorId) }
+    >
     {
       props.updateId == props.id ? (
         <div className="singleCommentContent">
