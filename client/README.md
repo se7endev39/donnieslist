@@ -1,4 +1,4 @@
-<h1 align="center">
+<!-- <h1 align="center">
   <br>
   <a href="https://donnieslist.com">
   </a>
@@ -11,8 +11,8 @@
     <img src='https://forthebadge.com/images/badges/uses-css.svg' />
     <img src='https://forthebadge.com/images/badges/validated-html5.svg' />
     <img src='https://forthebadge.com/images/badges/uses-html.svg' />
-</p>
-<h4 align="center">Donnie's list with React, Redux</h4>
+</p> -->
+### Donnie's list with React, Redux 
 
 
 [![React](https://img.shields.io/badge/react-16.2.0-lightgrey.svg)](https://github.com/facebook/react)
