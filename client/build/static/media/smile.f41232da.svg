@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="68px" height="68px" viewBox="0 0 68 68" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.1 (57501) - http://www.bohemiancoding.com/sketch -->
+    <title>smile</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="smile" transform="translate(1.000000, 1.000000)">
+            <circle id="Oval-5" stroke="#FFFFFF" stroke-width="2" cx="33" cy="33" r="33"></circle>
+            <path d="M43.8628771,47.3739622 C40.6297233,45.6181873 36.9248483,44.6209033 32.9870452,44.6209033 C29.025633,44.6209033 25.2999505,45.6301815 22.0531113,47.405624" id="Oval-5" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" transform="translate(32.957994, 46.013264) scale(1, -1) translate(-32.957994, -46.013264) "></path>
+            <g id="Group-7" transform="translate(17.000000, 24.000000)" fill="#FFFFFF" fill-rule="nonzero">
+                <circle id="Oval-6" cx="2.5" cy="2.5" r="2.5"></circle>
+                <circle id="Oval-6-Copy" cx="28.75" cy="2.5" r="2.5"></circle>
+            </g>
+        </g>
+    </g>
+</svg>
