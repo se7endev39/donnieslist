@@ -1,17 +1,4 @@
-<!-- <h1 align="center">
-  <br>
-  <a href="https://donnieslist.com">
-  </a>
-  <br>
-  Donnie's List
-  <br>
-</h1>
-<p align="center">
-    <img src='https://forthebadge.com/images/badges/made-with-javascript.svg' />
-    <img src='https://forthebadge.com/images/badges/uses-css.svg' />
-    <img src='https://forthebadge.com/images/badges/validated-html5.svg' />
-    <img src='https://forthebadge.com/images/badges/uses-html.svg' />
-</p> -->
+
 ### Donnie's list with React, Redux 
 
 
