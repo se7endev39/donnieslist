@@ -1,0 +1,117 @@
+openapi: 3.0.0
+info:
+  title: Donnie's List
+  description: Project based on providing online coaching. Build on top of MERN platform using Javascript ES6 Features.
+  version: 0.0.1
+servers:
+  - url: http://donnieslist.com
+    description: Production server
+security:
+ - bearerAuth: []  
+paths:
+  /auth/register:
+    post:
+      tags:
+      - Register
+      summary: Registers a new users on Donnie's List
+      description: Creates new user
+      requestBody:
+        description: "Has details of user to be registered"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUserBody'
+      responses:
+        '200':
+          description: Register a new user, return a JWT token in data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterUser_Success'
+        '400':
+          description: Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidParams'
+        '500':
+          description: Fail to create session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+  
+
+components:    
+  schemas:
+    InvalidParams:
+      title: Invalid Parameters
+      type: object
+      properties:
+        data:
+          type: string
+          description: Message text
+          example: "Key: '.Referrer' Error:Field validation for 'Referrer' failed on the 'required' tag"
+        verdict:
+          type: string
+          description: Message text
+          example: "invalid_parameters"
+        time:
+          type: string
+          example: "2018-07-20T11:01:04+07:00"
+        message:
+          type: string
+          example: "invalid params"
+    InternalServerError:
+      title: Internal Server Error
+      type: object
+      properties:
+        data:
+          type: object
+          description: Error object
+          example: {}
+        verdict:
+          type: string
+          description: Message text
+          example: "failure"
+        time:
+          type: string
+          example: "2018-07-20T11:01:04+07:00"
+        message:
+          type: string
+          example: ""
+
+    RegisterUser_Success:
+      title: Response for register 
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        token:
+          type: string
+          example: "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uX2lkIjoxLCJleHAiOjE1MzM4OTk4OTIsImlhdCI6MTUzMzgxMzQ5MiwiaXNzIjoidHJ1c3Rpbmdfc29jaWFsIn0.gNEBj7DWRKNP1dKJ9eMET-Tmc5fl84GXs6XroPLA3YBFFKxef0zkj5j_DTc2JNg5IV_-jVH6sG8-0Czfn35s6FYi1a0vm7g9DFV1iGso6nqio4Kh5fEKBR8AtFYFec13fD35esoyF4XeUM2p4J_hNN1CVtOiJT_xYUV9JQG6QG8i69jeYrJs2l4C6mLejNDWfzRHkAOpIdQXYWdbEWRdCikv8HNbskNfPjjBr5ffhK9FDdEB2GuCfM2a0tt-_XhxLbwCLpdQLFbDeIWDKu7TSktpclhNjfldAWhhRDlWXaZmX9VWJFQ02NVmgWRhQEVPB--lbaAN5viuZ50d6s2w4A"
+    RegisterUserBody:
+      title: Register User body
+      type: object
+      required:
+        - email
+        - firstName
+        - lastName
+        - password
+      properties:
+        email:
+          type: string
+          example: "abc@def.com"
+        firstName:
+          type: string
+          example: "John"
+        lastName:
+          type: string
+          example: "Doe"
+        password:
+          type: string
+          example: "dsxewsf"
+
+    
