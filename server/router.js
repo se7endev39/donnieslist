@@ -1,6 +1,8 @@
+const stripe = require('stripe');
+
 const AuthenticationController = require('./controllers/authentication');
 const UserController = require('./controllers/user');
-const CommentController = require('./controllers/comment')
+const CommentController = require('./controllers/comment');
 const ExpertsController = require('./controllers/experts');
 const VideoSessionController = require('./controllers/videosession');
 const AudioSessionController = require('./controllers/audiosession');
@@ -10,59 +12,59 @@ const ExpertChatController = require('./controllers/expertchat');
 const CommunicationController = require('./controllers/communication');
 const StripeController = require('./controllers/stripe');
 const VideoSessionStripeController = require('./controllers/video-session-stripe');
-const MainSettings                 = require('./config/main')
+const MainSettings = require('./config/main');
 
-var multer = require("multer")
+const multer = require('multer');
 
 // storage needed for saving images from forms
-var storage         =   multer.diskStorage({
-  destination: function (req, file, callback) {
+const storage = multer.diskStorage({
+  destination(req, file, callback) {
     callback(null, './public/uploads');
   },
-  filename: function (req, file, callback) {
-    callback(null, Date.now() + '-' + file.originalname);
+  filename(req, file, callback) {
+    callback(null, `${Date.now()}-${file.originalname}`);
   }
 });
 
 // var upload = multer({ storage : storage}).array('ProfileImage',2);
-var upload  = multer({ storage : storage}).fields([{ name: 'RelatedImages1', maxCount: 1 }]); //upload Midleware
+const upload = multer({ storage }).fields([{ name: 'RelatedImages1', maxCount: 1 }]); // upload Midleware
 
+// const bcrypt = require('bcryptjs');
 
-var bcrypt      = require('bcryptjs')
-const saltRounds = 10;
-var salt  = bcrypt.genSaltSync(saltRounds);
+// const saltRounds = 10;
+// const salt = bcrypt.genSaltSync(saltRounds);
 
 // const AdminsUsersList = require('./controllers/getlist')
 
-const AdminController       = require('./controllers/theAdminController')
+const AdminController = require('./controllers/theAdminController');
 
-var User = require('./models/user')
-var VideoSession =require('./models/videosession')
+const User = require('./models/user');
+// const VideoSession = require('./models/videosession');
 
 const express = require('express');
 const passport = require('passport');
-const ROLE_MEMBER = require('./constants').ROLE_MEMBER;
-const ROLE_CLIENT = require('./constants').ROLE_CLIENT;
-const ROLE_OWNER = require('./constants').ROLE_OWNER;
+// const ROLE_MEMBER = require('./constants').ROLE_MEMBER;
+// const ROLE_CLIENT = require('./constants').ROLE_CLIENT;
+// const ROLE_OWNER = require('./constants').ROLE_OWNER;
 const ROLE_ADMIN = require('./constants').ROLE_ADMIN;
 
-const passportService = require('./config/passport');
+// const passportService = require('./config/passport');
 
 // Middleware to require login/auth
 const requireAuth = passport.authenticate('jwt', { session: false });
 const requireLogin = passport.authenticate('local', { session: false });
 
-module.exports = function (app) {
+module.exports = (app) => {
   // Initializing route groups
-  const apiRoutes = express.Router(),
-    authRoutes = express.Router(),
-    userRoutes = express.Router(),
-    usersOwnRoutes=express.Router(),
-    chatRoutes = express.Router(),
-    expertChatRoutes = express.Router(),
-    payRoutes = express.Router(),
-    videoSessionStripeRoutes = express.Router(),
-    communicationRoutes = express.Router();
+  const apiRoutes = express.Router();
+  const authRoutes = express.Router();
+  const userRoutes = express.Router();
+  const usersOwnRoutes = express.Router();
+  const chatRoutes = express.Router();
+  const expertChatRoutes = express.Router();
+  const payRoutes = express.Router();
+  const videoSessionStripeRoutes = express.Router();
+  const communicationRoutes = express.Router();
 
   //= ========================
   // Experts Routes
@@ -80,12 +82,15 @@ module.exports = function (app) {
   //= ========================
   apiRoutes.post('/auth/login-facebook-user', AuthenticationController.loginFacebookUser);
 
-  apiRoutes.get('/auth/facebook', passport.authenticate('facebook', { scope : 'email' }));
+  apiRoutes.get('/auth/facebook', passport.authenticate('facebook', { scope: 'email' }));
 
-  apiRoutes.get('/auth/facebook/callback',
-    passport.authenticate('facebook', { session: false, failureRedirect: "/" }),
-    function(req, res) {
-      res.redirect(MainSettings.website_url+"/login-social/?facebook_token=" + req.user.jwtLoginAccessToken);
+  apiRoutes.get(
+    '/auth/facebook/callback',
+    passport.authenticate('facebook', { session: false, failureRedirect: '/' }),
+    (req, res) => {
+      res.redirect(
+        `${MainSettings.website_url}/login-social/?facebook_token=${req.user.jwtLoginAccessToken}`
+      );
     }
   );
 
@@ -98,21 +103,23 @@ module.exports = function (app) {
   //   console.log(req.query)
   //   res.json({m:"working"})
 
-
   // })
 
   apiRoutes.get('/auth/twitter', passport.authenticate('twitter'));
 
-  apiRoutes.get('/auth/twitter/callback',
-    passport.authenticate('twitter', { session: false, failureRedirect: "/" }),
-    function(req, res) {
-      res.redirect("http://localhost:5000/login-social/?twitter_token=" + req.user.jwtLoginAccessToken);
-  });
+  apiRoutes.get(
+    '/auth/twitter/callback',
+    passport.authenticate('twitter', { session: false, failureRedirect: '/' }),
+    (req, res) => {
+      res.redirect(
+        `http://localhost:5000/login-social/?twitter_token=${req.user.jwtLoginAccessToken}`
+      );
+    }
+  );
 
-
-  apiRoutes.get('/test-stripe-payment', function(req, res) {
-      var stripe = require("stripe")("sk_test_08cuSozBbGN2QPnpieyjxomZ");
-      res.redirect("");
+  apiRoutes.get('/test-stripe-payment', (req, res) => {
+    stripe('sk_test_08cuSozBbGN2QPnpieyjxomZ');
+    res.redirect('');
   });
 
   apiRoutes.post('/auth/twitter-send-jwt-token', AuthenticationController.twitterSendJWTtoken);
@@ -130,7 +137,10 @@ module.exports = function (app) {
   authRoutes.post('/reset-password/:token', AuthenticationController.verifyToken);
 
   // Signup link for expert
-  authRoutes.post('/signupExpertSendSignupLink', AuthenticationController.signupExpertSendSignupLink);
+  authRoutes.post(
+    '/signupExpertSendSignupLink',
+    AuthenticationController.signupExpertSendSignupLink
+  );
 
   //= ========================
   // User Routes
@@ -147,15 +157,19 @@ module.exports = function (app) {
   userRoutes.post('/fetch-account-info', UserController.FetchAccountInfo);
   // userRoutes.post('/add-account-info', UserController.addAccountInfo);
 
-
   // Test protected route
   apiRoutes.get('/protected', requireAuth, (req, res) => {
     res.send({ content: 'The protected test route is functional!' });
   });
 
-  apiRoutes.get('/admins-only', requireAuth, AuthenticationController.roleAuthorization(ROLE_ADMIN), (req, res) => {
-    res.send({ content: 'Admin dashboard is working.' });
-  });
+  apiRoutes.get(
+    '/admins-only',
+    requireAuth,
+    AuthenticationController.roleAuthorization(ROLE_ADMIN),
+    (req, res) => {
+      res.send({ content: 'Admin dashboard is working.' });
+    }
+  );
 
   //= ========================
   // Experts Routes
@@ -175,19 +189,22 @@ module.exports = function (app) {
 
   apiRoutes.get('/getExpertStories/:expertEmail', ExpertsController.getExpertStories);
 
-  apiRoutes.get('/getExpertStoriesBasedOnRole/:expertRole', ExpertsController.getExpertStoriesBasedOnRole);
+  apiRoutes.get(
+    '/getExpertStoriesBasedOnRole/:expertRole',
+    ExpertsController.getExpertStoriesBasedOnRole
+  );
 
-  apiRoutes.get('/getExpertEmailFromToken:token',ExpertsController.getExpertEmailFromToken);
+  apiRoutes.get('/getExpertEmailFromToken:token', ExpertsController.getExpertEmailFromToken);
 
-  apiRoutes.post('/addEndorsements',ExpertsController.addEndorsements);
-  apiRoutes.post('/getEndorsements',ExpertsController.getEndorsements);
-  apiRoutes.post('/getMyExpertsListing',ExpertsController.getMyExpertsListing);
+  apiRoutes.post('/addEndorsements', ExpertsController.addEndorsements);
+  apiRoutes.post('/getEndorsements', ExpertsController.getEndorsements);
+  apiRoutes.post('/getMyExpertsListing', ExpertsController.getMyExpertsListing);
   //= ========================
   // Session Routes
   //= ========================
-  //to be created by expert
+  // to be created by expert
   apiRoutes.post('/createVideoSession/', VideoSessionController.createVideoSession);
-  //to be joined by user
+  // to be joined by user
   apiRoutes.post('/joinVideoSession/', VideoSessionController.joinVideoSession);
 
   // Audio call session route
@@ -196,7 +213,10 @@ module.exports = function (app) {
 
   // recording audio call session route
   apiRoutes.post('/start_recording', ArchiveSessionController.start_recording);
-  apiRoutes.get('/stop_recording/:expertEmail/:userEmail/:archiveID', ArchiveSessionController.stop_recording);
+  apiRoutes.get(
+    '/stop_recording/:expertEmail/:userEmail/:archiveID',
+    ArchiveSessionController.stop_recording
+  );
   apiRoutes.post('/getArchiveSessionAndToken', ArchiveSessionController.getArchiveSessionAndToken);
   apiRoutes.post('/send_recording', ArchiveSessionController.send_recording);
 
@@ -231,30 +251,52 @@ module.exports = function (app) {
   apiRoutes.use('/expertchat', expertChatRoutes);
 
   // View messages to and from authenticated user
-  //expertChatRoutes.get('/', requireAuth, ExpertChatController.getConversations);
+  // expertChatRoutes.get('/', requireAuth, ExpertChatController.getConversations);
 
   // Retrieve single conversation
-  expertChatRoutes.get('/fetchSessionChat/:sessionOwnerUsername/:email', requireAuth, ExpertChatController.fetchSessionChat);
+  expertChatRoutes.get(
+    '/fetchSessionChat/:sessionOwnerUsername/:email',
+    requireAuth,
+    ExpertChatController.fetchSessionChat
+  );
 
   // Send reply in conversation
   expertChatRoutes.post('/expertsessionchat', requireAuth, ExpertChatController.expertsessionchat);
 
   // Start new conversation
-  //expertChatRoutes.post('/new/:recipient', requireAuth, ExpertChatController.newConversation);
+  // expertChatRoutes.post('/new/:recipient', requireAuth, ExpertChatController.newConversation);
 
   //= ========================
   // Video Session Stripe Payment Routes
   //= ========================
-  apiRoutes.use('/videosession',videoSessionStripeRoutes);
+  apiRoutes.use('/videosession', videoSessionStripeRoutes);
 
-  videoSessionStripeRoutes.post('/recharge-video-session', VideoSessionStripeController.rechargeVideoSession);
-  videoSessionStripeRoutes.post('/add-money-to-wallet', VideoSessionStripeController.addMoneyToWallet);
-  videoSessionStripeRoutes.post('/payment-video-session', VideoSessionStripeController.paymentVideoSession);
+  videoSessionStripeRoutes.post(
+    '/recharge-video-session',
+    VideoSessionStripeController.rechargeVideoSession
+  );
+  videoSessionStripeRoutes.post(
+    '/add-money-to-wallet',
+    VideoSessionStripeController.addMoneyToWallet
+  );
+  videoSessionStripeRoutes.post(
+    '/payment-video-session',
+    VideoSessionStripeController.paymentVideoSession
+  );
 
-  videoSessionStripeRoutes.post('/check-before-session-start', VideoSessionStripeController.checkBeforeSessionStart);
-  videoSessionStripeRoutes.post('/save-video-session-info', VideoSessionStripeController.saveVideoSessionInfo);
+  videoSessionStripeRoutes.post(
+    '/check-before-session-start',
+    VideoSessionStripeController.checkBeforeSessionStart
+  );
+  videoSessionStripeRoutes.post(
+    '/save-video-session-info',
+    VideoSessionStripeController.saveVideoSessionInfo
+  );
 
-  videoSessionStripeRoutes.get('/send-expert-invoice', VideoSessionStripeController.sendExpertInvoice);
+  videoSessionStripeRoutes.get(
+    '/send-expert-invoice',
+    VideoSessionStripeController.sendExpertInvoice
+  );
 
   //= ========================
   // Payment Routes
@@ -286,49 +328,53 @@ module.exports = function (app) {
 
   // fetch list of all users for admin
   apiRoutes.get('/getUsersList', AdminController.theAdminsUserList);
-  apiRoutes.post('/BanHim', AdminController.AdminToBanOrUnBanUser)
+  apiRoutes.post('/BanHim', AdminController.AdminToBanOrUnBanUser);
 
   // /api/getuserInfo/
-  apiRoutes.post('/getuserInfo/:id', AdminController.AdminGetUserInfo)
+  apiRoutes.post('/getuserInfo/:id', AdminController.AdminGetUserInfo);
 
   // updating the users information
-  apiRoutes.post('/UpdateUserInfo',AdminController.UpdateUserInfo )
+  apiRoutes.post('/UpdateUserInfo', AdminController.UpdateUserInfo);
 
-// /GetActiveSessions
-  apiRoutes.post('/GetActiveSessions', function(req,res){
-    User.aggregate([
-      {
-          $match: { role: 'Expert', videoSessionAvailability:true }
-      },
-      {
-        $lookup: {
-          from: "videosessions",
-          localField: "email",
-          foreignField: "expertEmail",
-          as: "AggregatedDetails"
-        }
-      },
-      {
-        $match: {
-          "AggregatedDetails.sessionCompletionStatus":"UNCOMPLETED","AggregatedDetails.sessionStatus":"ACTIVE"
-        }
-      },
-      { $sort: { sessionCreationDate: -1 } },
-      {$limit:1}
-    ], function(err, allusers){
-      // console.log(JSON.stringify(allusers))
-      res.json({AllUsers:allusers})
-    })
-  })
-  //fetch my own profile (can be called by all the three)
+  // /GetActiveSessions
+  apiRoutes.post('/GetActiveSessions', (req, res) => {
+    User.aggregate(
+      [
+        {
+          $match: { role: 'Expert', videoSessionAvailability: true }
+        },
+        {
+          $lookup: {
+            from: 'videosessions',
+            localField: 'email',
+            foreignField: 'expertEmail',
+            as: 'AggregatedDetails'
+          }
+        },
+        {
+          $match: {
+            'AggregatedDetails.sessionCompletionStatus': 'UNCOMPLETED',
+            'AggregatedDetails.sessionStatus': 'ACTIVE'
+          }
+        },
+        { $sort: { sessionCreationDate: -1 } },
+        { $limit: 1 }
+      ],
+      (err, allusers) => {
+        // console.log(JSON.stringify(allusers))
+        res.json({ AllUsers: allusers });
+      }
+    );
+  });
+  // fetch my own profile (can be called by all the three)
   usersOwnRoutes.get('/:userId', requireAuth, UserController.viewMyProfile);
   usersOwnRoutes.get('/:userId/:code', requireAuth, UserController.editMyProfileStripeID);
 
   // relates to profile updation by user itself
-  userRoutes.post('/update', UserController.UpdateMyOwnProfile)
+  userRoutes.post('/update', UserController.UpdateMyOwnProfile);
 
   // relates to profilePictureUpdation
-  userRoutes.post('/update/profile', upload, UserController.UpdateMyOwnProfilePicture)
+  userRoutes.post('/update/profile', upload, UserController.UpdateMyOwnProfilePicture);
 
   // Send email from contact form
   communicationRoutes.post('/contact', CommunicationController.sendContactForm);
