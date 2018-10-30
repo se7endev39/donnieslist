@@ -1,9 +1,6 @@
 var User = require('../models/user')
 var nodemailer = require('nodemailer')
-
-
 var   config =require ("../config/main")
-
 
   var  transporter = nodemailer.createTransport({
       service: 'Gmail',
@@ -13,18 +10,6 @@ var   config =require ("../config/main")
 
       },
   });
-
-
-// var transporter = nodemailer.createTransport({
-//     service: 'gmail',
-//     auth: {
-//         user : 'test4rvtech@gmail.com',
-//         pass : 'RVtechtest#123',
-//     },
-
-// });
-
-
 
 exports.theAdminsUserList = function(req, res) {
 
