@@ -77,8 +77,10 @@ exports.sendRegistrationEmail = function sendRegistrationEmail(userInfo) {
     } Registration</title></head><body><div style="width:580px;margin:0 auto;border:12px solid #f0f1f2;color:#696969;font:14px Arial,Helvetica,sans-serif"><table align="center" width="100%" height="auto" style="position:relative" cellpadding="0" cellspacing="0"> <tbody> <tr> <td> <center><img src="http://www.donnieslist.com:3000/uploads/banner-email.jpg" border="0" width="100%" height="200" class="CToWUd a6T" tabindex="0"> <img src="https://www.donnieslist.com/src/public/img/donnieslist-logo.png" style="width: 35%;position: absolute;top: 150px;left: 10px;"><div class="a6S" dir="ltr" style="opacity: 0.01; left: 641px; top: 270px;"></div></center> </td> </tr> </tbody></table>`;
 
   // const emailHtmlHeader =
-  //  `<div class="content-container" style="padding:18px;"><!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${
-  //  siteName
+  //  `<div class="content-container" style="padding:18px;"><!doctype html><html> \
+  // <head><meta charset="utf-8"> \
+  // <meta name="viewport" content="width=device-width, initial-scale=1"><title>${ \
+  //  siteName \
   //  } Registration</title></head><body><div style="width:580px;margin:0 auto;border:12px solid #f0f1f2;position:relative;color:#696969;font:14px Arial,Helvetica,sans-serif"><table align="center" width="100%" height="auto" style="position:relative" cellpadding="0" cellspacing="0"> <tbody> <tr> <td> <center><img src="http://www.donnieslist.com:3000/uploads/banner-email.jpg" border="0" width="100%" height="200" class="CToWUd a6T" tabindex="0"> <img src="http://www.donnieslist.com:3000/uploads/Donnys-List.png" style="width: 35%;position: absolute;top: 150px;left: 10px;"><div class="a6S" dir="ltr" style="opacity: 0.01; left: 641px; top: 270px;"></div></center> </td> </tr> </tbody></table>`;
 
   const emailHtmlFoot = '</body></html>';
@@ -132,8 +134,10 @@ exports.sendExpertSignupTokenEmail = function sendExpertSignupTokenEmail(userInf
     } Registration</title></head><body><div style="width:580px;margin:0 auto;border:12px solid #f0f1f2;color:#696969;font:14px Arial,Helvetica,sans-serif"><table align="center" width="100%" height="auto" style="position:relative" cellpadding="0" cellspacing="0"> <tbody> <tr> <td> <center><img src="http://www.donnieslist.com:3000/uploads/banner-email.jpg" border="0" width="100%" height="200" class="CToWUd a6T" tabindex="0"> <img src="https://www.donnieslist.com/src/public/img/donnieslist-logo.png" style="width: 35%;position: absolute;top: 150px;left: 10px;"><div class="a6S" dir="ltr" style="opacity: 0.01; left: 641px; top: 270px;"></div></center> </td> </tr> </tbody></table>`;
 
   // const emailHtmlHeader =
-  //  `<div class="content-container" style="padding:18px;"><!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${
-  //  siteName
+  //  `<div class="content-container" style="padding:18px;"> \
+  // <!doctype html><html><head><meta charset="utf-8">< \
+  // meta name="viewport" content="width=device-width, initial-scale=1"><title>${ \
+  //  siteName \
   //  } Registration</title></head><body><div style="width:580px;margin:0 auto;border:12px solid #f0f1f2;position:relative;color:#696969;font:14px Arial,Helvetica,sans-serif"><table align="center" width="100%" height="auto" style="position:relative" cellpadding="0" cellspacing="0"> <tbody> <tr> <td> <center><img src="http://www.donnieslist.com:3000/uploads/banner-email.jpg" border="0" width="100%" height="200" class="CToWUd a6T" tabindex="0"> <img src="http://www.donnieslist.com:3000/uploads/Donnys-List.png" style="width: 35%;position: absolute;top: 150px;left: 10px;"><div class="a6S" dir="ltr" style="opacity: 0.01; left: 641px; top: 270px;"></div></center> </td> </tr> </tbody></table>`;
 
   const emailHtmlFoot = '</body></html>';
@@ -167,15 +171,15 @@ exports.sendExpertSignupTokenEmail = function sendExpertSignupTokenEmail(userInf
     subject: `Welcome to ${siteName}! Signup as Expert`,
     html: htmlC
   };
-  console.log('mail options =======> ', mailOptions);
+  // console.log('mail options =======> ', mailOptions);
 
-  console.log(config.gmailEmail, config.gmailPassword);
-  transporter.sendMail(mailOptions, (error, info) => {
+  // console.log(config.gmailEmail, config.gmailPassword);
+  transporter.sendMail(mailOptions, (error) => {
     if (error) {
-      console.log('In error of nodemailer');
-      console.log(error);
+    //  console.log('In error of nodemailer');
+    //  console.log(error);
     } else {
-      console.log('Message sent to user: ' /* + JSON.stringify(info)*/);
+    //  console.log('Message sent to user: ' /* + JSON.stringify(info)*/);
     }
   });
 };
@@ -189,7 +193,8 @@ exports.sendExpertSignupSuccessEmail = function sendExpertSignupSuccessEmail(use
     siteName
     } Registration</title></head><body><div style="width:580px;margin:0 auto;border:12px solid #f0f1f2;color:#696969;font:14px Arial,Helvetica,sans-serif"><table align="center" width="100%" height="auto" style="position:relative" cellpadding="0" cellspacing="0"> <tbody> <tr> <td> <center><img src="http://www.donnieslist.com:3000/uploads/banner-email.jpg" border="0" width="100%" height="200" class="CToWUd a6T" tabindex="0"> <img src="https://www.donnieslist.com/src/public/img/donnieslist-logo.png" style="width: 35%;position: absolute;top: 150px;left: 10px;"><div class="a6S" dir="ltr" style="opacity: 0.01; left: 641px; top: 270px;"></div></center> </td> </tr> </tbody></table>`;
   // const emailHtmlHeader =
-  //  `<div class="content-container" style="padding:18px;"><!doctype html><html><head><meta charset="utf-8">
+  //  `<div class="content-container" style="padding:18px;">
+  // <!doctype html><html><head><meta charset="utf-8">
   // <meta name="viewport" content="width=device-width, initial-scale=1"><title>${
   //  siteName
   //  } Registration</title></head><body><div style="width:580px;margin:0 auto;border:12px solid #f0f1f2;position:relative;color:#696969;font:14px Arial,Helvetica,sans-serif"><table align="center" width="100%" height="auto" style="position:relative" cellpadding="0" cellspacing="0"> <tbody> <tr> <td> <center><img src="http://www.donnieslist.com:3000/uploads/banner-email.jpg" border="0" width="100%" height="200" class="CToWUd a6T" tabindex="0"> <img src="http://www.donnieslist.com:3000/uploads/Donnys-List.png" style="width: 35%;position: absolute;top: 150px;left: 10px;"><div class="a6S" dir="ltr" style="opacity: 0.01; left: 641px; top: 270px;"></div></center> </td> </tr> </tbody></table>`;
@@ -223,12 +228,12 @@ exports.sendExpertSignupSuccessEmail = function sendExpertSignupSuccessEmail(use
     html: htmlC
   };
 
-  transporter.sendMail(mailOptions, (error, info) => {
+  transporter.sendMail(mailOptions, (error) => {
     if (error) {
-      console.log('In error of nodemailer');
-      console.log(error);
+    //  console.log('In error of nodemailer');
+    //  console.log(error);
     } else {
-      console.log('Message sent to user: ' /* + JSON.stringify(info)*/);
+    //  console.log('Message sent to user: ' /* + JSON.stringify(info)*/);
     }
   });
 };
@@ -236,13 +241,13 @@ exports.sendExpertSignupSuccessEmail = function sendExpertSignupSuccessEmail(use
 /* after successfull expert signup, token from expertsignuptokens
    table will be deleted to prevent miss use  */
 exports.deleteExpertSignupToken = function deleteExpertSignupToken(userEmail) {
-  console.log(`userEmail: ${userEmail}`);
+  // console.log(`userEmail: ${userEmail}`);
   ExpertSignupToken.remove({ email: userEmail }, (err) => {
     if (!err) {
-      console.log('record deleted');
+    //  console.log('record deleted');
       return true;
     }
-    console.log('record not deleted');
+    // console.log('record not deleted');
     return false;
   });
 };

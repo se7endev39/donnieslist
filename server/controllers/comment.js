@@ -1,15 +1,15 @@
-const Comment = require('../models/comment')
+const Comment = require('../models/comment');
 const mongoose = require('mongoose');
 
-exports.getComments = (req, res, next) => {
-  var slug = req.params.slug;
+exports.getComments = (req, res) => {
+  const slug = req.params.slug;
   Comment.aggregate([
     {
       $match: { parentId: '-1', expert: slug }
     },
     {
       $project: {
-        id: { $toString: "$_id" },
+        id: { $toString: '$_id' },
         author: 1,
         text: 1,
         voters: 1,
@@ -18,62 +18,62 @@ exports.getComments = (req, res, next) => {
     },
     {
       $lookup: {
-        from: "users",
-        localField: "author",
-        foreignField: "slug",
-        as: "users"
+        from: 'users',
+        localField: 'author',
+        foreignField: 'slug',
+        as: 'users'
       }
     },
     {
       $lookup: {
-        from: "comments",
+        from: 'comments',
         let: {
-          parent_id: "$id"
+          parent_id: '$id'
         },
         /* localField: "id",
         foreignField: "parentId", */
         pipeline: [{
           $project: {
-            id: { $toString:"$_id" },
+            id: { $toString: '$_id' },
             parentId: 1,
             author: 1,
             text: 1,
             voters: 1,
             updatedAt: 1
           }
-        },{
-          $match: { $expr: { $eq: ["$parentId", "$$parent_id"] } }
-        },{
+        }, {
+          $match: { $expr: { $eq: ['$parentId', '$$parent_id'] } }
+        }, {
           $lookup: {
-            from: "users",
-            localField: "author",
-            foreignField: "slug",
-            as: "users"
+            from: 'users',
+            localField: 'author',
+            foreignField: 'slug',
+            as: 'users'
           }
-        },{
-          $group:{
-             _id: "$_id",
-             authorId: { $first: "$author" },
-             text:{ $first: "$text" },
-             voters: { $first: '$voters' },
-             authorName: { $first: { $arrayElemAt: ["$users.profile", 0] } },
-             profileImage: { $first: { $arrayElemAt: ["$users.profileImage", 0] } },
-             updatedAt: { $first: '$updatedAt' }
+        }, {
+          $group: {
+            _id: '$_id',
+            authorId: { $first: '$author' },
+            text: { $first: '$text' },
+            voters: { $first: '$voters' },
+            authorName: { $first: { $arrayElemAt: ['$users.profile', 0] } },
+            profileImage: { $first: { $arrayElemAt: ['$users.profileImage', 0] } },
+            updatedAt: { $first: '$updatedAt' }
           }
         }],
-        as: "answers"
+        as: 'answers'
       }
     },
     {
-      $group:{
-       _id: "$_id",
-       authorId: { $first: "$author" },
-       text:{ $first: "$text" },
-       voters: { $first: "$voters" },
-       answers: { $first: "$answers" },
-       authorName: { $first: { $arrayElemAt: ["$users.profile", 0] } },
-       profileImage: { $first: { $arrayElemAt: ["$users.profileImage", 0] } },
-       updatedAt: { $first: '$updatedAt' }
+      $group: {
+        _id: '$_id',
+        authorId: { $first: '$author' },
+        text: { $first: '$text' },
+        voters: { $first: '$voters' },
+        answers: { $first: '$answers' },
+        authorName: { $first: { $arrayElemAt: ['$users.profile', 0] } },
+        profileImage: { $first: { $arrayElemAt: ['$users.profileImage', 0] } },
+        updatedAt: { $first: '$updatedAt' }
       }
     }
   ]).exec(
@@ -90,9 +90,9 @@ exports.getComments = (req, res, next) => {
       });
     }
   );
-}
+};
 
-exports.addComment = (req, res, next) => {
+exports.addComment = (req, res) => {
   const comment = new Comment();
   const { expert, author, text, parentId } = req.body;
   if (!author || !text || !parentId) {
@@ -105,7 +105,7 @@ exports.addComment = (req, res, next) => {
   comment.author = author;
   comment.text = text;
   comment.parentId = parentId;
-  comment.save(err => {
+  return comment.save((err) => {
     if (err) {
       return res.json({
         success: false,
@@ -116,9 +116,9 @@ exports.addComment = (req, res, next) => {
       success: true
     });
   });
-}
+};
 
-exports.updateComment = (req, res, next) => {
+exports.updateComment = (req, res) => {
   const { id, text } = req.body;
   if (!id) {
     return res.json({
@@ -126,7 +126,7 @@ exports.updateComment = (req, res, next) => {
       error: { message: 'No comment id provided' }
     });
   }
-  Comment.findById(id, (error, comment) => {
+  return Comment.findById(id, (error, comment) => {
     if (error) {
       return res.json({
         success: false,
@@ -134,8 +134,8 @@ exports.updateComment = (req, res, next) => {
       });
     }
     if (text) comment.text = text;
-    comment.save(error => {
-      if (error) {
+    return comment.save((err) => {
+      if (err) {
         return res.json({
           success: false,
           error
@@ -146,9 +146,9 @@ exports.updateComment = (req, res, next) => {
       });
     });
   });
-}
+};
 
-exports.likeComment = (req, res, next) => {
+exports.likeComment = (req, res) => {
   const { id, author } = req.body;
   if (!id) {
     return res.json({
@@ -156,22 +156,22 @@ exports.likeComment = (req, res, next) => {
       error: { message: 'No comment id provided' }
     });
   }
-  Comment.findById(id, (error, comment) => {
+  return Comment.findById(id, (error, comment) => {
     if (error) {
       return res.json({
         success: false,
         error
       });
     }
-    let voter = comment.voters.find(voter => voter.slug == author);
-    if(voter == undefined || !voter){
+    const voter = comment.voters.find(voter => voter.slug === author);
+    if (voter === undefined || !voter) {
       comment.voters.push({ slug: author });
       comment.markModified('voters');
     } else {
-      comment.voters = comment.voters.filter(voter => voter.slug != author);
+      comment.voters = comment.voters.filter(voter => voter.slug !== author);
     }
-    comment.save(error => {
-      if (error) {
+    return comment.save((err) => {
+      if (err) {
         return res.json({
           success: false,
           error
@@ -182,9 +182,9 @@ exports.likeComment = (req, res, next) => {
       });
     });
   });
-}
+};
 
-exports.dislikeComment = (req, res, next) => {
+exports.dislikeComment = (req, res) => {
   const { id, author } = req.body;
   if (!id) {
     return res.json({
@@ -192,7 +192,7 @@ exports.dislikeComment = (req, res, next) => {
       error: { message: 'No comment id provided' }
     });
   }
-  Comment.findById(id, (error, comment) => {
+  return Comment.findById(id, (error, comment) => {
     if (error) {
       return res.json({
         success: false,
@@ -200,8 +200,8 @@ exports.dislikeComment = (req, res, next) => {
       });
     }
     comment.voters = comment.voters.filter(voter => voter.slug != author);
-    comment.save(error => {
-      if (error) {
+    return comment.save((err) => {
+      if (err) {
         return res.json({
           success: false,
           error
@@ -212,9 +212,9 @@ exports.dislikeComment = (req, res, next) => {
       });
     });
   });
-}
+};
 
-exports.deleteComment = (req, res, next) => {
+exports.deleteComment = (req, res) => {
   const { id } = req.body;
   if (!id) {
     return res.json({
@@ -222,7 +222,8 @@ exports.deleteComment = (req, res, next) => {
       error: { message: 'No comment id provided' }
     });
   }
-  Comment.remove({ $or: [ { _id: new mongoose.Types.ObjectId(id) }, { parentId: id } ] }, (error, comment) => {
+  return Comment.remove({ $or: [{ _id: new mongoose.Types.ObjectId(id) },
+     { parentId: id }] }, (error) => {
     if (error) {
       return res.json({
         success: false,
@@ -233,4 +234,4 @@ exports.deleteComment = (req, res, next) => {
       success: true
     });
   });
-}
+};
