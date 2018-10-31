@@ -35,7 +35,7 @@ app.use(bodyParser.urlencoded({ extended: false })); // Parses urlencoded bodies
 app.use(bodyParser.json()); // Send JSON responses
 app.use(logger('dev')); // Log requests to API using morgan
 
-//require('./config/passport')(passport);
+require('./config/passport')(passport);
 
 // Enable CORS from client-side
 app.use((req, res, next) => {
