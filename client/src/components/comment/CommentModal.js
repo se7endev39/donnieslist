@@ -9,7 +9,8 @@ const CommentModal = props => (
     show={ !!props.showModal }
     onHide={ props.handleModalClose }
     animation={ true }
-    bsSize="">
+    bsSize=""
+  >
     <Modal.Header>
       { props.title }
     </Modal.Header>
@@ -18,14 +19,14 @@ const CommentModal = props => (
     </Modal.Body>
     <Modal.Footer>
       {
-        props.showModal == 'need_login' ? (
+        props.showModal === 'need_login' ? (
           <Button onClick={ props.handleModalLogin }>Login</Button>
         ) : null
       }
       <Button onClick={ props.handleModalClose }>Close</Button>
     </Modal.Footer>
   </Modal>
-)
+);
 
 CommentModal.propTypes = {
   title: PropTypes.string,
@@ -33,11 +34,11 @@ CommentModal.propTypes = {
   showModal: PropTypes.string,
   handleModalClose: PropTypes.func.isRequired,
   handleModalLogin: PropTypes.func.isRequired,
-}
+};
 
 CommentModal.defaultProps = {
   title: '',
   text: '',
-}
+};
 
 export default CommentModal;

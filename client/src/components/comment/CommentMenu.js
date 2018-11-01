@@ -14,11 +14,11 @@ const CommentMenu = props => (
     <MenuItem eventKey="1">Edit</MenuItem>
     <MenuItem eventKey="2">Delete</MenuItem>
   </DropdownButton>
-)
+);
 
 CommentMenu.propTypes = {
   handleUpdateComment: PropTypes.func.isRequired,
-  handleDeleteComment: PropTypes.func.isRequired
-}
+  handleDeleteComment: PropTypes.func.isRequired,
+};
 
 export default CommentMenu;

@@ -6,7 +6,7 @@ const CommentNew = props => (
   <form onSubmit={ props.handleSubmitComment }>
     <div className="input-column">
       <div className="image-wrapper">
-        <img src="/src/public/img/person.jpg" className="comment-user"/>
+        <img role="presentation" src="/src/public/img/person.jpg" className="comment-user"/>
       </div>
     </div>
     {
@@ -18,7 +18,7 @@ const CommentNew = props => (
               rows="1"
               maxLength="10000"
               placeholder="Add a public comment..."
-              autocomplete="off"
+              autoComplete="off"
               value={ props.text }
               onChange={ props.handleChangeText }
               onFocus={ (e) => props.handleShowButton(e, true) }
@@ -39,7 +39,7 @@ const CommentNew = props => (
               rows="1"
               maxLength="10000"
               placeholder="Add a public comment..."
-              autocomplete="off"
+              autoComplete="off"
               value=""
               onFocus={ (e) => props.handleShowButton(e, true) }
             />
@@ -48,19 +48,19 @@ const CommentNew = props => (
       )
     }
   </form>
-)
+);
 
 CommentNew.propTypes = {
   text: PropTypes.string,
   showButton: PropTypes.boolean,
   handleChangeText: PropTypes.func.isRequired,
   handleShowButton: PropTypes.func.isRequired,
-  handleSubmitComment: PropTypes.func.isRequired
-}
+  handleSubmitComment: PropTypes.func.isRequired,
+};
 
 CommentNew.defaultProps = {
   text: '',
-  showButton: false
-}
+  showButton: false,
+};
 
 export default CommentNew;

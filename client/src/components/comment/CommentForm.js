@@ -18,7 +18,7 @@ const CommentForm = props => (
         <textarea
           name="text"
           maxLength="10000"
-          autocomplete="off"
+          autoComplete="off"
           value={ props.text }
           rows={ props.text ? props.text.split('\n').length : 1 }
           placeholder={ props.placeholder }
@@ -33,20 +33,21 @@ const CommentForm = props => (
       </div>
     </div>
   </form>
-)
+);
 
 CommentForm.propTypes = {
   text: PropTypes.string,
+  formType: PropTypes.string,
   buttonName: PropTypes.string,
   placeholder: PropTypes.string,
   handleSubmitComment: PropTypes.func.isRequired,
   handleChangeText: PropTypes.func.isRequired,
-  handleShowForm: PropTypes.func.isRequired
-}
+  handleShowForm: PropTypes.func.isRequired,
+};
 
 CommentForm.defaultProps = {
   text: '',
-  buttonName: 'Save'
-}
+  buttonName: 'Save',
+};
 
 export default CommentForm;

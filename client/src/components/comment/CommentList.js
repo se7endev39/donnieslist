@@ -4,18 +4,18 @@ import PropTypes from 'prop-types';
 import Comment from './Comment';
 import { Panel, Glyphicon } from 'react-bootstrap';
 
-const Index = _this => {
-  const commentNodes = _this.props.data.map(comment => (
+const Index=_this => {
+  const commentNodes=_this.props.data.map(comment => (
     <div>
       <Comment
         data={ comment }
         key={ comment._id }
         type={ 'comment' }
-        author = { _this.props.author }
-        expert = { _this.props.expert }
-        parentId = { comment._id }
-        handleShowModal = { _this.props.handleShowModal }
-        handleLoadComments = { _this.props.handleLoadComments }
+        author={ _this.props.author }
+        expert={ _this.props.expert }
+        parentId={ comment._id }
+        handleShowModal={ _this.props.handleShowModal }
+        handleLoadComments={ _this.props.handleLoadComments }
       >
         { comment.text }
       </Comment>
@@ -55,11 +55,11 @@ const Index = _this => {
                       key={ answer._id }
                       type={ 'answer' }
                       data={ answer }
-                      author = { _this.props.author }
-                      expert = { _this.props.expert }
-                      parentId = { comment._id }
-                      handleShowModal = { _this.props.handleShowModal }
-                      handleLoadComments = { _this.props.handleLoadComments }
+                      author={ _this.props.author }
+                      expert={ _this.props.expert }
+                      parentId={ comment._id }
+                      handleShowModal={ _this.props.handleShowModal }
+                      handleLoadComments={ _this.props.handleLoadComments }
                     >
                       { answer.text }
                     </Comment>
@@ -78,26 +78,26 @@ const Index = _this => {
       { commentNodes }
     </div>
   );
-}
+};
 
 class CommentList extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      showReplies: []
+    this.state={
+      showReplies: [],
     };
-    this.handleShowReply = this.handleShowReply.bind(this);
+    this.handleShowReply=this.handleShowReply.bind(this);
   }
 
   componentDidMount() {
   }
 
-  handleShowReply = (e, id) => {
-    e.preventDefault()
-    let _showReplies = this.state.showReplies;
-    _showReplies[id] = !_showReplies[id]
+  handleShowReply=(e, id) => {
+    e.preventDefault();
+    let _showReplies=this.state.showReplies;
+    _showReplies[id]=!_showReplies[id];
     this.setState({
-      showReplies: _showReplies
+      showReplies: _showReplies,
     });
   }
 
@@ -106,7 +106,7 @@ class CommentList extends Component {
   }
 }
 
-CommentList.propTypes = {
+CommentList.propTypes={
   author: PropTypes.object,
   expert: PropTypes.string,
   data: PropTypes.arrayOf(PropTypes.shape({
@@ -122,17 +122,17 @@ CommentList.propTypes = {
       text: PropTypes.string,
       voters: PropTypes.array,
       updatedAt: PropTypes.string,
-      commentId: PropTypes.string
+      commentId: PropTypes.string,
     }),
     updatedAt: PropTypes.string,
   })),
   handleLoadComments: PropTypes.func.isRequired,
-  handleShowModal: PropTypes.func.isRequired
-}
+  handleShowModal: PropTypes.func.isRequired,
+};
 
-CommentList.defaultProps = {
+CommentList.defaultProps={
   data: [],
-  showReplies: []
-}
+  showReplies: [],
+};
 
 export default CommentList;

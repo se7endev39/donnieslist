@@ -2,10 +2,10 @@
 import React, { Component } from 'react';
 // import 'whatwg-fetch';
 import cookie from 'react-cookie';
-import axios from 'axios'
+import axios from 'axios';
 import PropTypes from 'prop-types';
-import { API_URL, Image_URL, errorHandler } from '../../actions/index';
 import { browserHistory } from 'react-router';
+import { API_URL } from '../../actions/index';
 
 import CommentModal from './CommentModal';
 import CommentList from './CommentList';
@@ -19,7 +19,7 @@ class CommentBox extends Component {
       error: null,
       author: '',
       showButton: false,
-      showModal: null
+      showModal: null,
     };
     this.pollInterval = null;
     this.onModalClose = this.onModalClose.bind(this);
@@ -32,14 +32,13 @@ class CommentBox extends Component {
     }
     const currentUser = cookie.load('user');
     if (currentUser) {
-      let name = currentUser.firstName + ' ' + currentUser.lastName;
       this.setState({
         author: {
           id: currentUser.slug,
           name: currentUser.firstName + ' ' + currentUser.lastName,
           /* role: currentUser.role */
-          role: "Expert"
-        }
+          role: 'Expert',
+        },
       });
     }
   }
@@ -51,34 +50,34 @@ class CommentBox extends Component {
 
   onChangeText = (e) => {
     this.setState({
-      text: e.target.value
+      text: e.target.value,
     });
   }
 
   onModalShow = (e, value) => {
     this.setState({
-      showModal: value
-    })
+      showModal: value,
+    });
   }
 
   onModalLogin = (e) => {
     this.setState({
-      showModal: null
-    })
+      showModal: null,
+    });
     this.redirectToLogin(e);
   }
 
-  onModalClose = (e) => {
+  onModalClose = () => {
     this.setState({
-      showModal: null
-    })
+      showModal: null,
+    });
   }
 
   onShowButton = (e, value) => {
     this.setState({
       showButton: value,
-      text: ''
-    })
+      text: '',
+    });
   }
 
   onSubmitComment = (e) => {
@@ -89,21 +88,21 @@ class CommentBox extends Component {
     if (!text || !expert) return;
 
     if (!author) {
-      this.onModalShow(e, 'need_login')
-      return ;
+      this.onModalShow(e, 'need_login');
+      return;
     } else if (author.role !== 'Expert') {
-      this.onModalShow(e, 'need_expert')
-      return ;
+      this.onModalShow(e, 'need_expert');
+      return;
     }
 
-    let parentId = '-1';
+    const parentId = '-1';
     axios.post(`${API_URL}/addComment`, { expert, author: author.id, text, parentId, _id: Date.now().toString() })
       .then((res) => {
         if (!res.data.success) {
           this.setState({ error: res.data.error.message || res.data.error });
         } else {
-          this.onShowButton(e, false)
-          this.loadCommentsFromServer()
+          this.onShowButton(e, false);
+          this.loadCommentsFromServer();
         }
       });
   }
