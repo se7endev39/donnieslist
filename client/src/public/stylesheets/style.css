@@ -267,7 +267,7 @@ i.right { -webkit-transform: translateX(55px); -moz-transform: translateX(55px);
 .Client_image .innerm img, .Client_image .innerm video { max-width: 100%; min-width: 100%; }
 .Client_image .innerm .upperimageName { color: #fff; position: absolute; top: 7px; font-size: 16px; padding-left: 20px; padding-right: 20px; padding-bottom: 11px; width: 100%; z-index: 99; }
 .footer_action_btns { height: 15%; width: 100%; text-align: center; padding: 10px 0; background-color: rgba(8,46,72,0.6); }
-.footer_action_btns ul { list-style: none; padding: 0; position: relative; margin: 0; }
+.footer_action_btns ul { flex: 100; list-style: none; padding: 0; position: relative; margin: 0; }
 .footer_action_btns ul li { display: inline-block; margin: 0px 10px; }
 .footer_action_btns ul li a { width: 45px; height: 45px; display: block; line-height: 45px; background: #01aaeb; font-size: 15px; color: #fff; border-radius: 100px; box-shadow: 0 0px 4px rgba(255,255,255,0.5); }
 .footer_action_btns ul li.Chat_Trigger { position: absolute; left: 20px; }

@@ -230,6 +230,7 @@ class SessionPage extends Component {
                     isShowingInfoAlert: true,
                     infoAlertText: 'Expert has started session!',
                     isExpertStartedSession: true,
+                    sessionStartEndBtn: 'end',
                     videoSessionStartTime: new Date(),
                 });
                 self.state.sessionObj.publish(self.state.publisherObj);
@@ -916,9 +917,6 @@ secondsToTime(secs){
                       
                         {this.state.blurChatAreaStatus ? "" : this.showSessionCallBtn()}
 
-                        {/* this.state.sessionStartEndBtn == 'start' ? <li className="video_session_call_btn start_video_session_call"><Link to="#" data-toggle="tooltip" title="Start Session"  onClick={ e => this.startVideoSession(e)}></Link></li> : <li className="video_session_call_btn end_video_session_call"><Link data-toggle="tooltip" title="End Session" to="javascript:void(0)" onClick={this.disconnect.bind(this)}></Link></li> */}
-                        
-                        
                       {/* this.state.showEndCallOptions ? <li className="phone_call"><Link data-toggle="tooltip" title="End Session" to="javascript:void(0)" onClick={this.disconnect.bind(this)}><i className="fa fa-phone"></i></Link></li> : null */}
                       <li className="clockicon" style={this.redAlertTiming(this.state.time.m)}><a data-toggle="tooltip" title="Session Time" href="javascript:void(0)"><i className="fa fa-clock-o" aria-hidden="true"></i> {this.state.sessionDate} - {this.state.time.h} : {this.state.time.m} : {this.state.time.s}</a></li>
                       { /* }
