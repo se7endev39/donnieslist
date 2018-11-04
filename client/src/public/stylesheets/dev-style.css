@@ -136,7 +136,7 @@ body .experts-list{
 .list-group-item-action { width: 100%; color: #464a4c; text-align: inherit; }
 .session-msg-date { float: right; color: #6e6d73; font-size: 10px; padding: 3px; position: absolute; bottom: 0; right: 0; }
 .sidebar-caption { background: #23282e; color: #fff; line-height: 50px; display: block; text-align: center; font-size: 14px; }
-.clockicon { position: absolute; right: 20px; }
+.clockicon { float: right; }
 .footer_action_btns .clockicon a { width: 170px; text-decoration: none; }
 .btnNull { background: transparent; color: #337ab7; border: none; }
 .WhiteBoard_Trigger { position: absolute; left: 70px; }
@@ -790,4 +790,7 @@ a.Start-Session {
     bottom: 0px;
     right: 0px;
     padding: 4px;
+}
+.video_session_call_btn.start_video_session_call {
+  position: absolute;
 }
