@@ -153,6 +153,7 @@ class SessionPage extends Component {
 
   componentDidMount() {
 
+    const _this = this;
     setTimeout(function(){
       var g = $(".emojionearea-editor")[0]
       if (g == undefined || g == null){
@@ -273,7 +274,9 @@ class SessionPage extends Component {
         session.on('streamCreated', function(event) {
 
           //console.log('streamCreated'+ event.stream.connection.connectionId );
+          let localStream = false;
             if(event.stream.connection.connectionId == session.connection.connectionId){
+              localStream = true;
                 console.log('*** streamCreated same connectiond id ***');
             } else {
                 console.log('*** streamCreated different connectiond id ***');
@@ -295,7 +298,12 @@ class SessionPage extends Component {
 
           //var options = {width: 200, height: 200, 'box-shadow':'0 2px 12px 1px rgba(0,0,0,.89)', insertMode: 'append'}
             //var options = {width: 200, height: 200, 'box-shadow':'0 2px 12px 1px rgba(0,0,0,.89)'};
-            var optionsSubscriber = {width: '100%',height:'100%'};
+            var optionsSubscriber = {
+              insertMode: "append",
+              style: {
+                nameDisplayMode: 'on',
+              }
+            };
           
             var subscriber = session.subscribe(event.stream, 'subscribers' ,optionsSubscriber, function(error) {
             if (error) {
@@ -616,15 +624,20 @@ class SessionPage extends Component {
           } else {
             console.log('connected');
 
-            var optionsPublisher = {width: 200, height: 200, 'z-index': 2,'box-shadow':'0 2px 12px 1px rgba(0,0,0,.89)'};
-           
-            var publisher = OT.initPublisher('45801242', 'publisher',optionsPublisher);
-           
+            var optionsPublisher = {
+              name: _this.state.currentUser.firstName + ' ' + _this.state.currentUser.lastName,
+              'z-index': 2,'box-shadow':'0 2px 12px 1px rgba(0,0,0,.89)'
+            };
+            const el = document.createElement('div');
+            var publisher = OT.initPublisher(el, optionsPublisher);
+            setTimeout(function() {
+              $('#'+publisher.id + " " + ".OT_name").text('Me');
+            }, 500);
+            document.getElementById('subscribers').appendChild(el);
             self.setState({
                 publisherObj: publisher,
                 blurChatAreaStatus:true,
                 blurChatAreaStatusMessage:'Waiting for User to connnect!'
-
             });
             $('.session-page-container').show();
             $('.loader-center-ajax').hide();
@@ -884,13 +897,9 @@ secondsToTime(secs){
                 <div className="Right_Panel">
                   <div className="Client_image">
                     <div className="innerm">
-                      <div id="subscribers" className="chatHead chatHeadLeader"></div>
+                      <div id="subscribers"></div>
                       { this.state.showEndCallOptions ? null : <Loader/> }
                       <div id="publisher"></div>
-                      <div className="upperimageName">
-                        <div className="text-left-detail"><i className="fa fa-user-o" aria-hidden="true"></i> {this.state.firstName} {this.state.lastName}</div>
-                        <div className="text-right-detail"></div>
-                      </div>
                     </div>
                   </div>
 

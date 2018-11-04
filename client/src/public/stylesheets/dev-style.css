@@ -141,6 +141,7 @@ body .experts-list{
 .btnNull { background: transparent; color: #337ab7; border: none; }
 .WhiteBoard_Trigger { position: absolute; left: 70px; }
 .WhiteBoard_Trigger a { background: #1c272d !important; }
+.session-page { height: 100%; }
 .session-page #accordion { margin-top: 56px; }
 .social-login .facebook, .facebook:hover { background-color: #3b5999; border: 2px solid #3b5999; color: #fff; }
 .social-login .twitter, .twitter:hover { background-color: #00aced; border: 2px solid #00aced; color: #fff; }
@@ -523,8 +524,19 @@ div#publisherRecordAudio .OT_archiving.OT_edge-bar-item .OT_archiving-light-box 
 .footer_action_btns ul li.start_video_session_call a { background-color: #398439; background-image: url('/src/public/img/call_pick_up.png'); }
 .footer_action_btns ul li.end_video_session_call a { background-color: #e81123; background-image: url('/src/public/img/call_cancel.png'); }
 .footer_action_btns{ z-index: 9999 }
-div#subscribers{ position: absolute; }
-
+div#subscribers{
+  display: flex;
+  height: 100%;
+  width: 100%;
+  padding: 1%;
+}
+div#subscribers > div.OT_root {
+  flex-grow: 1 !important;
+  height: 100% !important;
+}
+div#subscribers > div.OT_root.OT_subscriber {
+  margin-left: 10px !important;
+}
 /* 10 may */
 
 .upload_footer{display:inline-block;float:left;width:100%;padding:18px 10px;border:solid 1px #ddd;background-color:#f3f3f3}
@@ -757,7 +769,6 @@ a.Start-Session {
 .mainContainer.FullHeightSec { height: calc(100vh - 75px); }
 .mainContainer.FullHeightSec .Left_Panel { height: calc(100vh - 75px); }
 .mainContainer.FullHeightSec .Right_Panel { height: calc(100vh - 75px); }
-.mainContainer.FullHeightSec .Right_Panel .Client_image { height: 100%; }
 .mainContainer.FullHeightSec .Right_Panel .Client_image .innerm { height: 100%; }
 .mainContainer.FullHeightSec .Right_Panel div#publisher { z-index:2!important; }
 .inline-block{display: inline-block;} 
