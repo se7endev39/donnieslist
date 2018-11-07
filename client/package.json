@@ -4,7 +4,7 @@
   "description": "Client-side of Donnys List",
   "main": "index.js",
   "scripts": {
-    "start": "node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js"
+    "start": "node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --port 5000"
   },
   "author": "donny dey",
   "license": "",
