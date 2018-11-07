@@ -437,7 +437,7 @@ OpenTok.prototype.createSession = function (opts, callback) {
   }
 
   // whitelist the keys allowed
-  _.pick(_.defaults(opts, { mediaMode: 'relayed', archiveMode: 'manual' }),
+  _.pick(_.defaults(opts, { mediaMode: 'routed', archiveMode: 'manual' }),
         'mediaMode', 'archiveMode', 'location');
   if (opts.mediaMode !== 'routed' && opts.mediaMode !== 'relayed') {
     opts.mediaMode = 'relayed';
@@ -468,7 +468,10 @@ OpenTok.prototype.createSession = function (opts, callback) {
     relayed: 'enabled'
   };
   opts['p2p.preference'] = mediaModeToParam[opts.mediaMode];
-  delete opts.mediaMode;
+  // delete opts.mediaMode;
+  console.log("*************************************");
+  console.log("New opts", opts);
+  console.log("*************************************");
 
   this._client.createSession(opts, function createSessionCallback(err, json) {
     if (err) {

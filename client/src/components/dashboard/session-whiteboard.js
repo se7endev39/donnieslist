@@ -195,7 +195,7 @@ class SessionWhiteboard extends Component {
                    </a>
                   </div>
                </div>
-              <div id="canvas-wrapper" class="col-md-12">
+              <div id="canvas-wrapper" className="col-md-12">
                 <canvas id="drawing"></canvas>
                 <div className="canvas-tools">
                   <div className="Pen_Tools">

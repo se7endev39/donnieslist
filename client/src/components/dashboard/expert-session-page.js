@@ -70,7 +70,10 @@ class SessionPage extends Component {
       },
       video_session_id: '',
       blurChatAreaStatus:true,
-      blurChatAreaStatusMessage:''
+      blurChatAreaStatusMessage:'',
+      videoDisableWarning: false,
+      videoDisabled: false,
+      subscriber: null,      
     };
 
     this.timer = 0;
@@ -162,28 +165,6 @@ class SessionPage extends Component {
     },1000)
 
 
-//    var todayDate = new Date();
-//    todayDate = todayDate.getDate()+"/"+todayDate.getMonth()+"/"+todayDate.getFullYear();
-//    this.setState({sessionDate : todayDate });
-//    let timeLeftVar = this.secondsToTime(this.state.seconds);
-//    this.setState({ time: timeLeftVar });
-//    var slug = this.props.params.slug;
-//
-//    axios.get(`${API_URL}/getExpertDetail/${slug}`)
-//      .then(res => {
-//        const expert = res.data[0];
-//        this.setState({firstName : res.data[0].profile.firstName });
-//        this.setState({lastName : res.data[0].profile.lastName });
-//        this.setState({expert});
-//      })
-//      .catch(err => {});
-//          
-//        // set current user cookie
-//        this.setState({
-//            currentUser: cookie.load('user')
-//        });
-
-
     const self = this;  
     const currentUser = cookie.load('user');
     //console.log('~~~~~~ currentUser: ',currentUser)
@@ -272,6 +253,7 @@ class SessionPage extends Component {
             }
         });
         
+        
         session.on('streamCreated', function(event) {
 
           //console.log('streamCreated'+ event.stream.connection.connectionId );
@@ -307,20 +289,44 @@ class SessionPage extends Component {
             };
           
             var subscriber = session.subscribe(event.stream, 'subscribers' ,optionsSubscriber, function(error) {
-            if (error) {
-              console.log(error.message);
-              return;
-            }
-            if (subscriber.stream.hasVideo) {
-              var imgData = subscriber.getImgData();
-              if(!imgData){
-                  subscriber.setStyle('backgroundImageURI','https://donnieslist.com/src/public/img/mini-user-dummy.png');
+              if (error) {
+                console.log(error.message);
+                return;
               }
-              subscriber.setStyle('backgroundImageURI', imgData);
-            } else {
-              subscriber.setStyle('backgroundImageURI','https://donnieslist.com/src/public/img/mini-user-dummy.png');
-            }
+              if (subscriber.stream.hasVideo) {
+                // var imgData = subscriber.getImgData();
+                // if(!imgData){
+                //     subscriber.setStyle('backgroundImageURI','https://donnieslist.com/src/public/img/mini-user-dummy.png');
+                // }
+                // subscriber.setStyle('backgroundImageURI', imgData);
+              } else {
+                // subscriber.setStyle('backgroundImageURI','https://donnieslist.com/src/public/img/mini-user-dummy.png');
+              }
+            });
+
+          subscriber.on('videoDisableWarning', function(e) {
+            const subImg = subscriber.getImgData();
+            subscriber.setStyle('backgroundImageURI', subImg);
+            self.setState({
+              videoDisableWarning: true,
+            });
           });
+          subscriber.on('videoDisableWarningLifted', function(e) {
+            self.setState({
+              videoDisableWarning: false,
+            });
+          });
+          subscriber.on('videoDisabled', function(e) {
+            self.setState({
+              videoDisabled: true,
+            });
+          });
+          subscriber.on('videoEnabled', function(e) {
+            self.setState({
+              videoDisabled: false,
+            });
+          });
+          self.setState({ subscriber });
         })
         .on('streamDestroyed', function(event){
           console.log('~~~~~~ streamDestroyed');
@@ -567,7 +573,7 @@ class SessionPage extends Component {
                 });
             }
            })
-         .on('sessionConnected', function(e){
+        .on('sessionConnected', function(e){
              
             if(self.state.currentUser){
                 if(self.state.currentUser.role == 'User'){
@@ -606,14 +612,7 @@ class SessionPage extends Component {
                   )
                 }
             }
-             
-             
-             
-         })
-//        .on('streamDestroyed', function(event) {
-////          console.log('streamDestroyed: '+event.reason+' - '+slug);
-////          socket.emit('expert user disconnected', slug);
-//        })
+        })
         .connect( this.state.apiToken, function(error) {
           if (error) {
             console.log('~~~~~~~~~ error .connect: ',error);
@@ -644,7 +643,6 @@ class SessionPage extends Component {
             $('.loader-center-ajax').hide();
             //$('.Left_Panel').css('height',$('.mainContainer').height()+'px');
             $('.Chating_msg_Here').animate({
-//                    scrollTo: $('.Chating_msg_Here ul').scrollHeight
                   scrollTop: $('.Chating_msg_Here ul').prop("scrollHeight")
 
             });
@@ -864,6 +862,16 @@ secondsToTime(secs){
     const currentUser = cookie.load('user');
     var controller = this.props.messagesController;
     const { handleSubmit } = this.props;
+    const { videoDisableWarning, subscriber } = this.state;
+    if(videoDisableWarning && subscriber) {
+      $("#" + subscriber.id + " video").addClass('blur');
+      if($('.video-disconnect-error-container').length == 0) {
+        $("#" + subscriber.id).append("<div class='video-disconnect-error-container'><div>Connection unstable</div></div>")        
+      }
+    } else if(subscriber) {
+      $("#" + subscriber.id + " video").removeClass('blur');
+      $(".video-disconnect-error-container").remove();
+    }
 
     return (
       <div className="session-page">
@@ -905,13 +913,13 @@ secondsToTime(secs){
                   </div>
 
                   <div className="footer_action_btns">
-                    <a href="javascript:void(0)" data-toggle="modal" data-target="#myModalWaitingToJoin" class="btn btn-primary btn_waitingtojoin"></a>
+                    <a href="javascript:void(0)" data-toggle="modal" data-target="#myModalWaitingToJoin" className="btn btn-primary btn_waitingtojoin"></a>
                     <ul>
                       <li className={this.state.blurChatAreaStatus ? "Chat_Trigger cntrl_hide" : "Chat_Trigger cntrl_show"}>
                         <a data-toggle="tooltip" title="Conversation" href="javascript:void(0)"><i className="fa fa-commenting" aria-hidden="true"></i></a>
                       </li>
                       <li className={this.state.blurChatAreaStatus ? "WhiteBoard_Trigger cntrl_hide" : "WhiteBoard_Trigger cntrl_show"}>
-                        {/*}<a data-toggle="modal" data-target="#myWhiteBoard" class="btn btn-primary btn_waitingtojoin"></a>{*/}
+                        {/*}<a data-toggle="modal" data-target="#myWhiteBoard" className="btn btn-primary btn_waitingtojoin"></a>{*/}
                         <a data-toggle="tooltip" title="White Board" href="javascript:void(0)"><i className="fa fa-pencil" aria-hidden="true"></i></a>
                       </li>
                       
@@ -984,7 +992,7 @@ secondsToTime(secs){
                               <div className="form-group">
                                 <i>Note: Transaction will process automatically in backend!</i>
                               </div>
-                              <div class="form-group">
+                              <div className="form-group">
                                 <button type="submit" className="btn btn-primary">Pay Now!</button>
                                 &nbsp;
                                 <button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
