@@ -2,7 +2,7 @@ module.exports = {
   // Secret key for JWT signing and encryption
   secret: 'super secret passphrase',
   // Database connection information
-  database: 'mongodb://localhost/donnyslist',
+  database: 'mongodb://db/donnyslist',
   // Setting port for server
   port: 3000,
   // Configuring Mailgun API for sending transactional email
@@ -26,8 +26,8 @@ module.exports = {
   test_db: 'mern-starter-test',
   test_env: 'test',
 
-  website_url: 'http://localhost:8080',
-  // website_url: 'https://www.donnieslist.com',
+  // website_url: 'http://localhost:8080',
+  website_url: 'https://www.donnieslist.com',
 
   //tokbox or opentok api details, trial period  
   /*opentok_apiKey : "45891112",

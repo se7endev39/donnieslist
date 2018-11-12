@@ -2,10 +2,10 @@ import axios from 'axios';
 import cookie from 'react-cookie';
 import { logoutUser } from './auth';
 import { STATIC_ERROR, FETCH_USER } from './types';
-export const API_URL = 'http://localhost:3000/api';
-export const CLIENT_ROOT_URL = 'http://localhost:5000';
-//export const API_URL = 'https://www.donnieslist.com/api';
-//export const CLIENT_ROOT_URL = 'https://www.donnieslist.com';
+// export const API_URL = 'http://localhost:3000/api';
+// export const CLIENT_ROOT_URL = 'http://localhost:5000';
+export const API_URL = 'https://www.donnieslist.com/api';
+export const CLIENT_ROOT_URL = 'https://www.donnieslist.com';
 
 export const tokBoxApikey = '45839302';
 

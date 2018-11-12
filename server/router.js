@@ -389,5 +389,5 @@ module.exports = (app) => {
   apiRoutes.post('/likeComment', CommentController.likeComment);
   apiRoutes.post('/dislikeComment', CommentController.dislikeComment);
   // Set url for API group routes
-  app.use('/api', apiRoutes);
+  app.use('/', apiRoutes);
 };

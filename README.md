@@ -108,3 +108,29 @@ you may get an error message saying that the directory already exists
 
 5) Type `exit` to return back to your account. That's it. Now the user should be able to login with his private key as described above.
 
+
+
+### Running using docker:
+
+#### Before you start do the following:
+
+1) Make sure 80 port is unused, kill nginx and apache servers on your local box.
+
+2) Kill mongo service.
+
+3) Add `https://www.donnieslist.com/` in `/etc/hosts`.(Be sure to comment this line to access production instance).
+
+#### Running your dev server:
+1) Install docker community edition.
+
+2) Enter server folder run `docker build -t server .`
+
+3) Enter client folder run `docker build -t client .`
+
+4) Enter balancer folder run `docker build -t balancer .`
+
+5) Run following command from root app folder.
+`docker build -t db https://github.com/docker-library/mongo.git#:4.1`
+
+6) Run `docker swarm init`
+7) Run `docker stack deploy -c docker-compose.yml donnies-list` to start your server.

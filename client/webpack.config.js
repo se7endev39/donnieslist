@@ -23,6 +23,7 @@ const config = {
         ],
   },
   devServer: {
+    disableHostCheck: true,
     historyApiFallback: true,
     contentBase: './',
   },

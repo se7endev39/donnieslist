@@ -10,7 +10,7 @@ const express = require('express'),
   passport    = require('passport');
 
 // Database Setup
-mongoose.connect(config.database);
+mongoose.connect(process.env.DB_URI);
 
 // Start the server
 let server;
