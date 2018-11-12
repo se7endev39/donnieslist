@@ -10,7 +10,20 @@ const express = require('express'),
   passport    = require('passport');
 
 // Database Setup
-mongoose.connect(process.env.DB_URI);
+function connectDB() {
+    mongoose
+      .connect(process.env.DB_URI)
+      .then(
+        () => {},
+        (err) => {
+          console.log("Database not ready!");
+          setTimeout(function() {
+            connectDB();
+          }, 1000)
+        })
+}
+
+connectDB();
 
 // Start the server
 let server;
