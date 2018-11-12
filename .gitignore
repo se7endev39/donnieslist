@@ -3,4 +3,5 @@
 /client/node_modules/webpack-dev-server/bin/webpack-dev-server.js
 /server/node_modules
 /server/public/uploads
-
+/server/logs/
+/uploads

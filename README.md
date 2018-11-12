@@ -123,11 +123,11 @@ you may get an error message saying that the directory already exists
 #### Running your dev server:
 1) Install docker community edition.
 
-2) Enter server folder run `docker build -t server .`
+2) Enter server folder run `docker build -t server -f Dockerfile.dev  .`
 
-3) Enter client folder run `docker build -t client .`
+3) Enter client folder run `docker build -t client -f Dockerfile.dev .`
 
-4) Enter balancer folder run `docker build -t balancer .`
+4) Enter balancer folder run `docker build -t balancer -f Dockerfile.dev .`
 
 5) Run following command from root app folder.
 `docker build -t db https://github.com/docker-library/mongo.git#:4.1`
