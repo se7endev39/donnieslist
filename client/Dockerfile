@@ -1,11 +1,10 @@
 FROM node
 
-
-WORKDIR /var/www/
-
-EXPOSE 80
-
-
 CMD ["npm", "install"]
 CMD ["npm", "run", "build"]
-CMD ["./node_modules/.bin/http-server", "-p", "80"]
+
+FROM nginx:1.13.12-alpine
+EXPOSE 80
+COPY nginx.conf /etc/nginx/nginx.conf
+
+CMD ["nginx", "-g", "daemon off;"]

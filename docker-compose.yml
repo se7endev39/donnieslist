@@ -15,7 +15,7 @@ services:
   client:
     image: client
     volumes:
-      - ./client:/var/www
+      - ./client:/etc/nginx/html/
     networks:
       - internal
 
