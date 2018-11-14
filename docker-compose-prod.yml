@@ -34,7 +34,7 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - /var/lib/mongodb:/data/db
+      - /data/db:/data/db
     networks:
       - internal
 
