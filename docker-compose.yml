@@ -15,7 +15,7 @@ services:
   client:
     image: client
     volumes:
-      - ./client:/app
+      - ./client:/var/www
     networks:
       - internal
 

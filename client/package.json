@@ -4,7 +4,8 @@
   "description": "Client-side of Donnys List",
   "main": "index.js",
   "scripts": {
-    "start": "node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --port 5000 --host 0.0.0.0"
+    "start": "node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --port 5000 --host 0.0.0.0",
+    "build": "./node_modules/.bin/webpack -p"
   },
   "author": "donny dey",
   "license": "",
@@ -67,6 +68,7 @@
     "eslint-plugin-jsx-a11y": "^2.2.3",
     "eslint-plugin-react": "^6.6.0",
     "extract-text-webpack-plugin": "^1.0.1",
+    "http-server": "^0.11.1",
     "node-sass": "^3.4.2",
     "nodemailer": "~0.7.1",
     "sass-loader": "^3.1.2",
