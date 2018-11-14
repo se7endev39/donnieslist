@@ -62,7 +62,6 @@ exports.getExpertsCategoryList = function(req, res, next) {
         'subcategory.slug': 1
       }
     },
-    //{   $sort: {'subcategory.name': 1} },
     {
       $lookup: {
         from: "users",
@@ -87,7 +86,12 @@ exports.getExpertsCategoryList = function(req, res, next) {
           $push: '$subcategory_experts.expertCategories'
         }
       }
-    }
+    },
+    {
+      $sort: {
+        'name': 1
+      }
+    },
   ],
   function(err, users) {
     if (err) {
