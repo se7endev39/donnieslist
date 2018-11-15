@@ -259,7 +259,17 @@ class ExpertsListingPage extends Component {
                             </div>
                             <div className="btn-expertise">
                               {/*}<Link to={`/expert/${this.props.params.category}/${post.slug}`} className="btn-strt-session btn btn-primary pull-right">Start Video Session</Link>{*/}
-                              {currentUser ? <Link data-toggle="modal" title="Start Video Session" data-target="#notificationModal" to="javascript:;" onClick={this.selectVideoSessionMinutes.bind(this, post)} data-slug={post.slug} className="Start-Session btn-strt-session btn btn-primary pull-right">Connect</Link> : <div><Link title="Start Video Session" to="#" onClick={this.redirectToLogin.bind(this)} className="Start-Session btn-strt-session btn btn-primary pull-right">Connect</Link></div> }
+                              {
+                                  <div>
+                                    <Link
+                                      title="Start Video Session"
+                                      onClick={e=>this.addEndorsements(post.slug)}
+                                      className="Start-Session btn-strt-session btn btn-primary pull-right"
+                                      >
+                                        Add Expert
+                                      </Link>
+                                  </div>
+                              }
                             </div>
                           </div>
                         </div>
