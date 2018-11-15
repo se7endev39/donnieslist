@@ -97,7 +97,18 @@ exports.getExpertsCategoryList = function(req, res, next) {
     if (err) {
       return res.status(200).json(err);
     }
-    return res.status(200).json(users);
+    var usersArr = []
+    for(var i=0; i<= users.length; i++) {
+      usersArr[i] = users[i];
+    }
+
+    var discussion = usersArr.splice(3, 1);
+    var music = usersArr[5];
+    var sports = usersArr[6];
+    usersArr[5] = sports;
+    usersArr[6] = music;
+    usersArr[9] = discussion[0];
+    return res.status(200).json(usersArr);
   });
 }
 /* API endpoint to render all experts list by category */
