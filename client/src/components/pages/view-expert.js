@@ -3,20 +3,22 @@ import { Link, IndexLink, browserHistory } from 'react-router';
 import { connect } from 'react-redux';
 import { API_URL, CLIENT_ROOT_URL, Image_URL, errorHandler, tokBoxApikey, stripeKey } from '../../actions/index';
 import { Field, reduxForm } from 'redux-form';
-import { sendEmail, sendTextMessage, checkBeforeSessionStart, createAudioSession, startRecording, stopRecording, rechargeVideoSession } from '../../actions/expert';
+import { sendEmail, sendTextMessage, checkBeforeSessionStart, createAudioSession, startRecording, stopRecording, rechargeVideoSession, getVideoSession } from '../../actions/expert';
 import axios from 'axios';
 import ExpertReviews from './ExpertReviews';
 import AudioRecording from './AudioRecording';
 import cookie from 'react-cookie';
 import LoginModal from './login-modal';
 import * as actions from '../../actions/messaging';
-const socket = actions.socket;
 import NotificationModal from './notification-modal';
 import { Modal, Button, Panel } from 'react-bootstrap';
 import $ from 'jquery';
 import StripeCheckout from 'react-stripe-checkout';
 import Carousel from 'react-image-carousel';
 import CommentBox from '../comment/CommentBox';
+
+const socket = actions.socket;
+const OT = require('@opentok/client');
 
 const form = reduxForm({
   form: 'email-form'
@@ -82,7 +84,8 @@ class ViewExpert extends Component {
       refreshIntervalId: '',
       profileImage:"",
       endorsements:[],
-      selectMins : 0
+      selectMins : 0,
+      showCallLink: true,
     };
 
     this.open = this.open.bind(this);
@@ -312,6 +315,20 @@ class ViewExpert extends Component {
         this.setState({ university : res.data[0].university });
 		    this.setState({ expert, loading: true, error: null });
 
+        const logged_user_email = this.state.currentUser ? this.state.currentUser.email : '';
+        const scheduleData = {
+        userEmail: logged_user_email,
+        expertEmail: expert.email,
+        }
+        this.props.getVideoSession(scheduleData).then(response => {
+          console.log(response)
+          if(response.success){
+            this.setState({
+              showCallLink: false
+            })
+          }
+        })
+
         const data = res.data[0].endorsements;
         axios.post(`${API_URL}/getEndorsements/`,{"slug":data})
           .then(res => {
@@ -486,6 +503,13 @@ class ViewExpert extends Component {
     browserHistory.push('/login');
     cookie.save('requiredLogin_for_session', 'Please login to start video session', { path: '/' });
   }
+  
+  toggleCallLinks(v){
+    this.setState({
+      showCallLink: v
+    })
+  }
+
   renderPosts() {
     const currentUser = cookie.load('user');
     /*if(currentUser.role == "Expert") {
@@ -515,6 +539,7 @@ class ViewExpert extends Component {
       'https://grace951.github.io/react-image-carousel/img/landing5.jpg',
     ];
     const { handleSubmit } = this.props;
+    const { showCallLink } = this.state;
     return (
       <div id="view-experts" className="view-experts">
       {/* modal to show notifications to unauthorized user */}
@@ -555,20 +580,35 @@ class ViewExpert extends Component {
                         { this.getOnlineStatus(this.state.onlineStatus) && <i data-toggle="title" title="Online" className={'user-online-o fa fa-circle'} aria-hidden="true"></i> }
                       </div>
                       <ul className="Action_icon">
-                        <li>
-                          { currentUser ? <Link data-toggle="modal" title="Start Video Session" data-target="#notificationModal" to="javascript:;" onClick={/*this.startSessionCheck.bind(this)*/this.selectVideoSessionMinutes } className="Start-Session"></Link> : <div><Link title="Start Video Session" to="#" onClick={ this.redirectToLogin.bind(this) } className="Start-Session"></Link></div> }
-                        </li>
+                        {
+                          showCallLink &&
+                          <li>
+                            { currentUser ? <Link data-toggle="modal" title="Start Video Session" data-target="#notificationModal" to="javascript:;" onClick={/*this.startSessionCheck.bind(this)*/this.selectVideoSessionMinutes } className="Start-Session"></Link> : <div><Link title="Start Video Session" to="#" onClick={ this.redirectToLogin.bind(this) } className="Start-Session"></Link></div> }
+                          </li>
+                        }
                         <li><Link title="Send E-Mail" data-toggle="modal" data-target="#myModalEmail" className="Send_E-Mail"> Send E-Mail</Link></li>
                         <li><Link title="Send Text Message" data-toggle="modal" data-target="#myModalTextMessage" className="Send-Text-Message"> Send Text Message</Link></li>
                         <li><a  href={ `${Image_URL}`+this.state.resume_path } title="Download Resume" download className="Download-Resume"> Download Resume</a></li>
-                        <li>
-                          {currentUser ? <Link title="Audio Call" onClick={ this.audioCallNowButtonClick.bind(this)} className="Audio-Call">  Audio Call </Link> : <Link title="Audio Call" to="javascript:void(0)" data-toggle="modal" data-target="#myModalAudio" className="Audio-Call"> Audio Call</Link>}
-                        </li>
+                        {
+                          showCallLink &&
+                          <li>
+                            {currentUser ? <Link title="Audio Call" onClick={ this.audioCallNowButtonClick.bind(this)} className="Audio-Call">  Audio Call </Link> : <Link title="Audio Call" to="javascript:void(0)" data-toggle="modal" data-target="#myModalAudio" className="Audio-Call"> Audio Call</Link>}
+                          </li>
+                        }
                         <li><AudioRecording expertSlug={ this.props.params.slug } /></li>
                       </ul>
                       <div>
                       {/*<Link title="Start Session" to="javascript:void(0)" data-toggle="modal" className="notification-modal" data-target="#notificationModal"></Link>*/}
-                        { currentUser ? <NotificationModal userEmail={ currentUser.email } expertSlug={ this.props.params.slug } modalId="notificationModal" modalMessage={ this.state.modalMessageNotification}/> : "" }
+                        { currentUser ? 
+                               <NotificationModal 
+                               userEmail={currentUser.email}
+                                expertSlug={this.props.params.slug}
+                                 expert={this.state.expert} 
+                                 modalId="notificationModal"
+                                 modalMessage={this.state.modalMessageNotification}
+                                 toggleCallLinks={this.toggleCallLinks.bind(this)}
+                                  /> 
+                                  : "" }
                       </div>
                       {/* <div className="">
                           <div className="form-group">
@@ -868,4 +908,4 @@ function mapStateToProps(state) {
     message: state.auth.message
   };
 }
-export default connect(mapStateToProps, { sendEmail, sendTextMessage, checkBeforeSessionStart, createAudioSession, startRecording, stopRecording, rechargeVideoSession })(form(ViewExpert));
+export default connect(mapStateToProps, { sendEmail, sendTextMessage, checkBeforeSessionStart, createAudioSession, startRecording, stopRecording, rechargeVideoSession, getVideoSession })(form(ViewExpert));
