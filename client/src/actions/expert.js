@@ -103,17 +103,51 @@ export function checkBeforeSessionStart({ expertEmail, userEmail }) {
 //= ===============================
 // check Before Session Start actions
 //= ===============================
-export function createAudioSession({ expertEmail, userEmail }) {
+// export function createAudioSession({ expertEmail, userEmail }) {
+//   return function (dispatch) {
+//       //console.log('expertEmail: '+expertEmail + ' userEmail: '+userEmail);
+//       if(expertEmail !== undefined && userEmail !== undefined){
+//         return axios.post(`${API_URL}/createAudioSession`, { expertEmail, userEmail })
+//             .then(response => {
+//                 //console.log(response.data);
+//                 return response.data;
+//             })
+//             .catch(err => {
+//                 errorHandler(dispatch, error.response, AUTH_ERROR);
+//             });
+//     }
+//   };
+// }
+
+export function createAudioSession(payload) {
   return function (dispatch) {
       //console.log('expertEmail: '+expertEmail + ' userEmail: '+userEmail);
-      if(expertEmail !== undefined && userEmail !== undefined){
-        return axios.post(`${API_URL}/createAudioSession`, { expertEmail, userEmail })
+      console.log(payload)
+      if(payload.expertEmail !== undefined && payload.userEmail !== undefined){
+        return axios.post(`${API_URL}/createVideoSession`, payload)
             .then(response => {
                 //console.log(response.data);
                 return response.data;
             })
             .catch(err => {
-                errorHandler(dispatch, error.response, AUTH_ERROR);
+                errorHandler(dispatch, err.message, AUTH_ERROR);
+            });
+    }
+  };
+}
+
+export function getVideoSession(payload) {
+  return function (dispatch) {
+      //console.log('expertEmail: '+expertEmail + ' userEmail: '+userEmail);
+      console.log(payload)
+      if(payload.expertEmail !== undefined && payload.userEmail !== undefined){
+        return axios.get(`${API_URL}/getVideoSession/${payload.expertEmail}/${payload.userEmail}`)
+            .then(response => {
+                //console.log(response.data);
+                return response.data;
+            })
+            .catch(err => {
+                errorHandler(dispatch, err.message, AUTH_ERROR);
             });
     }
   };

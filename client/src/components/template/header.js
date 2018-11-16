@@ -6,6 +6,11 @@ import $ from 'jquery';
 
 import * as actions from '../../actions/messaging';
 import ExpertAudioCall from './expert-audio-call';
+import { setpage } from '../../actions/setpage';
+import { setsearch } from '../../actions/searchaction';
+import axios from 'axios';
+import { API_URL } from '../../actions/index';
+
 
 const socket = actions.socket;
 
@@ -17,8 +22,24 @@ class HeaderTemplate extends Component {
   constructor(props, context) {
     super(props, context);
     this.state = {
-      redirect: false
+      redirect: false,
+      category:null,
+      searchval: true,
+      searchres: [],
     };
+  }
+
+  hidesearch() {
+    console.log(typeof(this.props.posts))
+    if(this.props.posts === '0'){ 
+      return false
+    }
+    else if(this.props.posts === undefined){
+      return true
+    }
+    else {
+      return true
+    }
   }
 
   renderLinks() {
@@ -64,7 +85,7 @@ class HeaderTemplate extends Component {
       return [
         // Unauthenticated navigation
         <li key={1}>
-          <Link onClick={this.handleOnClick} to="/">Home</Link>
+          <Link onClick={this.homeOnClick} to="/">Home</Link>
         </li>,
         <li key={2}>
           <Link onClick={this.handleOnClick} to="login">Login</Link>
@@ -82,10 +103,54 @@ class HeaderTemplate extends Component {
     }
   }
 
+  getplaceholder(){
+    if(this.props.posts === "HOME" || this.props.posts === undefined){
+      return "Search"
+    }
+    else if(this.props.posts === '0'){
+      return ""
+    }
+    else{
+      return `Search ${this.props.posts}`
+    }
+  }
+
   handleOnClick(){
     console.log('here');
     let linksEl = document.querySelector('#nav-collapse');
     linksEl.classList.remove("in");
+  }
+
+  homeOnClick(){
+    let linksEl = document.querySelector('#nav-collapse');
+    linksEl.classList.remove("in");
+    this.props.setpage('HOME');
+  }
+
+  searchinvoke(e) {
+    console.log("Test........");
+    axios.get(`${API_URL}/getExpertsListingByKeyword/${e.target.value}`)
+    .then((res) => {
+      // Transform the raw data by extracting the nested posts
+      const searchres = res.data;
+      // Clear any errors, and turn off the loading indiciator.
+      this.setState({
+        searchres,
+        error: null,
+      });
+      if (this.state.searchres.length > 0) {
+        this.props.setsearch(this.state.searchres);
+      } else {
+        this.props.setsearch([]);
+      }
+    })
+    .catch((err) => {
+      // Something went wrong. Save the error in state and re-render.
+      this.setState({
+        category: '',
+        error: err,
+      });
+    });
   }
 
   displayPendingAccountAlert(){
@@ -116,6 +181,12 @@ class HeaderTemplate extends Component {
             </div>
             <div className="collapse navbar-collapse" id="nav-collapse">
               <ul className="nav navbar-nav navbar-right">
+                {this.hidesearch() && <li>
+                  <div className="search">
+                    <i className="fa fa-search"></i>
+                    <input className="test" placeholder={this.getplaceholder()} type="text" onChange={e => this.searchinvoke(e)}/>
+                  </div>
+                </li>}
                 {this.renderLinks()}
               </ul>
             </div>
@@ -131,9 +202,11 @@ class HeaderTemplate extends Component {
 }
 
 function mapStateToProps(state) {
+  let pos= state.pageroute.pagename;
   return {
     authenticated: state.auth.authenticated,
+    posts: pos
   };
 }
 
-export default connect(mapStateToProps)(HeaderTemplate);
+export default connect(mapStateToProps, { setpage, setsearch })(HeaderTemplate);

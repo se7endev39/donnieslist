@@ -176,6 +176,7 @@ module.exports = (app) => {
   //= ========================
   apiRoutes.get('/getExpertsCategoryList', ExpertsController.getExpertsCategoryList);
   apiRoutes.get('/getExpertsListing/:category', ExpertsController.getExpertsListing);
+  apiRoutes.get('/getExpertsListingByKeyword/:keyword', ExpertsController.getExpertsListingByKeyword);
   apiRoutes.get('/getExpertsListing/topRated/:category', ExpertsController.getTopExpertsListing);
   apiRoutes.get('/getExpertDetail/:slug', ExpertsController.getExpertDetail);
 

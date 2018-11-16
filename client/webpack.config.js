@@ -16,7 +16,7 @@ const config = {
       loader: 'babel',
     },
       {
-        test: /\.scss$/,
+        test: /\.(scss|css)$/,
         loader: ExtractTextPlugin.extract('css!sass'),
       },
       { test: /\.json$/, loader: "json-loader" }

@@ -1,0 +1,109 @@
+
+.image-element-class{
+  margin:8px;
+  transition: transform 300ms ease 0s;
+}
+
+
+/*.masonry-column {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(10px,1fr));
+  column-gap: 10px;
+  grid-auto-rows: 20px;
+ 
+}
+
+.masonry-item {
+ display: inline-block;
+ margin:  0.25rem;
+ padding:  1rem;
+ width:  100%;
+ background:  #efefef;
+ text-align: center;
+ border-radius: 8px;
+ grid-row-end: span 13;
+}
+
+.masonry-item-tall {
+  display: inline-block;
+  margin:  0.25rem;
+  padding:  1rem;
+  width:  100%; 
+  background:  #efefef;
+  text-align: center;
+  border-radius: 8px;
+  grid-row-end: span 14;
+ }*/
+ 
+.search {
+    position: relative;
+    margin-top: 6px;
+}
+.search input {
+    border: none;
+    text-indent: 30px;
+    border-radius:5px;
+    width:25rem;
+}
+.search>input::placeholder {
+  color:#3BB9FF;
+}
+.search>input:focus{
+  border:1px solid #3BB9FF;
+  box-shadow:#3BB9FF;
+  outline:none;
+}
+
+.search .fa-search { 
+  position: absolute;
+  top: 2px;
+  left: 7px;
+  font-size: 15px;
+}
+
+.mas-image{
+  background-color: rgb(234, 237, 239);
+  background-size: cover;
+  cursor: pointer;
+  background-position: center center;
+  background-repeat: no-repeat;
+  border-radius: 0.8em;
+  outline: none;
+  overflow: hidden;
+}
+
+.image-element-class:hover{
+  transform: scale(1.07);
+}
+
+.mas-profile{
+  position: absolute;
+  left:2%;
+  top:55%;
+  z-index: 100;
+}
+.mas-profile-image{
+  width: 50px;
+  height: 50px;
+  background-size: cover;
+  border-radius: 40px;
+}
+
+.mas-expert-name{
+  position: absolute;
+  left: 3%;
+  top: 72%;
+  color:white;
+  z-index: 101;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.mas-time{
+  position: absolute;
+  left: 3%;
+  top:85%;
+  color:white;
+  z-index: 101;
+  font-size: 15px;
+}

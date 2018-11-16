@@ -2,10 +2,14 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
 import StripeCheckout from 'react-stripe-checkout';
-import { rechargeVideoSession, addMoneyToWallet } from '../../actions/expert';
+import { rechargeVideoSession, addMoneyToWallet, createAudioSession } from '../../actions/expert';
 import { CLIENT_ROOT_URL, errorHandler } from '../../actions/index';
 import cookie from 'react-cookie';
 var classNames = require('classnames');
+import Calendar from 'react-calendar';
+// import './model.css';
+
+const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
 
 class NotificationModal extends Component {
   constructor(props, context) {
@@ -18,33 +22,36 @@ class NotificationModal extends Component {
         walletSuccess: false,
         walletError: false,
         walletMessage: this.props.modalMessage,
-        walletDefault: true
+        walletDefault: true,
+        date: new Date(),
     };
     const userEmail = this.props.userEmail;
     
     this.addMoneyToWallet = this.addMoneyToWallet.bind(this);
     this.selectMins = this.selectMins.bind(this);
     this.startNowSession = this.startNowSession.bind(this);
+    this.sendSessionRequest = this.sendSessionRequest.bind(this);
   }
   
   startNowSession(){
       var self = this;
       var selectMins = this.state.selectMins;
-      
-      if(selectMins == 0){
-        self.setState({
-            walletError: true,
-            walletDefault: false,
-            walletMessage: 'Please select time slot'
-        });
-      } else{
-         self.setState({
-            walletError: false,
-        });
-        cookie.save('selectMins', selectMins * 60, { path: '/' });
-        browserHistory.push('/mysession/'+this.props.expertSlug);
+      window.jQuery('.scheduleSuccess').show();
+      window.jQuery('.scheduleDiv').hide();
+      // if(selectMins == 0){
+      //   self.setState({
+      //       walletError: true,
+      //       walletDefault: false,
+      //       walletMessage: 'Please select time slot'
+      //   });
+      // } else{
+      //    self.setState({
+      //       walletError: false,
+      //   });
+      //   cookie.save('selectMins', selectMins * 60, { path: '/' });
+      //   browserHistory.push('/mysession/'+this.props.expertSlug);
         
-      }
+      // }
       
       
   }
@@ -53,6 +60,28 @@ class NotificationModal extends Component {
       this.setState({
        selectMins: parseInt(e.target.value)   
       });
+  }
+
+  sendSessionRequest() {
+    const logged_user_email = this.state.currentUser ? this.state.currentUser.email : '';
+   // alert(JSON.stringify(this.props.expert))
+    const data = {
+        requestedMinutes: this.state.selectMins,
+        requestedDate: this.state.date,
+        userEmail: logged_user_email,
+        expertEmail: this.props.expert.email,
+        sessionCompletionStatus: 'UNCOMPLETED'
+     }
+     //alert(JSON.stringify(data));
+     this.props.createAudioSession(data).then(response => {
+                 console.log(response);
+                 if (response.success) {
+                     //alert(response.message);
+                     this.props.toggleCallLinks();
+                     window.jQuery('.scheduleSuccess').show();
+                     window.jQuery('.scheduleDiv').hide();
+                 }
+     })
   }
   
   addMoneyToWallet(e){
@@ -117,6 +146,8 @@ class NotificationModal extends Component {
     }catch(e){}
   }
 
+  onCalendarChange = date => this.setState({ date:new Date(date) })
+
   render() {
       
     const modalMessageClass = classNames(
@@ -142,12 +173,32 @@ class NotificationModal extends Component {
                     {this.state.walletMessage}
                 </div>
         
-                <div style={{marginBottom: '10px'}}>
-                    Please select time slot from the dropdown you want to spend with expert
+                <div className='scheduleDiv' style={{marginBottom: '10px'}}>
+                    Please select date from the calendar you want to spend with expert
                 </div>
                 
                 <div className="form-group row">
-                    <div className="col-md-4 col-md-offset-4">
+                  <div style={{display:'none'}} className="col-md-12 scheduleSuccess">
+                  <div class="alert alert-success">
+                    <strong>Video Session Scheduled Successfully ! </strong> 
+                      You Will Get Notified By Email Once Experts Confirms.
+                    </div>
+                  </div>
+                    <div className="col-md-12 scheduleDiv">
+                    
+                    <div style={{display:'flex', justifyContent:'center'}}>
+                    <Calendar
+                    onChange={this.onCalendarChange}
+                    value={this.state.date}
+                    />
+                    </div>
+                    {this.state.date &&
+                    <div style={{display:'flex', justifyContent:'center'}}>
+                    <p>Selected Date: <span style={{fontWeight:'bold'}}>{this.state.date.toLocaleDateString("en-US", dateOptions)}</span></p>
+                   </div>
+                    }
+
+                      {/* <div className="col-md-4 col-md-offset-4">
                         <select className="form-control" onChange={this.selectMins}>
                             <option value="0">Select Mins</option>
                             <option value="15">15 mins ($15)</option>
@@ -155,12 +206,14 @@ class NotificationModal extends Component {
                             <option value="45">45 mins ($45)</option>
                             <option value="60">1 hr ($60)</option>
                         </select>
+                    </div>*/}
+                    
                     </div>
                 </div>
                 
                 <div dangerouslySetInnerHTML={{__html: this.state.responseTextMsg}}/>
             </div>
-            <div className="modal-footer">
+            <div className="modal-footer scheduleDiv">
               <div className="bootstrap-dialog-footer">
                 <div className="bootstrap-dialog-footer-buttons text-center">
                   
@@ -185,4 +238,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps, { rechargeVideoSession, addMoneyToWallet })(NotificationModal);
+export default connect(mapStateToProps, { rechargeVideoSession, addMoneyToWallet, createAudioSession })(NotificationModal);
