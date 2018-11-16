@@ -33,84 +33,100 @@ function generateToken(user) {
 //= =======================================
 // Experts Routes
 //= =======================================
-function getExpertCount(slug){
-  console.log(slug)
-  User.find({
-    "expertCategories":['$slug']
-  }, function(err, userscount) {
-    return(userscount.length)
+function getExpertCount(slug) {
+  return new Promise((resolve, reject) => {
+    User.find({
+      "expertCategories":[slug]
+    }, (err, results) => {
+      (err)? reject(err): resolve(results.length);
+    });
   });
+}
+
+function CategoriesWithExpertsCounts(categories){
+  let newCategories = []
+  setTimeout(function(){
+    categories.forEach(async (category) => {
+    let newCat = {};
+    newCat['_id'] = category._id;
+    newCat['name'] = category.name;
+    newCat['slug'] = category.slug;
+    let newSubCats = []
+    await category.subcategories.forEach(async (subcategory) => {
+      let newsubCat = {}
+      newsubCat['name'] = subcategory.name;
+      newsubCat['slug'] = subcategory.slug;
+      newsubCat['expertsCount'] = await getExpertCount(subcategory.slug);
+      //console.log(newsubCat);
+      newSubCats.push(newsubCat);
+      //console.log(newSubCats);
+    });
+    newCat['subcategories'] = newSubCats;
+    //console.log(category['subcategories']);    
+    newCategories.push(newCat)
+  });
+  // console.log(newCategories);
+  // return newCategories;
+},2000);
+  return newCategories;
 }
 
 /* API endpoint to render all categories list on homepage */
-exports.getExpertsCategoryList = function(req, res, next) {
-  Experts.aggregate([
-    {
-      $project: {
-        'subcategory': 1,
-        'name': 1,
-        'slug': 1,
-        'order': 1
-      }
-    },
-    {
-      $unwind: '$subcategory'
-    },
-    {
-      $sort: {
-        'slug': -1,
-        'subcategory.slug': 1
-      }
-    },
-    {
-      $lookup: {
-        from: "users",
-        localField: "subcategory.slug",
-        foreignField: "expertCategories",
-        as: "subcategory_experts"
-      }
-    },
-    {
-      $group: {
-        _id: '$_id',
-        'name': {
-          $first: '$name'
-        },
-        'slug': {
-          $first: '$slug'
-        },
-        'subcategory': {
-          $push: '$subcategory'
-        },
-        'subcategory_experts': {
-          $push: '$subcategory_experts.expertCategories'
+exports.getExpertsCategoryList = function (req, res, next) {
+  //User.find({"expertCategories":["accounting"]},function(err, userscount){console.log(userscount.length)});
+  Experts.aggregate(
+    [
+      {
+        $project: {
+          'subcategory': 1,
+          'name': 1, 
+          'slug': 1, 
+          'order': 1, 
+          'entity_id': {$literal: 54} }, 
+          //'expertsCount': getExpertCount('blogging')
+      },
+      {   $sort: {'order': -1} },
+      {   $unwind: '$subcategory' },
+      // {
+      //   $lookup: {
+      //     from: "users",
+      //     localField: "subcategory.slug",
+      //     foreignField: "expertCategories",
+      //     as: "subcategory_experts"
+      //   }
+      // },
+      //{   $sort: {'subcategory.name': 1} },
+      //{ $group: {_id: '$_id', 'name': {  $first: '$name'}, 'slug': {  $first: '$slug'},'subcategory': {  $push: '$subcategory'} } }
+      //{   $sort: {'name': 1} }
+      {
+        $group: {
+          _id: '$_id',
+          'name': {
+            $first: '$name'
+          },
+          'slug': {
+            $first: '$slug'
+          },
+          'subcategories': {
+            $push: '$subcategory'
+          },
+          // 'subcategory_experts': {
+          //   $push: '$subcategory_experts.expertCategories'
+          // },
+          // 'expertsCount': {
+          //   $push: `${getExpertCount('blogging')}`
+          // }
         }
       }
-    },
-    {
-      $sort: {
-        'name': 1
+    ], function (err, users) {
+      if(err){
+          return res.status(200).json(err);
       }
-    },
-  ],
-  function(err, users) {
-    if (err) {
-      return res.status(200).json(err);
-    }
-    var usersArr = []
-    for(var i=0; i<= users.length; i++) {
-      usersArr[i] = users[i];
-    }
-
-    var discussion = usersArr.splice(3, 1);
-    var music = usersArr[5];
-    var sports = usersArr[6];
-    usersArr[5] = sports;
-    usersArr[6] = music;
-    usersArr[9] = discussion[0];
-    return res.status(200).json(usersArr);
+      return res.status(200).json(users);
+      // return res.status(200).json(CategoriesWithExpertsCounts(users));
   });
-}
+};
+
 /* API endpoint to render all experts list by category */
 exports.getExpertsListing = function(req, res, next) {
 
@@ -131,51 +147,51 @@ exports.getExpertsListing = function(req, res, next) {
 
   res.header('Access-Control-Allow-Origin', '*');
   User.aggregate(
-  [
-    {
-      $match: {
-        'expertCategories' : { $regex : new RegExp(category, "i") },
-        "role":'Expert',
-      }
-    },
-    {
-      $project:{
-        '_id':0,
-        'accountCreationDate':0,
-        'createdAt':0,
-        'enableAccount':0,
-        'email':0,
-        'contact':0,
-        //'onlineStatus':0,
-      }
-    },
-    {
-      $sort: {'createdAt': -1}
-    },
-    {
-      "$addFields": {
-        'onlineStatus' : { "$cond": {
-          if: {
-              '$eq': ['$onlineStatus', "ONLINE"]
-            },
-            'then': true,
-            'else': false
-          }
+    [
+      {
+        $match: {
+            'expertCategories' : { $regex : new RegExp(category, "i") },
+            "role":'Expert',
+        }
+      },
+      {
+        $project:{
+          '_id':0,
+          'accountCreationDate':0,
+          'createdAt':0,
+          'enableAccount':0,
+          'email':0,
+          'contact':0,
+          //'onlineStatus':0,
+        }
+      },
+      {   $sort: {'createdAt': -1} },
+      {
+        "$addFields": {
+            'onlineStatus' : { "$cond": { 
+              if: { 
+                  '$eq': ['$onlineStatus', "ONLINE"]
+                },
+                'then': true,
+                'else': false
+              }
+            }
         }
       }
-    }
-  ],function (err, expertsList) {
-    if(expertsList){
-        res.json(expertsList);
-    }else{
-      console.log(err)
-        res.json({
-            success: false,
-            data: {},
-            code: 404
-        });
-    }
-  });
+    ],function (err, expertsList) {
+      if(expertsList){
+          res.json(expertsList);
+      }else{
+        console.log(err)
+          res.json({
+              success: false,
+              data: {},
+              code: 404
+          });
+      }
+    });
+
+
   /*ExpertsSubcategories.findOne({'slug':{ $regex : new RegExp(category, "i") }}, function (err, expertsList) {
       if(expertsList){
           res.json(expertsList);
