@@ -111,6 +111,70 @@ exports.getExpertsCategoryList = function(req, res, next) {
     return res.status(200).json(usersArr);
   });
 }
+
+exports.getExpertsListingByKeyword = function (req, res, next) {
+  if (!req.params.keyword) {
+    res.status(422).send({ error: 'Please choose any keyword' });
+    return next();
+  }
+
+  const keyword = req.params.keyword;
+
+  res.header('Access-Control-Allow-Origin', '*');
+  User.aggregate(
+    [
+      {
+        $match: {
+          $or: [
+              { expertCategories: { $regex: new RegExp(keyword, 'i') } },
+              { expertFocusExpertise: { $regex: new RegExp(keyword, 'i') } },
+              { locationCountry: { $regex: new RegExp(keyword, 'i') } },
+              { locationState: { $regex: new RegExp(keyword, 'i') } },
+              { locationCity: { $regex: new RegExp(keyword, 'i') } },
+              { 'profile.firstName': { $regex: new RegExp(keyword, 'i') } },
+              { 'profile.lastName': { $regex: new RegExp(keyword, 'i') } }
+          ],
+          role: 'Expert'
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          accountCreationDate: 0,
+          createdAt: 0,
+          enableAccount: 0,
+          email: 0,
+          contact: 0
+            // 'onlineStatus':0,
+        }
+      },
+        { $sort: { createdAt: -1 } },
+      {
+        $addFields: {
+          onlineStatus: { $cond: {
+            if: {
+              $eq: ['$onlineStatus', 'ONLINE']
+            },
+            then: true,
+            else: false
+          }
+          }
+        }
+      }
+    ], (err, expertsList) => {
+    if (expertsList) {
+      res.json(expertsList);
+    } else {
+      console.log(err);
+      res.json({
+        success: false,
+        data: {},
+        code: 404
+      });
+    }
+  });
+};
+
 /* API endpoint to render all experts list by category */
 exports.getExpertsListing = function(req, res, next) {
 

@@ -8,7 +8,7 @@ import axios from 'axios';
 import $ from 'jquery'
 import cookie from 'react-cookie';
 import NotificationModal from './notification-modal';
-import { setpage } from '../../actions/pageroute';
+import { setpage } from '../../actions/setpage';
 
 class ExpertsListingPage extends Component {
   /**
@@ -67,8 +67,7 @@ class ExpertsListingPage extends Component {
   }
 
   componentDidMount() {
-    const data = {page:"0"}
-    this.props.setpage(data)
+    this.props.setpage('0');
     var category = this.props.params.category;
     // Remove the 'www.' to cause a CORS error (and see the error state)
     axios.get(`${API_URL}/getExpertsListing/${category}`)

@@ -3,6 +3,8 @@ import { API_URL, Image_URL, errorHandler } from '../../actions/index';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import Masonry from 'react-masonry-component';
+import { setpage } from '../../actions/setpage';
+
 
 const masonryOptions = {
   transitionDuration: 0,
@@ -428,8 +430,7 @@ class CommunityNews extends Component {
 
   componentDidMount() {
     const category = this.props.params.value;
-    const data = { page: category };
-    this.props.dispatch({ type: 'UPDATE', data });
+    this.props.setpage(category);
 
     axios.get(`${API_URL}/getExpertStoriesBasedOnRole/${category}`)
       .then((res) => {
@@ -519,4 +520,4 @@ class CommunityNews extends Component {
   }
 }
 
-export default connect()(CommunityNews);
+export default connect(null, { setpage })(CommunityNews);

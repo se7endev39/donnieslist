@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import { Link, IndexLink } from 'react-router';
-import { API_URL } from '../../actions/index';
+import { API_URL, Image_URL, errorHandler } from '../../actions/index';
 import axios from 'axios';
 import Masonry from 'react-masonry-component';
 import {connect} from 'react-redux';
 import CommunityNews from './CommunityNews';
+import cookie from 'react-cookie';
+import { setpage } from '../../actions/setpage';
 
 const masonryOptions = {
     transitionDuration: 0
@@ -21,13 +23,14 @@ class HomePage extends Component {
       category :"",
       posts: [],
       loading: true,
-      error: null
+      error: null,
+      searchval: false,
+      displaysearch: false,
     };
   }
 
   componentDidMount() {
-    const data = {page:"HOME"};
-    this.props.dispatch({type:"UPDATE", data});
+    this.props.setpage('HOME');
     axios.get(`${API_URL}/getExpertsCategoryList`)
       .then(res => {
         // debugger
@@ -45,6 +48,88 @@ class HomePage extends Component {
           error: err
         });
       });
+  }
+
+  getStars(rating) {
+    const size = Math.max(0, (Math.min(5, rating))) * 16;
+    return Object.assign(
+      { width: size },
+    );
+  }
+
+  selectVideoSessionMinutes(item, e) {
+    this.setState({ selectedExpertSlug: item.slug });
+    $('.notification-modal').trigger('click');
+  }
+
+  redirectToLogin(e) {
+    e.preventDefault();
+    browserHistory.push('/login');
+    cookie.save('requiredLogin_for_session', 'Please login to start video session', { path: '/' });
+  }
+  
+  getOnlineStatus(onlineStatus) {
+    return (onlineStatus === 'ONLINE');
+  }
+
+  selectVideoSessionMinutes(item, e) {
+    this.setState({ selectedExpertSlug: item.slug });
+    $('.notification-modal').trigger('click');
+  }
+
+  getsearchitem() {
+    const imageStyle = {
+      background: '#ffffff',
+      padding: 15,
+    };
+    const currentUser = cookie.load('user');
+    return (
+      <div id="experts-list" className="experts-list">
+      <div className="expertise-tab-wrap">
+        <div className="expertise-inner">
+          <div className="container">
+          <div className="expertise-all-detail-wrap">
+
+        {this.props.searchvalue.map(post => <div>
+          <div className="expertise-detail-only">
+            <div className="row">
+              <div className="col-sm-8">
+                <div className="row">
+                  <div className="col-sm-2" style={imageStyle}>
+                    <div className="img-exper">
+                      {post.profileImage !== '' ? <img width="100" src={`${Image_URL}${post.profileImage}`} /> : <img src="/src/public/img/pro1.png" /> }
+                      {this.getOnlineStatus(post.onlineStatus) && <i data-toggle="title" title="Online" className={'user-online-o fa fa-circle'} aria-hidden="true" />}
+                    </div>
+                  </div>
+                  <div className="person-per-info">
+                    <p>University: {post.university}</p>
+                    <p>Area of Expertise: {post.expertCategories}</p>
+
+                    <p>Focus of Expertise: {post.expertFocusExpertise}</p>
+                    <p>Years of Expertise: {post.yearsexpertise}</p>
+                    <p>Rating: {post.expertRating && post.expertRating != null && post.expertRating != undefined && post.expertRating != '' ? post.expertRating : 'No Ratings Available Yet'} {post.expertRating && post.expertRating != '' && <i className="fa fa-star" aria-hidden="true" />}</p>
+                  </div>
+                </div>
+              </div>
+              <div className="col-sm-4">
+                <div className="stars-review">
+                  <span className="stars right">
+                    <span style={this.getStars(post.rating)} />
+                  </span>
+                </div>
+                {currentUser ? <Link data-toggle="modal" title="Start Video Session" data-target="#notificationModal" to="javascript:;" onClick={this.selectVideoSessionMinutes.bind(this, post)} data-slug={post.slug} className="Start-Session btn-strt-session btn btn-primary pull-right">Connect</Link> : <div><Link title="Start Video Session" to="#" onClick={this.redirectToLogin.bind(this)} className="Start-Session btn-strt-session btn btn-primary pull-right">Connect</Link></div>}
+              </div>
+            </div>
+          </div>
+        </div>,
+        )}
+      </div>
+      </div>
+      </div>
+      </div>
+      </div>
+
+    );
   }
 
   renderLoading() {
@@ -139,14 +224,32 @@ class HomePage extends Component {
    * Render the component.
    */
   render() {
-    return (
-      <div>
-        {this.state.loading ?
-          this.renderLoading()
-          : this.renderPosts()}
-      </div>
-    );
+    let x = 0;
+
+    try {
+      x = this.props.searchvalue[0].slug.length;
+    } catch (err) {
+      x = 0;
+    }
+
+    if (x > 0) {
+      console.log(x);
+      return this.getsearchitem();
+    }
+
+    if (this.state.loading) {
+      return this.renderLoading();
+    }
+
+    return this.renderPosts();
   }
 }
 
-export default connect()(HomePage);
+function mapStateToProps(state) {
+  const val = state.searchvalue.searchval;
+  return {
+    searchvalue: val,
+  };
+}
+
+export default connect(mapStateToProps, { setpage })(HomePage);

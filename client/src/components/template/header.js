@@ -6,6 +6,11 @@ import $ from 'jquery';
 
 import * as actions from '../../actions/messaging';
 import ExpertAudioCall from './expert-audio-call';
+import { setpage } from '../../actions/setpage';
+import { setsearch } from '../../actions/searchaction';
+import axios from 'axios';
+import { API_URL } from '../../actions/index';
+
 
 const socket = actions.socket;
 
@@ -19,7 +24,8 @@ class HeaderTemplate extends Component {
     this.state = {
       redirect: false,
       category:null,
-      searchval: true
+      searchval: true,
+      searchres: [],
     };
   }
 
@@ -118,9 +124,34 @@ class HeaderTemplate extends Component {
   homeOnClick(){
     let linksEl = document.querySelector('#nav-collapse');
     linksEl.classList.remove("in");
-    const data = {page:"HOME"}
-    this.props.dispatch({type:"UPDATE", data});
-   }
+    this.props.setpage('HOME');
+  }
+
+  searchinvoke(e) {
+    console.log("Test........");
+    axios.get(`${API_URL}/getExpertsListingByKeyword/${e.target.value}`)
+    .then((res) => {
+      // Transform the raw data by extracting the nested posts
+      const searchres = res.data;
+      // Clear any errors, and turn off the loading indiciator.
+      this.setState({
+        searchres,
+        error: null,
+      });
+      if (this.state.searchres.length > 0) {
+        this.props.setsearch(this.state.searchres);
+      } else {
+        this.props.setsearch([]);
+      }
+    })
+    .catch((err) => {
+      // Something went wrong. Save the error in state and re-render.
+      this.setState({
+        category: '',
+        error: err,
+      });
+    });
+  }
 
   displayPendingAccountAlert(){
     if(currentUser && currentUser.role == 'User' && !currentUser.customerId){
@@ -153,7 +184,7 @@ class HeaderTemplate extends Component {
                 {this.hidesearch() && <li>
                   <div className="search">
                     <i className="fa fa-search"></i>
-                    <input placeholder={this.getplaceholder()} type="text" />
+                    <input className="test" placeholder={this.getplaceholder()} type="text" onChange={e => this.searchinvoke(e)}/>
                   </div>
                 </li>}
                 {this.renderLinks()}
@@ -171,11 +202,11 @@ class HeaderTemplate extends Component {
 }
 
 function mapStateToProps(state) {
-  let pos= state.pageroute.pagename.page
+  let pos= state.pageroute.pagename;
   return {
     authenticated: state.auth.authenticated,
     posts: pos
   };
 }
 
-export default connect(mapStateToProps)(HeaderTemplate);
+export default connect(mapStateToProps, { setpage, setsearch })(HeaderTemplate);
