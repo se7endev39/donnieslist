@@ -67,7 +67,7 @@ export default (
   <Route path="/" component={App}>
     <IndexRoute component={HomePage} />
     <Route path="how-it-works" component={HowItWorks} />
-    <Route path="community-news" component={CommunityNews} />
+    <Route path="community-news/:value" component={CommunityNews} />
     <Route path="testpage" component={TestPage} />
     <Route path="forum" component={Forum} />
     <Route path="privacy-policy" component={PrivacyPolicy} />

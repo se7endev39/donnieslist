@@ -3,6 +3,8 @@ import { Link, IndexLink } from 'react-router';
 import { API_URL } from '../../actions/index';
 import axios from 'axios';
 import Masonry from 'react-masonry-component';
+import {connect} from 'react-redux';
+import CommunityNews from './CommunityNews';
 
 const masonryOptions = {
     transitionDuration: 0
@@ -24,6 +26,8 @@ class HomePage extends Component {
   }
 
   componentDidMount() {
+    const data = {page:"HOME"};
+    this.props.dispatch({type:"UPDATE", data});
     axios.get(`${API_URL}/getExpertsCategoryList`)
       .then(res => {
         // debugger
@@ -68,7 +72,7 @@ class HomePage extends Component {
 
   getCategoryLink(categorySlug, categoryName, expertNumbers){
     if(categorySlug == 'forum'){
-      return <Link to={`/${categorySlug}`}>{categoryName} {(expertNumbers > 0) ? '('+expertNumbers+')' : ''}</Link>;
+      return <Link to={`/${categoryName}`}>{categoryName} {(expertNumbers > 0) ? '('+expertNumbers+')' : ''}</Link>;
     }else{
       return <Link to={`/list/${categorySlug}`}>{categoryName} {(expertNumbers > 0) ? '('+expertNumbers+')' : ''}</Link>;
     }
@@ -109,7 +113,7 @@ class HomePage extends Component {
                           <span className="short-dash"></span>
                         </h4>
                         <h4 className={'community-news-parent'}>
-                            <Link to={'community-news'} className={'community-news-link'}>
+                            <Link to={'community-news/'+post.slug} className={'community-news-link'}>
                                 Community
                             </Link>
                         </h4>
@@ -145,4 +149,4 @@ class HomePage extends Component {
   }
 }
 
-export default HomePage;
+export default connect()(HomePage);

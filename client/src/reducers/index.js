@@ -5,6 +5,7 @@ import userReducer from './user_reducer';
 import communicationReducer from './communication_reducer';
 import customerReducer from './customer_reducer';
 import expertReducer from './expert_reducer';
+import pageroutereducer from './pageroutereducer';
 
 const rootReducer = combineReducers({
   form: formReducer,
@@ -13,6 +14,7 @@ const rootReducer = combineReducers({
   communication: communicationReducer,
   customer: customerReducer,
   expert: expertReducer,
+  pageroute:pageroutereducer
 });
 
 export default rootReducer;

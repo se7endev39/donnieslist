@@ -17,8 +17,23 @@ class HeaderTemplate extends Component {
   constructor(props, context) {
     super(props, context);
     this.state = {
-      redirect: false
+      redirect: false,
+      category:null,
+      searchval: true
     };
+  }
+
+  hidesearch() {
+    console.log(typeof(this.props.posts))
+    if(this.props.posts === '0'){ 
+      return false
+    }
+    else if(this.props.posts === undefined){
+      return true
+    }
+    else {
+      return true
+    }
   }
 
   renderLinks() {
@@ -64,7 +79,7 @@ class HeaderTemplate extends Component {
       return [
         // Unauthenticated navigation
         <li key={1}>
-          <Link onClick={this.handleOnClick} to="/">Home</Link>
+          <Link onClick={this.homeOnClick} to="/">Home</Link>
         </li>,
         <li key={2}>
           <Link onClick={this.handleOnClick} to="login">Login</Link>
@@ -82,11 +97,30 @@ class HeaderTemplate extends Component {
     }
   }
 
+  getplaceholder(){
+    if(this.props.posts === "HOME" || this.props.posts === undefined){
+      return "Search"
+    }
+    else if(this.props.posts === '0'){
+      return ""
+    }
+    else{
+      return `Search ${this.props.posts}`
+    }
+  }
+
   handleOnClick(){
     console.log('here');
     let linksEl = document.querySelector('#nav-collapse');
     linksEl.classList.remove("in");
   }
+
+  homeOnClick(){
+    let linksEl = document.querySelector('#nav-collapse');
+    linksEl.classList.remove("in");
+    const data = {page:"HOME"}
+    this.props.dispatch({type:"UPDATE", data});
+   }
 
   displayPendingAccountAlert(){
     if(currentUser && currentUser.role == 'User' && !currentUser.customerId){
@@ -116,6 +150,12 @@ class HeaderTemplate extends Component {
             </div>
             <div className="collapse navbar-collapse" id="nav-collapse">
               <ul className="nav navbar-nav navbar-right">
+                {this.hidesearch() && <li>
+                  <div className="search">
+                    <i className="fa fa-search"></i>
+                    <input placeholder={this.getplaceholder()} type="text" />
+                  </div>
+                </li>}
                 {this.renderLinks()}
               </ul>
             </div>
@@ -131,8 +171,10 @@ class HeaderTemplate extends Component {
 }
 
 function mapStateToProps(state) {
+  let pos= state.pageroute.pagename.page
   return {
     authenticated: state.auth.authenticated,
+    posts: pos
   };
 }
 
