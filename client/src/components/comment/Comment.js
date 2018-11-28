@@ -56,11 +56,11 @@ const Index = _this => (
           <ReactMarkdown source={ _this.props.children } />
           <div className="reply-wrapper">
             <div className="number">
-              <img src="/src/public/img/hand-like.svg" onClick={ (e) => _this.onLike(e) }/>
+              <img src="/src/public/img/hand-like.png" onClick={ (e) => _this.onLike(e) }/>
               { _this.props.data.voters && _this.props.data.voters.length ? _this.props.data.voters.length : '' }
             </div>
             <div className="number">
-              <img src="/src/public/img/hand-dislike.svg" onClick={ (e) => _this.onDislike(e) }/>
+              <img src="/src/public/img/hand-dislike.png" onClick={ (e) => _this.onDislike(e) }/>
             </div>
             <a onClick={ (e) => { _this.onShowReply(e, true) } }> REPLY </a>
           </div>
