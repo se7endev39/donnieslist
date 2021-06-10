@@ -70,7 +70,7 @@
     "eslint-plugin-react": "^6.6.0",
     "extract-text-webpack-plugin": "^1.0.1",
     "http-server": "^0.11.1",
-    "node-sass": "^3.4.2",
+    "node-sass": "^6.0.0",
     "nodemailer": "~0.7.1",
     "sass-loader": "^3.1.2",
     "style-loader": "^0.13.0",
