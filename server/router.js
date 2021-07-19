@@ -75,7 +75,7 @@ module.exports = (app) => {
   //= ========================
 
   // Set auth routes as subgroup/middleware to apiRoutes
-  apiRoutes.use('/auth', authRoutes);
+  apiRoutes.use('/api/auth', authRoutes);
 
   //= ========================
   // Facebook Routes
@@ -147,7 +147,7 @@ module.exports = (app) => {
   //= ========================
 
   // Set user routes as a subgroup/middleware to apiRoutes
-  apiRoutes.use('/user', userRoutes);
+  apiRoutes.use('/api/user', userRoutes);
   apiRoutes.use('/myuserprofile', usersOwnRoutes);
 
   // View user profile route

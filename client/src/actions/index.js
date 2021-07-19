@@ -7,10 +7,10 @@ import { STATIC_ERROR, FETCH_USER , SEND_CONTACT_FORM} from './types';
 // Global variables
 //= ===============================
 
-export const API_URL = 'https://www.donnieslist.com/api';
-export const CLIENT_ROOT_URL = 'https://www.donnieslist.com';
-// export const API_URL = 'http://localhost:3000/api';
-// export const CLIENT_ROOT_URL = 'http://localhost:5000';
+// export const API_URL = 'https://www.donnieslist.com/api';
+// export const CLIENT_ROOT_URL = 'https://www.donnieslist.com';
+export const API_URL = 'http://localhost:3000/api';
+export const CLIENT_ROOT_URL = 'http://localhost:5000';
 
 export const Image_URL = 'https://www.donnieslist.com';
 export const SOCKET_CONNECTION = io.connect(API_URL);

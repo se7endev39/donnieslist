@@ -7,20 +7,20 @@ const express = require('express'),
   mongoose = require('mongoose'),
   socketEvents = require('./socketEvents'),
   config = require('./config/main'),
-  passport    = require('passport');
+  passport = require('passport');
 
 // Database Setup
 function connectDB() {
-    mongoose
-      .connect(process.env.DB_URI)
-      .then(
-        () => {},
-        (err) => {
-          console.log("Database not ready!");
-          setTimeout(function() {
-            connectDB();
-          }, 1000)
-        })
+  mongoose
+    .connect("mongodb://127.0.0.1:27017/donnyslist")
+    .then(
+      () => { },
+      (err) => {
+        console.log("Database not ready!");
+        setTimeout(function () {
+          connectDB();
+        }, 1000)
+      })
 }
 
 connectDB();
@@ -30,7 +30,7 @@ let server;
 if (process.env.NODE_ENV != config.test_env) {
   server = app.listen(config.port);
   console.log(`Your server is running on port ${config.port}.`);
-} else{
+} else {
   server = app.listen(config.test_port);
 }
 
