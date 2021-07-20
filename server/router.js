@@ -148,7 +148,7 @@ module.exports = (app) => {
 
   // Set user routes as a subgroup/middleware to apiRoutes
   apiRoutes.use('/api/user', userRoutes);
-  apiRoutes.use('/myuserprofile', usersOwnRoutes);
+  apiRoutes.use('/api/myuserprofile', usersOwnRoutes);
 
   // View user profile route
   userRoutes.get('/:userId', requireAuth, UserController.viewProfile);
@@ -174,7 +174,7 @@ module.exports = (app) => {
   //= ========================
   // Experts Routes
   //= ========================
-  apiRoutes.get('/getExpertsCategoryList', ExpertsController.getExpertsCategoryList);
+  apiRoutes.get('/api/getExpertsCategoryList', ExpertsController.getExpertsCategoryList);
   apiRoutes.get('/getExpertsListing/:category', ExpertsController.getExpertsListing);
   apiRoutes.get('/getExpertsListingByKeyword/:keyword', ExpertsController.getExpertsListingByKeyword);
   apiRoutes.get('/getExpertsListing/topRated/:category', ExpertsController.getTopExpertsListing);
