@@ -4,7 +4,7 @@ const User = require('../models/user');
 // User Routes
 //= =======================================
 exports.AdminsUsersList = (req, res, next) => {
-  const userId = req.params.userId;
+  const { userId } = req.params;
   if (req.user._id.toString() !== userId) {
     return res.status(401).json({ error: 'You are not authorized to view this user profile.' });
   }

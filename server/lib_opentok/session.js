@@ -8,15 +8,14 @@
 * @class Session
 */
 
-var Session = function Session(ot, sessionId, properties) {
-  var prop;
+const Session = function Session(ot, sessionId, properties) {
   this.ot = ot;
   this.sessionId = sessionId;
-  for (prop in properties) {
+  Object.keys(properties).forEach((prop) => {
     if ({}.hasOwnProperty.call(properties, prop)) {
       this[prop] = properties[prop];
     }
-  }
+  });
 };
 
 Session.prototype.generateToken = function generateToken(opts) {

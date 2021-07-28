@@ -1,4 +1,3 @@
-
 const config = require('../config/main');
 
 process.env.NODE_ENV = config.test_env;

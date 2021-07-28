@@ -1,34 +1,33 @@
-import React, { Component } from 'react';
+import React, { useState } from "react";
 
-import RotatorItem from './rotator-item';
-import RotatorNav from './rotator-nav';
+import RotatorItem from "./rotator-item";
+import RotatorNav from "./rotator-nav";
 
-class Rotator extends Component {
-  constructor(props) {
-    super(props);
+const Rotator = (props) => {
+  const [state, setState] = useState({ index: 0 });
 
-    this.setPage = this.setPage.bind(this);
-    this.state = {
-      index: 0,
-    };
-  }
+  const setPage = (e) => {
+    setState({ index: e.target.value });
+  };
 
-  setPage(e) {
-    this.setState({ index: e.target.value });
-  }
+  const selectedSlide = () => {
+    return props.rotators.filer((slider, index) => {
+      if (index === state.index) return slider;
+    });
+  };
 
-  render() {
-    const selectedSlide = this.props.rotators.filter(function (slider, index) {
-      return index == this.state.index;
-    }, this);
-
-    return (
-      <div className="rotator-container">
-        <RotatorItem selectedSlide={selectedSlide} />
-        <RotatorNav length={this.props.rotators.length} active={this.state.index} setPage={this.setPage} />
-      </div>
-    );
-  }
-}
+  return (
+    <div className="rotator-container">
+      <RotatorItem selectedSlide={selectedSlide()} />
+      <RotatorNav
+        length={props.rotators.length}
+        active={state.index}
+        setPage={(e) => {
+          setPage(e);
+        }}
+      />
+    </div>
+  );
+};
 
 export default Rotator;

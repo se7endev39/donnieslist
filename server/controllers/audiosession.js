@@ -11,9 +11,9 @@ const opentok = new OpenTok(config.opentok_apiKey, config.opentok_apiSecret);
 
 /* API endpoint to create audio session  */
 exports.createAudioSession = (req, res, /* next */) => {
-  const expertEmail = req.body.expertEmail;
-  const userEmail = req.body.userEmail;
-  const username = req.body.username;
+  const { expertEmail } = req.body;
+  const { userEmail } = req.body;
+  const { username } = req.body;
 
   opentok.createSession((error, session) => {
     const bind = {};
@@ -50,7 +50,7 @@ exports.createAudioSession = (req, res, /* next */) => {
 
 exports.requestForToken = (req, res, /* next */) => {
   // const { email } = req.body;
-  const newConAudioId = req.body.newConAudioId;
+  const { newConAudioId } = req.body;
 
   AudioSession.findById(newConAudioId, (err, sessionInfo) => {
     if (sessionInfo) {

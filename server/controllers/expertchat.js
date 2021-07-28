@@ -1,17 +1,17 @@
 const Sessionmessages = require('../models/sessionmessages');
 
 exports.expertsessionchat = (req, res, next) => {
-  const messageSenderEmail = req.body.messageSenderEmail;
-  const messageReceiverEmail = req.body.messageReceiverEmail;
-  const composedMessage = req.body.composedMessage;
-  const sessionOwnerUsername = req.body.sessionOwnerUsername;
-  const date = req.body.date;
+  const { messageSenderEmail } = req.body;
+  const { messageReceiverEmail } = req.body;
+  const { composedMessage } = req.body;
+  const { sessionOwnerUsername } = req.body;
+  const { date } = req.body;
   if (
-    messageSenderEmail !== undefined &&
-    messageSenderEmail !== null &&
-    (messageReceiverEmail !== undefined && messageReceiverEmail !== null) &&
-    (composedMessage !== undefined && composedMessage !== null) &&
-    (sessionOwnerUsername !== undefined && sessionOwnerUsername !== null)
+    messageSenderEmail !== undefined
+    && messageSenderEmail !== null
+    && (messageReceiverEmail !== undefined && messageReceiverEmail !== null)
+    && (composedMessage !== undefined && composedMessage !== null)
+    && (sessionOwnerUsername !== undefined && sessionOwnerUsername !== null)
   ) {
     const reply = new Sessionmessages({
       messageSenderEmail,
@@ -32,8 +32,8 @@ exports.expertsessionchat = (req, res, next) => {
 };
 
 exports.fetchSessionChat = (req, res) => {
-  const sessionOwnerUsername = req.params.sessionOwnerUsername;
-  const email = req.params.email;
+  const { sessionOwnerUsername } = req.params;
+  const { email } = req.params;
   if (sessionOwnerUsername !== undefined && sessionOwnerUsername !== null) {
     return Sessionmessages.aggregate(
       [

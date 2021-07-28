@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { Link,IndexLink } from 'react-router';
-import { Field, reduxForm } from 'redux-form';
-import { fetchRecipients, startConversation } from '../../../actions/messaging';
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import { Link, NavLink } from "react-router-dom";
+import { Field, reduxForm } from "redux-form";
+import { fetchRecipients, startConversation } from "../../../actions/messaging";
 
 const form = reduxForm({
-  form: 'composeMessage',
+  form: "composeMessage",
   validate,
 });
 
@@ -13,14 +13,20 @@ function validate(formProps) {
   const errors = {};
 
   if (!formProps.composedMessage) {
-    errors.password = 'Please enter a message';
+    errors.password = "Please enter a message";
   }
   return errors;
 }
 
-const renderTextarea = field => (
+const renderTextarea = (field) => (
   <div>
-    <textarea required rows="3" placeholder="Your message here" className="form-control" {...field.input} ></textarea>
+    <textarea
+      required
+      rows="3"
+      placeholder="Your message here"
+      className="form-control"
+      {...field.input}
+    ></textarea>
     {field.touched && field.error && <div className="error">{field.error}</div>}
   </div>
 );
@@ -38,10 +44,11 @@ class ComposeMessage extends Component {
 
   renderRecipients() {
     if (this.props.recipients) {
-      return (
-        this.props.recipients.map(data => <option key={data._id} value={data._id}>
-          {data.profile.firstName} {data.profile.lastName}</option>)
-      );
+      return this.props.recipients.map((data) => (
+        <option key={data._id} value={data._id}>
+          {data.profile.firstName} {data.profile.lastName}
+        </option>
+      ));
     }
   }
 
@@ -61,11 +68,15 @@ class ComposeMessage extends Component {
     }
   }
 
-  breadcrumb(){
-    return(
+  breadcrumb() {
+    return (
       <ol className="breadcrumb">
-        <li className="breadcrumb-item"><IndexLink to="/">Home</IndexLink></li>
-        <li className="breadcrumb-item"><Link to="/dashboard">Dashboard</Link></li>
+        <li className="breadcrumb-item">
+          <NavLink to="/">Home</NavLink>
+        </li>
+        <li className="breadcrumb-item">
+          <Link to="/dashboard">Dashboard</Link>
+        </li>
         <li className="breadcrumb-item">Inbox</li>
       </ol>
     );
@@ -74,8 +85,18 @@ class ComposeMessage extends Component {
   userMenu() {
     return (
       <ul className="nav nav-sidebar" id="menu">
-        <li><Link to="/profile/edit"><i className="glyphicon glyphicon-list-alt"></i> <span className="collapse in hidden-xs"> Edit Profile</span></Link></li>
-        <li><Link to="/dashboard/inbox"><i className="glyphicon glyphicon-list-alt"></i> <span className="collapse in hidden-xs"> Inbox</span></Link></li>
+        <li>
+          <Link to="/profile/edit">
+            <i className="glyphicon glyphicon-list-alt"></i>
+            <span className="collapse in hidden-xs"> Edit Profile</span>
+          </Link>
+        </li>
+        <li>
+          <Link to="/dashboard/inbox">
+            <i className="glyphicon glyphicon-list-alt"></i>
+            <span className="collapse in hidden-xs"> Inbox</span>
+          </Link>
+        </li>
       </ul>
     );
   }
@@ -90,7 +111,10 @@ class ComposeMessage extends Component {
             {this.breadcrumb()}
             <div className="wrapper-sidebar-page">
               <div className="row row-offcanvas row-offcanvas-left">
-                <div className="column col-sm-3 col-xs-1 sidebar-offcanvas" id="sidebar">
+                <div
+                  className="column col-sm-3 col-xs-1 sidebar-offcanvas"
+                  id="sidebar"
+                >
                   {this.userMenu()}
                 </div>
                 <div className="column col-sm-9 col-xs-11" id="main">
@@ -98,10 +122,17 @@ class ComposeMessage extends Component {
                     <div className="title">Start New Conversation</div>
                   </div>
                   <div className="compose-msg-form">
-                    <form onSubmit={handleSubmit(this.handleFormSubmit.bind(this))}>
+                    <form
+                      onSubmit={handleSubmit(this.handleFormSubmit.bind(this))}
+                    >
                       <div className="form-group">
                         <label>Choose Recipent</label>
-                        <Field className="form-control" required name="recipient" component="select">
+                        <Field
+                          className="form-control"
+                          required
+                          name="recipient"
+                          component="select"
+                        >
                           <option />
                           {this.renderRecipients()}
                         </Field>
@@ -109,10 +140,19 @@ class ComposeMessage extends Component {
                       <div className="form-group">
                         <label>Enter your message below</label>
                         {this.renderAlert()}
-                        <Field name="composedMessage" required rows="3" component={renderTextarea} type="text" placeholder="Type here to chat..." />
+                        <Field
+                          name="composedMessage"
+                          required
+                          rows="3"
+                          component={renderTextarea}
+                          type="text"
+                          placeholder="Type here to chat..."
+                        />
                       </div>
                       <div className="form-group">
-                        <button action="submit" className="btn btn-primary">Send</button>
+                        <button action="submit" className="btn btn-primary">
+                          Send
+                        </button>
                       </div>
                     </form>
                   </div>
@@ -133,4 +173,6 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps, { fetchRecipients, startConversation })(form(ComposeMessage));
+export default connect(mapStateToProps, { fetchRecipients, startConversation })(
+  form(ComposeMessage)
+);

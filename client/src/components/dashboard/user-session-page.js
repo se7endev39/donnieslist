@@ -1,52 +1,58 @@
-import React, { Component } from 'react';
-import { Link, IndexLink  } from 'react-router';
-import moment from 'moment';
-import ChatView from 'react-chatview';
-import { connect } from 'react-redux';
-import cookie from 'react-cookie';
-import { API_URL, CLIENT_ROOT_URL, errorHandler } from '../../actions/index';
-import { protectedTest } from '../../actions/auth';
-import $ from 'jquery'
-import axios from 'axios';
+/* eslint-disable jsx-a11y/anchor-is-valid */
+import React, { Component } from "react";
+import { NavLink, withRouter } from "react-router-dom";
+import { connect } from "react-redux";
+import { Cookies, withCookies } from "react-cookie";
+import { instanceOf } from "prop-types";
+import axios from "axios";
 
-import { FetchExpertConversation } from '../../actions/messaging';
-import ExpertReplyMessage from './expert-reply-message';
+import { API_URL} from "../../constants/api";
+import { protectedTest } from "../../actions/auth";
+import { FetchExpertConversation } from "../../actions/messaging";
+import ExpertReplyMessage from "./expert-reply-message";
 
-import io from 'socket.io-client';
+// import io from "socket.io-client";
 //var socket = io().connect();
 
 //var socket = io.connect();
 
-var Compose = React.createClass({
-  render () {
-    return (
-        <div className="composition-area">
-            <textarea
-                onKeyDown={this.onKeyDown}
-                onChange={this.onChange}
-                value={this.props.cursor.value} />
-        </div>
-    );
-  },
+const OT = require("@opentok/client");
 
-  onChange(e) {
-    this.props.cursor.set(e.target.value);
-  },
+// var Compose = React.createClass({
+//   render() {
+//     return (
+//       <div className="composition-area">
+//         <textarea
+//           onKeyDown={this.onKeyDown}
+//           onChange={this.onChange}
+//           value={this.props.cursor.value}
+//         />
+//       </div>
+//     );
+//   },
 
-  onKeyDown (e) {
-    if (e.keyCode == 13) {
-      console.log('enter pressed');
-      e.preventDefault();
-      this.props.sendMessage(this.props.cursor.value);
-    }
-  }
-});
+//   onChange(e) {
+//     this.props.cursor.set(e.target.value);
+//   },
+
+//   onKeyDown(e) {
+//     if (e.keyCode === 13) {
+//       console.log("enter pressed");
+//       e.preventDefault();
+//       this.props.sendMessage(this.props.cursor.value);
+//     }
+//   },
+// });
 
 class SessionPage extends Component {
+  static propTypes = {
+    cookies: instanceOf(Cookies).isRequired,
+  };
+
   constructor(props) {
     super(props);
 
-    this.props.FetchExpertConversation(this.props.params.slug);
+    this.props.FetchExpertConversation(this.props.match.params.slug);
 
     this.state = {
       expert: "",
@@ -58,7 +64,7 @@ class SessionPage extends Component {
       loading: false,
       error: null,
       session: "",
-      publisher: ""
+      publisher: "",
     };
 
     this.state = { time: {}, seconds: 1800 };
@@ -68,48 +74,48 @@ class SessionPage extends Component {
     this.countDown = this.countDown.bind(this);
 
     this.props.protectedTest();
-		$(document).ready(function(){
-		   jQuery('.Chat_Trigger').click(function() {
-		        jQuery("body").addClass('OpenChatList');
-		    });
-		    jQuery(document).on('click','.Hide_Left_panel',function(){
-		      jQuery("body").removeClass('OpenChatList');
-		    });
+    window.$(document).ready(function () {
+      window.$(".Chat_Trigger").click(function () {
+        window.$("body").addClass("OpenChatList");
+      });
+      window.$(document).on("click", ".Hide_Left_panel", function () {
+        window.$("body").removeClass("OpenChatList");
+      });
 
-        setTimeout(function(){
-            jQuery("body").addClass('OpenChatList');
-            //console.log( $('.mainContainer').height() );
-            var mainContainerHeight = $('.mainContainer').height();
-            $('.Left_Panel').css('height',mainContainerHeight+'px');
-        },1200);
-		});
+      setTimeout(function () {
+        window.$("body").addClass("OpenChatList");
+        //console.log( window.$('.mainContainer').height() );
+        var mainContainerHeight = window.$(".mainContainer").height();
+        window.$(".Left_Panel").css("height", mainContainerHeight + "px");
+      }, 1200);
+    });
 
-    $(function () {
-      console.log('session page dom loaded');
+    window.$(function () {
+      console.log("session page dom loaded");
     });
   }
 
   renderInbox() {
-    const currentUser = cookie.load('user');
-    const moment = require('moment');
+    // const currentUser = this.props.cookies.get("user");
+    const moment = require("moment");
     //console.log('currentUser: '+JSON.stringify(currentUser));
     if (this.props.messages) {
       return (
         <ul>
-            {this.props.messages.map(data =>
-              <li className="me">
-                <span className="message-body">
-                  {data.message}
-                </span>
-                <div className="session-msg-date">{moment(data.messageTime).from(moment())}</div>
-              </li>
-            )}
+          {this.props.messages.map((data, index) => (
+            <li className="me" key={`DATA_${index}`}>
+              <span className="message-body">{data.message}</span>
+              <div className="session-msg-date">
+                {moment(data.messageTime).from(moment())}
+              </div>
+            </li>
+          ))}
         </ul>
       );
     }
   }
 
-  secondsToTime(secs){
+  secondsToTime(secs) {
     let hours = Math.floor(secs / (60 * 60));
 
     let divisor_for_minutes = secs % (60 * 60);
@@ -119,14 +125,14 @@ class SessionPage extends Component {
     let seconds = Math.ceil(divisor_for_seconds);
 
     let obj = {
-      "h": hours,
-      "m": minutes,
-      "s": seconds
+      h: hours,
+      m: minutes,
+      s: seconds,
     };
     return obj;
   }
 
-  callNowButtonClick(e){
+  callNowButtonClick(e) {
     /*
     e.preventDefault();
 
@@ -184,29 +190,40 @@ class SessionPage extends Component {
     */
   }
 
-  componentWillMount() {
-    //console.log('*** **** *** componentWillMount ');
+  UNSAFE_componentWillMount() {
+    //console.log('*** **** *** UNSAFE_componentWillMount ');
 
-    //jQuery("body").addClass('OpenChatList');
+    //window.$("body").addClass('OpenChatList');
 
     var userEmail = "mohit@gmail.com";
     var expertEmail = "rohit@gmail.com";
 
-    axios.post(`${API_URL}/createVideoSession`, { expertEmail, userEmail })
-		  .then(res => {
+    axios
+      .post(`${API_URL}/createVideoSession`, { expertEmail, userEmail })
+      .then((res) => {
         //console.log(JSON.stringify(res.data.session));
-        this.state.session = TB.initSession(res.data.session.sessionId);
+        this.setState({ session: OT.initSession(res.data.session.sessionId) });
 
         //console.log('sessionId: '+res.data.session.sessionId);
         //console.log('apiKey: '+res.data.session.ot.apiKey);
 
-        this.state.publisher = TB.initPublisher(res.data.session.ot.apiKey, 'publisher',{width:'100%', height:400},function(error) {
-          if (error) {
-            console.log('Publisher error : '+error);
-          }else{
-            $('.Left_Panel').css('height',$('.mainContainer').height()+'px');
-            console.log('Publisher initialized.');
-          }
+        this.setState({
+          publisher: OT.initPublisher(
+            res.data.session.ot.apiKey,
+            "publisher",
+            { width: "100%", height: 400 },
+            function (error) {
+              if (error) {
+                console.log("Publisher error : " + error);
+              } else {
+                window.$(".Left_Panel").css(
+                  "height",
+                  window.$(".mainContainer").height() + "px"
+                );
+                console.log("Publisher initialized.");
+              }
+            }
+          ),
         });
 
         /*this.state.session.on('sessionConnected', function(){
@@ -216,55 +233,54 @@ class SessionPage extends Component {
           console.log('sessionDisconnected');
         });*/
 
-
-
         this.startTimer();
         this.setState({ showEndCallOptions: true });
-        this.setState({sessionId : res.data.session.sessionId });
-        this.setState({apiKey : res.data.session.ot.apiKey });
-        this.setState({apiSecret : res.data.session.ot.apiSecret });
-		    this.setState({
-		      expert,
-		      loading: false,
-		      error: null
-		    });
-
-		  }).catch(err => {
-		    // Something went wrong. Save the error in state and re-render.
-		    this.setState({
-		      loading: false,
-		      error: err
-		    });
-  	});
+        this.setState({ sessionId: res.data.session.sessionId });
+        this.setState({ apiKey: res.data.session.ot.apiKey });
+        this.setState({ apiSecret: res.data.session.ot.apiSecret });
+        this.setState({
+          // expert,
+          loading: false,
+          error: null,
+        });
+      })
+      .catch((err) => {
+        // Something went wrong. Save the error in state and re-render.
+        this.setState({
+          loading: false,
+          error: err,
+        });
+      });
   }
-  
+
   componentDidMount() {
     let timeLeftVar = this.secondsToTime(this.state.seconds);
     this.setState({ time: timeLeftVar });
-    var slug = this.props.params.slug;
+    var slug = this.props.match.params.slug;
 
     //console.log('sessionId set by prev :'+this.state.sessionId);
-    axios.get(`${API_URL}/getExpertDetail/${slug}`)
-		  .then(res => {
+    axios
+      .get(`${API_URL}/getExpertDetail/${slug}`)
+      .then((res) => {
         const expert = res.data[0];
-        this.setState({firstName : res.data[0].profile.firstName });
-        this.setState({lastName : res.data[0].profile.lastName });
-		    this.setState({
-		      expert,
-		      loading: false,
-		      error: null
-		    });
-		  })
-		  .catch(err => {
-		    this.setState({
-		      loading: false,
-		      error: err
-		    });
-	  	});
-	}
+        this.setState({ firstName: res.data[0].profile.firstName });
+        this.setState({ lastName: res.data[0].profile.lastName });
+        this.setState({
+          expert,
+          loading: false,
+          error: null,
+        });
+      })
+      .catch((err) => {
+        this.setState({
+          loading: false,
+          error: err,
+        });
+      });
+  }
 
   startTimer() {
-    if (this.timer == 0) {
+    if (this.timer === 0) {
       this.timer = setInterval(this.countDown, 1000);
     }
   }
@@ -277,17 +293,18 @@ class SessionPage extends Component {
       seconds: seconds,
     });
 
-    if (seconds == 0) {
+    if (seconds === 0) {
       clearInterval(this.timer);
     }
   }
 
   redAlertTiming(minutes) {
     //if(minutes == this.props.redAlert)
-    if(minutes <= this.props.redAlert)
-    return Object.assign(
-      {'-webkit-animation':'shake 0.1s ease-in-out 0.1s infinite alternate', 'color':'#FF0000'}
-    );
+    if (minutes <= this.props.redAlert)
+      return Object.assign({
+        "-webkit-animation": "shake 0.1s ease-in-out 0.1s infinite alternate",
+        color: "#FF0000",
+      });
   }
 
   disconnect() {
@@ -298,29 +315,35 @@ class SessionPage extends Component {
   }
 
   render() {
-    var controller = this.props.messagesController;
+    // var controller = this.props.messagesController;
     return (
       <div className="session-page">
         <div className="container">
           <div className="row">
-           <ol className="breadcrumb">
-             <li className="breadcrumb-item"><IndexLink to="/">Home</IndexLink></li>
-             <li className="breadcrumb-item">Session with {this.state.firstName} {this.state.lastName}</li>
-           </ol>
+            <ol className="breadcrumb">
+              <li className="breadcrumb-item">
+                <NavLink to="/">Home</NavLink>
+              </li>
+              <li className="breadcrumb-item">
+                Session with {this.state.firstName} {this.state.lastName}
+              </li>
+            </ol>
 
-            { /* }
+            {/* }
             <header className="header-session">John L</header>
-            { */ }
+            { */}
             <section>
-            	<div className="mainContainer">
-            		<div className="Left_Panel">
-            			<div className="Conversation">
-            				<h6>Conversation</h6>
-            				<a href="#" className="Hide_Left_panel"><i className="fa fa-times" aria-hidden="true"></i></a>
-            			</div>
+              <div className="mainContainer">
+                <div className="Left_Panel">
+                  <div className="Conversation">
+                    <h6>Conversation</h6>
+                    <a className="Hide_Left_panel">
+                      <i className="fa fa-times" aria-hidden="true"></i>
+                    </a>
+                  </div>
                   <div className="Chat_Main_section">
                     <div className="Chating_msg_Here">
-                      { this.renderInbox() }
+                      {this.renderInbox()}
                       {/*}<ul>
                         <div className="Show_date_startMassage">May 27, 2016 .</div>
                         <li className="me">lorem ipsum dolor site. lorem ipsum dolor site.lorem ipsum dolor site.</li>
@@ -335,53 +358,106 @@ class SessionPage extends Component {
                       </ul>{*/}
                     </div>
                     <div className="typeMessage">
-                      <ExpertReplyMessage sessionOwnerUsername={this.props.params.slug} messageReceiverEmail={'avadhesh_bhatt@rvtechnologies.co.in'} messageSenderEmail={'mohit@gmail.com'}/>
+                      <ExpertReplyMessage
+                        sessionOwnerUsername={this.props.match.params.slug}
+                        messageReceiverEmail={
+                          "avadhesh_bhatt@rvtechnologies.co.in"
+                        }
+                        messageSenderEmail={"mohit@gmail.com"}
+                      />
                       <div className="SendBtn_action">
-                        <li><a href="#"><i className="fa fa-smile-o" aria-hidden="true"></i></a></li>
-                        <li><a href="#"><i className="fa fa-paper-plane" aria-hidden="true"></i></a></li>
+                        <li>
+                          <a>
+                            <i className="fa fa-smile-o" aria-hidden="true"></i>
+                          </a>
+                        </li>
+                        <li>
+                          <a>
+                            <i
+                              className="fa fa-paper-plane"
+                              aria-hidden="true"
+                            ></i>
+                          </a>
+                        </li>
                       </div>
                     </div>
                   </div>
-            		</div>
-            		<div className="Right_Panel">
+                </div>
+                <div className="Right_Panel">
+                  <div className="CallingDetails">
+                    <div className="ClientName">
+                      <span>
+                        <i className="fa fa-users" aria-hidden="true"></i>
+                      </span>
+                      2 Participants
+                    </div>
+                    {/* }<div className="ClientEmail">Calling {this.state.expert.name}</div>{ */}
+                  </div>
 
-            			<div className="CallingDetails">
-            				<div className="ClientName"><span><i className="fa fa-users" aria-hidden="true"></i></span> 2 Participants</div>
-            				{ /* }<div className="ClientEmail">Calling {this.state.expert.name}</div>{ */ }
-            			</div>
-
-            			<div className="Client_image">
-            				<div className="innerm">
-                      { /* }
-                      <div className="chatHead chatHeadLeader"><img src="/src/public/img/Client-img.png"/></div>
-                      { */ }
-                      { this.state.showEndCallOptions ? null : <LoaderImage/> }
+                  <div className="Client_image">
+                    <div className="innerm">
+                      {/* }
+                      <div className="chatHead chatHeadLeader"><img src="/img/Client-img.png"/></div>
+                      { */}
+                      {this.state.showEndCallOptions ? null : <LoaderImage />}
                       <div id="publisher"></div>
                       <div id="subscribers"></div>
-            					<div className="upperimageName">
-                        <div className="text-left-detail"><i className="fa fa-user-o" aria-hidden="true"></i> {this.state.firstName} {this.state.lastName}</div>
-                        <div className="text-right-detail" style={this.redAlertTiming(this.state.time.m)}><i className="fa fa-clock-o" aria-hidden="true"></i> {this.state.time.m} : {this.state.time.s}</div>
+                      <div className="upperimageName">
+                        <div className="text-left-detail">
+                          <i className="fa fa-user-o" aria-hidden="true"></i>
+                          {this.state.firstName} {this.state.lastName}
+                        </div>
+                        <div
+                          className="text-right-detail"
+                          style={this.redAlertTiming(this.state.time.m)}
+                        >
+                          <i className="fa fa-clock-o" aria-hidden="true"></i>
+                          {this.state.time.m} : {this.state.time.s}
+                        </div>
                       </div>
-            				</div>
-            			</div>
+                    </div>
+                  </div>
 
-            			<div className="footer_action_btns">
-            				<ul>
-            					<li className="Chat_Trigger"><a href="javascript:void(0)"><i className="fa fa-commenting" aria-hidden="true"></i></a></li>
-                      { this.state.showEndCallOptions ? null : <li className="create_phone_call"><Link to="javascript:void()"><i className="fa fa-video-camera" aria-hidden="true"></i> Initiating session...</Link></li> }
+                  <div className="footer_action_btns">
+                    <ul>
+                      <li className="Chat_Trigger">
+                        <a>
+                          <i
+                            className="fa fa-commenting"
+                            aria-hidden="true"
+                          ></i>
+                        </a>
+                      </li>
+                      {this.state.showEndCallOptions ? null : (
+                        <li className="create_phone_call">
+                          <div>
+                            <i
+                              className="fa fa-video-camera"
+                              aria-hidden="true"
+                            ></i>
+                            Initiating session...
+                          </div>
+                        </li>
+                      )}
 
-                      { this.state.showEndCallOptions ? <li className="phone_call"><Link to="javascript:void(0)" onClick={this.disconnect.bind(this)}><i className="fa fa-phone"></i></Link></li> : null }
-                      { /* }
+                      {this.state.showEndCallOptions ? (
+                        <li className="phone_call">
+                          <div onClick={this.disconnect.bind(this)}>
+                            <i className="fa fa-phone"></i>
+                          </div>
+                        </li>
+                      ) : null}
+                      {/* }
             					<li className="video_call"><a href="#"><i className="fa fa-video-camera" aria-hidden="true"></i></a></li>
             					<li className="microphone"><a href="#"><i className="fa fa-microphone" aria-hidden="true"></i></a></li>
             					<li className="phone_call"><a href="#"><i className="fa fa-phone" aria-hidden="true"></i></a></li>
             					<li className="setting"><a href="#"><i className="fa fa-cogs" aria-hidden="true"></i></a></li>
             					<li className="ellipsismore"><a href="#"><i className="fa fa-ellipsis-h" aria-hidden="true"></i></a></li>
-                      { */ }
-            				</ul>
-            			</div>
-            		</div>
-            	</div>
+                      { */}
+                    </ul>
+                  </div>
+                </div>
+              </div>
             </section>
           </div>
         </div>
@@ -390,18 +466,26 @@ class SessionPage extends Component {
   }
 }
 
-class EndCallSection extends Component {
-  render(){
-    return (
-      <li className="phone_call"><Link to="javascript:void(0)" onClick={this.disconnect.bind(this)}><i className="fa fa-phone"></i></Link></li>
-    );
-  }
-}
+// class EndCallSection extends Component {
+//   render() {
+//     return (
+//       <li className="phone_call">
+//         <Link to={void(0)} onClick={this.disconnect.bind(this)}>
+//           <i className="fa fa-phone"></i>
+//         </Link>
+//       </li>
+//     );
+//   }
+// }
 
 class LoaderImage extends Component {
-  render(){
+  render() {
     return (
-        <img className="loader-center-ajax" src="/src/public/img/ajax-loader-l.gif"/>
+      <img
+        className="loader-center-ajax"
+        src="/img/ajax-loader-l.gif"
+        alt=""
+      />
     );
   }
 }
@@ -413,6 +497,9 @@ function mapStateToProps(state) {
   };
 }
 
-SessionPage.defaultProps = { redAlert: 5}
+SessionPage.defaultProps = { redAlert: 5 };
 
-export default connect(mapStateToProps, { protectedTest, FetchExpertConversation })(SessionPage);
+export default connect(mapStateToProps, {
+  protectedTest,
+  FetchExpertConversation,
+})(withRouter(withCookies(SessionPage)));

@@ -1,14 +1,15 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { Field, reduxForm } from 'redux-form';
-import { resetPassword } from '../../actions/auth';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { Field, reduxForm } from "redux-form";
+import { resetPassword } from "../../actions/auth";
+import { withRouter } from "react-router-dom";
 
 const form = reduxForm({
-  form: 'resetPassword'
+  form: "resetPassword",
 });
 
-const renderField = field => (
+const renderField = (field) => (
   <div>
     <input className="form-control" {...field.input} />
     {field.touched && field.error && <div className="error">{field.error}</div>}
@@ -18,22 +19,22 @@ const renderField = field => (
 class ResetPassword extends Component {
   static contextTypes = {
     router: PropTypes.object,
-  }
-  
-  componentWillMount() {
+  };
+
+  UNSAFE_componentWillMount() {
     if (this.props.authenticated) {
-      this.context.router.push('/dashboard');
+      this.context.router.push("/dashboard");
     }
   }
 
-  componentWillUpdate(nextProps) {
+  UNSAFE_componentWillUpdate(nextProps) {
     if (nextProps.authenticated) {
-      this.context.router.push('/dashboard');
+      this.context.router.push("/dashboard");
     }
   }
 
   handleFormSubmit({ password }) {
-    const resetToken = this.props.params.resetToken;
+    const resetToken = this.props.match.params.resetToken;
     this.props.resetPassword(resetToken, { password });
   }
 
@@ -57,19 +58,28 @@ class ResetPassword extends Component {
     const { handleSubmit } = this.props;
 
     return (
-      <form id="reset_form" onSubmit={handleSubmit(this.handleFormSubmit.bind(this))}>
+      <form
+        id="reset_form"
+        onSubmit={handleSubmit(this.handleFormSubmit.bind(this))}
+      >
         <fieldset className="form-group">
           <label>New Password:</label>
           <Field name="password" component={renderField} type="password" />
         </fieldset>
         <fieldset className="form-group">
           <label>Confirm New Password:</label>
-          <Field name="passwordConfirm" component={renderField} type="password" />
-          {passwordConfirm.touched && passwordConfirm.error && <div className="error">{passwordConfirm.error}</div>}
+          <Field
+            name="passwordConfirm"
+            component={renderField}
+            type="password"
+          />
+          {/* {passwordConfirm.touched && passwordConfirm.error && <div className="error">{passwordConfirm.error}</div>} */}
         </fieldset>
 
         {this.renderAlert()}
-        <button action="submit" className="btn btn-primary">Change Password</button>
+        <button action="submit" className="btn btn-primary">
+          Change Password
+        </button>
       </form>
     );
   }
@@ -79,4 +89,4 @@ function mapStateToProps(state) {
   return { errorMessage: state.auth.error, message: state.auth.resetMessage };
 }
 
-export default connect(mapStateToProps, { resetPassword })(form(ResetPassword));
+export default connect(mapStateToProps, { resetPassword })(withRouter(form(ResetPassword)));

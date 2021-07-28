@@ -1,30 +1,26 @@
-
-exports.ArgumentError = function (message) {
+exports.ArgumentError = (message) => {
   this.message = message;
 };
 
 exports.ArgumentError.prototype = Object.create(Error.prototype);
 
-
-exports.AuthError = function (message) {
+exports.AuthError = (message) => {
   this.message = message;
 };
 
 exports.AuthError.prototype = Object.create(Error.prototype);
 
-
-exports.ArchiveError = function (message) {
+exports.ArchiveError = (message) => {
   this.message = message;
 };
 
-exports.SipError = function (message) {
+exports.SipError = (message) => {
   this.message = message;
 };
 
 exports.ArchiveError.prototype = Object.create(Error.prototype);
 
-
-exports.RequestError = function (message) {
+exports.RequestError = (message) => {
   this.message = message;
 };
 

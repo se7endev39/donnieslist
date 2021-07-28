@@ -1,33 +1,25 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import React, {useEffect} from 'react';
+import { useSelector } from 'react-redux';
+import { useHistory } from 'react-router';
 
-export default function (ComposedComponent) {
-  class Authentication extends Component {
-    static contextTypes = {
-      router: PropTypes.object,
+const RequireAuth = ComposedPage => {
+    const Authentication = props => {
+        const {authenticated} = useSelector(state => state.auth);
+        const history = useHistory();
+    
+        useEffect(() => {
+            if(!authenticated)
+                history.push('/login'); 
+        }, [authenticated, history]);
+        
+        return (
+            <>
+                <ComposedPage />
+            </>
+        );
     }
+    return Authentication;
+};
 
-    componentWillMount() {
-      if (!this.props.authenticated) {
-        this.context.router.push('/login');
-      }
-    }
+export default RequireAuth;
 
-    componentWillUpdate(nextProps) {
-      if (!nextProps.authenticated) {
-        this.context.router.push('/login');
-      }
-    }
-
-    render() {
-      return <ComposedComponent {...this.props} />;
-    }
-  }
-
-  function mapStateToProps(state) {
-    return { authenticated: state.auth.authenticated };
-  }
-
-  return connect(mapStateToProps)(Authentication);
-}

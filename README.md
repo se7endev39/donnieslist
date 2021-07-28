@@ -1,13 +1,33 @@
 # Donny's List
 
-    git clone https://<username>@bitbucket.org/donnydey/donnies-list.git
+## Fetch Source Code
 
-    cd server
-    npm install
-    node run dev
+```
+git clone https://<username>@bitbucket.org/donnydey/donnies-list.git
+```
 
-    cd client
-    npm install
-    npm start
+## Database Installation
 
-- Hit this url on browser : http://0.0.0.0:5000/
+If you want to delete the your existng db 
+```bash
+mongo donnyslist --eval "db.dropDatabase()"
+```
+
+To populate the DB
+```bash
+mongorestore -d donnyslist db/
+```
+
+## Packages installation
+
+```
+./install.sh
+```
+
+## Usage
+
+```
+./runall.sh
+```
+
+Hit this url on browser : http://0.0.0.0:5000/

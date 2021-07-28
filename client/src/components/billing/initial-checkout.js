@@ -1,13 +1,9 @@
-import React, { Component } from 'react';
+import React from "react";
 
-import CheckoutForm from './checkout-form';
+import CheckoutForm from "./checkout-form";
 
-class InitialCheckout extends Component {
-  render() {
-    return (
-      <CheckoutForm plan={this.props.params.plan} />
-    );
-  }
-}
+const InitialCheckout = (props) => {
+  return <CheckoutForm plan={props.params.plan} />;
+};
 
 export default InitialCheckout;

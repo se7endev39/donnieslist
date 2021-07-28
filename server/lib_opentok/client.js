@@ -1,9 +1,13 @@
-var requestRoot = require('request');
-var request = requestRoot;
-var _ = require('lodash');
-var jwt = require('jsonwebtoken');
-var pkg = require('../package.json');
-var defaultConfig = {
+/* eslint-disable func-names */
+/* eslint-disable no-underscore-dangle */
+const requestRoot = require('request');
+
+let request = requestRoot;
+const _ = require('lodash');
+const jwt = require('jsonwebtoken');
+const pkg = require('../package.json');
+
+const defaultConfig = {
   apiKey: null,
   apiSecret: null,
   apiUrl: 'https://api.opentok.com',
@@ -19,7 +23,7 @@ var defaultConfig = {
   }
 };
 
-var Client = function (c) {
+const Client = function (c) {
   this.c = {};
   this.config(_.defaults(c, defaultConfig));
 };
@@ -44,22 +48,22 @@ Client.prototype.createSession = function (opts, cb) {
     form: opts,
     json: true,
     headers: this._generateHeaders()
-  }, function (err, resp, body) {
+  }, (err, resp, body) => {
     if (err) {
-      return cb(new Error('The request failed: ' + err));
+      return cb(new Error(`The request failed: ${err}`));
     }
 
     // handle client errors
     if (resp.statusCode === 403) {
       return cb(new Error(
-        'An authentication error occurred: (' + resp.statusCode + ') ' + JSON.stringify(body)
+        `An authentication error occurred: (${resp.statusCode}) ${JSON.stringify(body)}`
       ));
     }
 
     // handle server errors
     if (resp.statusCode >= 500 && resp.statusCode <= 599) {
       return cb(new Error(
-        'A server error occurred: (' + resp.statusCode + ') ' + JSON.stringify(body)
+        `A server error occurred: (${resp.statusCode}) ${JSON.stringify(body)}`
       ));
     }
 
@@ -72,29 +76,29 @@ Client.prototype.createSession = function (opts, cb) {
   });
 };
 
-Client.prototype.startArchive = function () {
+Client.prototype.startArchive = () => {
 };
 
-Client.prototype.stopArchive = function () {
+Client.prototype.stopArchive = () => {
 };
 
-Client.prototype.getArchive = function () {
+Client.prototype.getArchive = () => {
 };
 
-Client.prototype.listArchives = function () {
+Client.prototype.listArchives = () => {
 };
 
-Client.prototype.deleteArchive = function () {
+Client.prototype.deleteArchive = () => {
 };
 
-Client.prototype.dial = function (opts, cb) {
+Client.prototype.dial = (opts, cb) => {
   request.post({
     // TODO: only works while apiUrl is always up to the domain, without the ending slash
     url: this.c.apiUrl + this.c.endpoints.dial,
     json: opts,
     headers: this._generateHeaders()
-  }, function (err, resp, body) {
-    if (err) return cb(new Error('The request failed: ' + err));
+  }, (err, resp, body) => {
+    if (err) return cb(new Error(`The request failed: ${err}`));
     // handle client errors
     if (resp.statusCode === 400) {
       return cb(new Error('Bad session ID, token, SIP credentials, or SIP URI (sip:user@domain.tld)'));
@@ -110,7 +114,7 @@ Client.prototype.dial = function (opts, cb) {
 
     // handle server errors
     if (resp.statusCode >= 500 && resp.statusCode <= 599) {
-      return cb(new Error('A server error occurred: (' + resp.statusCode + ') ' + body));
+      return cb(new Error(`A server error occurred: (${resp.statusCode}) ${body}`));
     }
 
     // Parse data from server
@@ -118,17 +122,15 @@ Client.prototype.dial = function (opts, cb) {
   });
 };
 
-Client.prototype._generateHeaders = function () {
-  return {
-    'User-Agent': 'OpenTok-Node-SDK/' + pkg.version + (this.c.uaAddendum ? ' ' + this.c.uaAddendum : ''),
-    'X-OPENTOK-AUTH': this._generateJwt(),
-    Accept: 'application/json'
-  };
-};
+Client.prototype._generateHeaders = () => ({
+  'User-Agent': `OpenTok-Node-SDK/${pkg.version}${this.c.uaAddendum ? ` ${this.c.uaAddendum}` : ''}`,
+  'X-OPENTOK-AUTH': this._generateJwt(),
+  Accept: 'application/json'
+});
 
-Client.prototype._generateJwt = function () {
-  var currentTime = Math.floor(new Date() / 1000);
-  var token = jwt.sign({
+Client.prototype._generateJwt = () => {
+  const currentTime = Math.floor(new Date() / 1000);
+  const token = jwt.sign({
     iss: this.c.apiKey,
     ist: 'project',
     iat: currentTime,

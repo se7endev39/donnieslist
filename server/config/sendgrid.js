@@ -1,8 +1,9 @@
+const sendGrid = require('sendgrid');
 const config = require('./main');
-const helper = require('sendgrid').mail;
 
+const helper = sendGrid.mail;
+const sg = sendGrid(config.sendgridApiKey);
 const fromEmail = new helper.Email('info@yourdomain.com');
-const sg = require('sendgrid')(config.sendgridApiKey);
 
 // Create and export function to send emails through Mailgun API
 exports.sendEmail = function sendEmail(recipient, message) {

@@ -1,14 +1,16 @@
-/* global require, exports*/
-/* jshint strict:false, eqnull:true */
-
-var request = require('request');
-var errors = require('./errors');
-var pkg = require('../package.json');
-var _ = require('lodash');
-var jwt = require('jsonwebtoken');
+/* eslint-disable no-const-assign */
+/* eslint-disable no-param-reassign */
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable func-names */
+/* eslint-disable max-len */
+const request = require('request');
+const _ = require('lodash');
+const jwt = require('jsonwebtoken');
+const errors = require('./errors');
+const pkg = require('../package.json');
 
 // functions
-var api;
+// let api;
 
 /**
 * An object representing an OpenTok archive.
@@ -98,15 +100,13 @@ var api;
 * @class Archive
 */
 function Archive(config, properties) {
-  var hasProp = {}.hasOwnProperty;
-  var id = properties.id;
-  var key;
-
-  for (key in properties) {
+  const hasProp = {}.hasOwnProperty;
+  const { id } = properties;
+  Object.keys(properties).forEach((key) => {
     if (hasProp.call(properties, key)) {
       this[key] = properties[key];
     }
-  }
+  });
 
   /**
   * Stops the recording of the archive.
@@ -150,14 +150,14 @@ function Archive(config, properties) {
   * @method #delete
   * @memberof Archive
   */
-  this.delete = function (callback) {
+  this.delete = (callback) => {
     exports.deleteArchive(config, id, callback);
   };
 }
 
-var _generateJwt = function (config) {
-  var currentTime = Math.floor(new Date() / 1000);
-  var token = jwt.sign({
+const _generateJwt = function (config) {
+  const currentTime = Math.floor(new Date() / 1000);
+  const token = jwt.sign({
     iss: config.apiKey,
     ist: 'project',
     iat: currentTime,
@@ -167,29 +167,29 @@ var _generateJwt = function (config) {
   return token;
 };
 
-var _generateHeaders = function (config) {
+const _generateHeaders = function (config) {
   return {
-    'User-Agent': 'OpenTok-Node-SDK/' + pkg.version,
+    'User-Agent': `OpenTok-Node-SDK/${pkg.version}`,
     'X-OPENTOK-AUTH': _generateJwt(config),
     Accept: 'application/json'
   };
 };
 
-api = function (config, method, path, body, callback) {
-  var rurl = config.apiEndpoint + '/v2/project/' + config.apiKey + path;
+const api = function (config, method, path, body, callback) {
+  const url = `${config.apiEndpoint}/v2/project/${config.apiKey}${path}`;
   if ('defaults' in request) {
     request = request.defaults(_.pick(config, 'proxy', 'timeout'));
   }
   request({
-    url: rurl,
-    method: method,
+    url,
+    method,
     headers: _generateHeaders(config),
     json: body
   }, callback);
 };
 
 exports.listArchives = function (config, options, callback) {
-  var qs = [];
+  const qs = [];
 
   if (typeof options === 'function') {
     callback = options;
@@ -199,12 +199,12 @@ exports.listArchives = function (config, options, callback) {
     throw (new errors.ArgumentError('No callback given to listArchives'));
   }
   if (options.offset) {
-    qs.push('offset=' + parseInt(options.offset, 10));
+    qs.push(`offset=${parseInt(options.offset, 10)}`);
   }
   if (options.count) {
-    qs.push('count=' + parseInt(options.count, 10));
+    qs.push(`count=${parseInt(options.count, 10)}`);
   }
-  api(config, 'GET', '/archive?' + qs.join('&'), null, function (err, response, body) {
+  api(config, 'GET', `/archive?${qs.join('&')}`, null, (err, response, body) => {
     if (!err && body) {
       try {
         body = JSON.parse(body);
@@ -219,9 +219,7 @@ exports.listArchives = function (config, options, callback) {
         callback(new errors.RequestError('Unexpected response from OpenTok'));
       }
     } else {
-      callback(null, body.items.map(function (item) {
-        return new Archive(config, item);
-      }), body.count);
+      callback(null, body.items.map((item) => new Archive(config, item)), body.count);
     }
   });
 };
@@ -239,12 +237,12 @@ exports.startArchive = function (config, sessionId, options, callback) {
     return;
   }
   api(config, 'POST', '/archive', {
-    sessionId: sessionId,
+    sessionId,
     name: options.name,
     hasAudio: options.hasAudio,
     hasVideo: options.hasVideo,
     outputMode: options.outputMode
-  }, function startArchiveCallback(err, response, body) {
+  }, (err, response, body) => {
     if (err) {
       callback(err);
     } else if (response.statusCode !== 200) {
@@ -271,8 +269,8 @@ exports.stopArchive = function (config, archiveId, callback) {
     callback(new errors.ArgumentError('No archive ID given'));
     return;
   }
-  api(config, 'POST', '/archive/' + encodeURIComponent(archiveId) + '/stop', {},
-    function stopArchiveCallback(err, response, body) {
+  api(config, 'POST', `/archive/${encodeURIComponent(archiveId)}/stop`, {},
+    (err, response, body) => {
       if (err) {
         callback(err);
       } else if (response.statusCode !== 200) {
@@ -299,7 +297,7 @@ exports.getArchive = function (config, archiveId, callback) {
     callback(new errors.ArgumentError('No archive ID given'));
     return;
   }
-  api(config, 'GET', '/archive/' + archiveId, null, function getArchiveCallback(err, response, body) {
+  api(config, 'GET', `/archive/${archiveId}`, null, (err, response, body) => {
     if (!err && body) {
       try {
         body = JSON.parse(body);
@@ -329,8 +327,8 @@ exports.deleteArchive = function (config, archiveId, callback) {
     callback(new errors.ArgumentError('No archive ID given'));
     return;
   }
-  api(config, 'DELETE', '/archive/' + encodeURIComponent(archiveId), null,
-    function deleteArchiveCallback(err, response) {
+  api(config, 'DELETE', `/archive/${encodeURIComponent(archiveId)}`, null,
+    (err, response) => {
       if (err || response.statusCode !== 204) {
         if (response && response.statusCode === 404) {
           callback(new errors.ArchiveError('Archive not found'));

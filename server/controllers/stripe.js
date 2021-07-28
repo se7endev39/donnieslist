@@ -1,7 +1,10 @@
+const Stripe = require('stripe');
+const moment = require('moment');
+
 const config = require('../config/main');
 const mailgun = require('../config/mailgun');
-const stripe = require('stripe')(config.stripeApiKey);
-const moment = require('moment');
+
+const stripe = Stripe(config.stripeApiKey);
 const User = require('../models/user');
 
 exports.webhook = (req, res, next) => {
@@ -27,9 +30,9 @@ exports.webhook = (req, res, next) => {
           // Add a month to the user's subscription
           user.stripe.activeUntil = moment().add(1, 'months');
           // Save user with subscription
-          user.save((err) => {
-            if (err) {
-              return err;
+          user.save((err1) => {
+            if (err1) {
+              return err1;
             }
             return res.status(200);
           });
@@ -45,9 +48,9 @@ exports.webhook = (req, res, next) => {
             subject: 'Payment Failed',
             text:
               `You are receiving this because your most recent payment for $${verifiedEvent.data
-                .object.amount_due / 100}failed.` +
-              '\nThis could be due to a change or expiration on your provided credit card or interference from your bank.' +
-              `\nPlease update your payment information as soon as possible by logging in at http://${
+                .object.amount_due / 100}failed.`
+              + '\nThis could be due to a change or expiration on your provided credit card or interference from your bank.'
+              + `\nPlease update your payment information as soon as possible by logging in at http://${
                 req.headers.host
               }`
           };
@@ -57,7 +60,7 @@ exports.webhook = (req, res, next) => {
         break;
 
       default:
-        // console.log(`Unrecognized action ${verifiedEvent.type} received.`);
+        break;
     }
     // Return 200 status to inform Stripe the webhook was received
     return res.status(200);
@@ -66,8 +69,8 @@ exports.webhook = (req, res, next) => {
 
 // Create customer object when new customer enters credit card
 exports.createSubscription = (req, res, next) => {
-  const plan = req.body.plan;
-  const stripeToken = req.body.stripeToken;
+  const { plan } = req.body;
+  const { stripeToken } = req.body;
   const userEmail = req.user.email;
 
   User.findById(req.user._id, (error, user) => {
@@ -97,7 +100,7 @@ exports.createSubscription = (req, res, next) => {
               .send({ message: `You have been successfully subscribed to the ${plan} plan.` });
           });
         })
-        .catch(err => next(err));
+        .catch((err) => next(err));
     }
     // Otherwise create new Stripe customer object
     return stripe.customers
@@ -122,7 +125,7 @@ exports.createSubscription = (req, res, next) => {
             .send({ message: `You have been successfully subscribed to the ${plan} plan.` });
         });
       })
-      .catch(err => next(err));
+      .catch((err) => next(err));
   });
 };
 
@@ -154,7 +157,7 @@ exports.changeSubscription = (req, res, next) => {
             });
         });
       })
-      .catch(err => err);
+      .catch((err) => err);
   });
 };
 
@@ -179,7 +182,7 @@ exports.deleteSubscription = (req, res, next) => {
           return res.status(200).json({ message: 'Subscription successfully deleted.' });
         });
       })
-      .catch(err => next(err));
+      .catch((err) => next(err));
   });
 };
 
@@ -190,8 +193,8 @@ exports.getCustomer = (req, res, next) => {
     }
     return stripe.customers
       .retrieve(userToFetch.stripe.customerId)
-      .then(customer => res.status(200).json({ customer }))
-      .catch(err => next(err));
+      .then((customer) => res.status(200).json({ customer }))
+      .catch((err) => next(err));
   });
 };
 
@@ -214,6 +217,6 @@ exports.updateCustomerBillingInfo = (req, res, next) => {
           return res.status(200).json({ message: 'Payment method successfully updated.' });
         });
       })
-      .catch(err => next(err));
+      .catch((err) => next(err));
   });
 };

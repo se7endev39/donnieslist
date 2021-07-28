@@ -1,11 +1,12 @@
-const should = require('should');
+// const should = require('should');
 const request = require('supertest');
-const app = require('../index');
-const URI = require('./spec_helper').URI;
 const mongoose = require('mongoose');
+const app = require('../index');
+const { URI } = require('./spec_helper');
 
-const validUser = { password: 'secret', lastName: 'Doe', firstName: 'John', email: 'johndoe@exampledomain.com' };
-
+const validUser = {
+  password: 'secret', lastName: 'Doe', firstName: 'John', email: 'johndoe@exampledomain.com'
+};
 
 describe('************* AUTH REGISTRATION *************', () => {
   after((done) => {

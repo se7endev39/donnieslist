@@ -3,6 +3,7 @@ const Message = require('../models/message');
 // const User = require('../models/user');
 
 exports.getConversations = (req, res, next) => {
+  console.log('hello there i am in chat controller');
   // Only return one message from each conversation to display as snippet
   Conversation.find({ participants: req.user._id })
     .select('_id')

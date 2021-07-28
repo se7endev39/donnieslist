@@ -1,89 +1,99 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { Field, reduxForm } from 'redux-form';
-import { getForgotPasswordToken } from '../../actions/auth';
-var Recaptcha = require('react-recaptcha');
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { Field, reduxForm } from "redux-form";
+
+import { getForgotPasswordToken } from "../../actions/auth";
+
+var Recaptcha = require("react-recaptcha");
 
 const form = reduxForm({
-  form: 'forgotPassword',
+  form: "forgotPassword",
 });
 
 // specifying your onload callback function
 var callback = function () {
-  console.log('Done!!!!');
+  console.log("Done!!!!");
 };
 
 class ForgotPassword extends Component {
-
   constructor(props, context) {
     super(props, context);
 
     this.state = {
-        recaptcha_value: '',
+      recaptcha_value: "",
     };
-
   }
 
   static contextTypes = {
     router: PropTypes.object,
-  }
+  };
 
   // specifying verify callback function
   verifyCallback = function (response) {
-    console.log('verifyCallback '+response);
-    $('#hiddenRecaptcha').val(response);
+    console.log("verifyCallback " + response);
+    window.$("#hiddenRecaptcha").val(response);
     var recaptcha_value = response;
     this.setState({
-        recaptcha_value,
-        responseEmailMsg
+      recaptcha_value,
+      responseEmailMsg: "",
     });
   };
 
-  componentDidMount(){
-    $(document).ready(function(){
-      jQuery("#forgot_form").validate({
+  componentDidMount() {
+    window.$(document).ready(function () {
+      window.$("#forgot_form").validate({
         rules: {
-             email: { required: true,email: true },
-             hiddenRecaptcha: { required: true }
+          email: { required: true, email: true },
+          hiddenRecaptcha: { required: true },
         },
         messages: {
-             email: { required: "Please enter this field" },
-             hiddenRecaptcha:{ required: "Please enter this field" }
+          email: { required: "Please enter this field" },
+          hiddenRecaptcha: { required: "Please enter this field" },
         },
         //submitHandler: function(form) { form.submit(); }
       });
     });
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     if (this.props.authenticated) {
-      this.context.router.push('/dashboard');
+      this.context.router.push("/dashboard");
     }
   }
 
-  componentWillUpdate(nextProps) {
+  UNSAFE_componentWillUpdate(nextProps) {
     if (nextProps.authenticated) {
-      this.context.router.push('/dashboard');
+      this.context.router.push("/dashboard");
     }
   }
 
   handleFormSubmit(formProps) {
-    if($('#forgot_form').valid()){
-     //this.props.getForgotPasswordToken(formProps);
+    if (window.$("#forgot_form").valid()) {
+      //this.props.getForgotPasswordToken(formProps);
 
-
-     try{
-       this.props.getForgotPasswordToken(formProps).then(
-       	(response)=>{
-            console.log('response: '+response);
-           this.setState({responseEmailMsg : "<div class='alert alert-success text-center'>"+response.message+"</div>"});
-       	},
-       	(err) => err.response.json().then(({errors})=> {
-        		this.setState({responseEmailMsg : "<div class='alert alert-danger text-center'>"+errors+"</div>"});
-        	})
-       )
-     }catch(e){}
+      try {
+        this.props.getForgotPasswordToken(formProps).then(
+          (response) => {
+            console.log("response: " + response);
+            this.setState({
+              responseEmailMsg:
+                "<div class='alert alert-success text-center'>" +
+                response.message +
+                "</div>",
+            });
+          },
+          (err) =>
+            err.response.json().then(({ errors }) => {
+              this.setState({
+                responseEmailMsg:
+                  "<div class='alert alert-danger text-center'>" +
+                  errors +
+                  "</div>",
+              });
+            })
+        );
+      } catch (e) {}
     }
   }
 
@@ -91,7 +101,9 @@ class ForgotPassword extends Component {
     if (this.props.errorMessage) {
       return (
         <div>
-          <span><strong>Error!</strong> {this.props.errorMessage}</span>
+          <span>
+            <strong>Error!</strong> {this.props.errorMessage}
+          </span>
         </div>
       );
     }
@@ -103,21 +115,50 @@ class ForgotPassword extends Component {
     return (
       <div className="container">
         <div className="col-sm-6 col-sm-offset-3">
-          <div className="page-title text-center"><h2>Forget Password</h2></div>
-          <p className="text-center">Please enter your email to get new password.</p>
-          <div dangerouslySetInnerHTML={{__html: this.state.responseEmailMsg}}></div>
-          <form id="forgot_form" onSubmit={handleSubmit(this.handleFormSubmit.bind(this))}>
+          <div className="page-title text-center">
+            <h2>Forget Password</h2>
+          </div>
+          <p className="text-center">
+            Please enter your email to get new password.
+          </p>
+          <div
+            dangerouslySetInnerHTML={{ __html: this.state.responseEmailMsg }}
+          ></div>
+          <form
+            id="forgot_form"
+            onSubmit={handleSubmit(this.handleFormSubmit.bind(this))}
+          >
             <div className="form-group">
               {this.renderAlert()}
               <label>Email</label>
-              <Field name="email" className="form-control" component="input" type="text" />
+              <Field
+                name="email"
+                className="form-control"
+                component="input"
+                type="text"
+              />
             </div>
             <div className="form-group text-center">
-              <Recaptcha sitekey="6LeMERsUAAAAACSYqxDZEOOicHM8pG023iDHZiH5"  render="explicit" onloadCallback={callback} verifyCallback={this.verifyCallback.bind(this)} />
-              <div><input type="text" class="form-control g-recaptcha" id="hiddenRecaptcha" name="hiddenRecaptcha"  value={this.state.recaptcha_value} /></div>
+              <Recaptcha
+                sitekey="6LeMERsUAAAAACSYqxDZEOOicHM8pG023iDHZiH5"
+                render="explicit"
+                onloadCallback={callback}
+                verifyCallback={this.verifyCallback.bind(this)}
+              />
+              <div>
+                <input
+                  type="text"
+                  class="form-control g-recaptcha"
+                  id="hiddenRecaptcha"
+                  name="hiddenRecaptcha"
+                  value={this.state.recaptcha_value}
+                />
+              </div>
             </div>
             <div className="form-group text-center">
-              <button type="submit" className="btn btn-primary">Reset Password</button>
+              <button type="submit" className="btn btn-primary">
+                Reset Password
+              </button>
             </div>
           </form>
         </div>
@@ -134,4 +175,6 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps, { getForgotPasswordToken })(form(ForgotPassword));
+export default connect(mapStateToProps, { getForgotPasswordToken })(
+  form(ForgotPassword)
+);

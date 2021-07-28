@@ -1,6 +1,6 @@
 // const mailgun = require('../config/mailgun');
-const config = require('../config/main');
 const nodemailer = require('nodemailer');
+const config = require('../config/main');
 
 exports.sendContactForm = (req, res, /* next */) => {
   const transporter = nodemailer.createTransport({
@@ -38,7 +38,7 @@ exports.sendContactForm = (req, res, /* next */) => {
     to: req.body.emailAddress,
     subject: 'Donnies list contact request',
     html: html1
-  };*/
+  }; */
   transporter.sendMail(mailOptions, (error, /* info */) => {
     if (error) {
     //  console.log('In error of nodemailer');

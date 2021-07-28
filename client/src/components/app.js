@@ -1,17 +1,16 @@
-import React, { Component } from 'react';
-import HeaderTemplate from './template/header';
-import FooterTemplate from './template/footer';
+import React from "react";
 
-class App extends Component {
-  render() {
-    return (
-      <div>
-        <HeaderTemplate logo="Donnie's List" />
-          {this.props.children}
-        <FooterTemplate />
-      </div>
-    );
-  }
-}
+import HeaderTemplate from "./template/header";
+import FooterTemplate from "./template/footer";
+
+const App = (props) => {
+  return (
+    <div>
+      <HeaderTemplate logo="Donnie's List" />
+      {props.children}
+      <FooterTemplate />
+    </div>
+  );
+};
 
 export default App;

@@ -1,15 +1,22 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { Field, reduxForm } from 'redux-form';
-import { sendReply } from '../../../actions/messaging';
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import { Field, reduxForm } from "redux-form";
+import { sendReply } from "../../../actions/messaging";
 
 const form = reduxForm({
-  form: 'replyMessage',
+  form: "replyMessage",
 });
 
-const renderField = field => (
+const renderField = (field) => (
   <div>
-    <textarea required rows="3" autoComplete="off" placeholder="Your message here" className="form-control" {...field.input} ></textarea>
+    <textarea
+      required
+      rows="3"
+      autoComplete="off"
+      placeholder="Your message here"
+      className="form-control"
+      {...field.input}
+    ></textarea>
   </div>
 );
 
@@ -41,10 +48,18 @@ class ReplyMessage extends Component {
       <form onSubmit={handleSubmit(this.handleFormSubmit.bind(this))}>
         {this.renderAlert()}
         <div className="form-group">
-          <Field name="composedMessage" className="form-control" component={renderField} type="text" placeholder="Type here to chat..." />
+          <Field
+            name="composedMessage"
+            className="form-control"
+            component={renderField}
+            type="text"
+            placeholder="Type here to chat..."
+          />
         </div>
         <div className="form-group">
-          <button action="submit" className="btn btn-primary">Send</button>
+          <button action="submit" className="btn btn-primary">
+            Send
+          </button>
         </div>
       </form>
     );

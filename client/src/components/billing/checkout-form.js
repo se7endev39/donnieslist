@@ -1,38 +1,39 @@
-import React, { Component } from 'react';
-import CheckoutFields from './checkout-fields';
-import { connect } from 'react-redux';
-import * as actions from '../../actions/billing';
+import React, { Component } from "react";
+import CheckoutFields from "./checkout-fields";
+import { connect } from "react-redux";
+import Stripe from 'stripe';
+import * as actions from "../../actions/billing";
 
 /* TODO:
-*   - Pass more information down with redux state (i.e., billing address initial val)
-*/
+ *   - Pass more information down with redux state (i.e., billing address initial val)
+ */
 
 class CheckoutForm extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      stripePublicKey: 'pk_test_s744wYvqQUrpqsXGLnUBUFRw',
-      cardNumber: '',
-      expMonth: '',
-      expYear: '',
-      cvc: '',
-      error: '',
+      stripePublicKey: "pk_test_s744wYvqQUrpqsXGLnUBUFRw",
+      cardNumber: "",
+      expMonth: "",
+      expYear: "",
+      cvc: "",
+      error: "",
     };
   }
 
-  componentWillMount() {
+  UNSAFE_UNSAFE_componentWillMount() {
     // Import Stripe.js
     this.loadStripe();
   }
 
   loadStripe() {
     // Check if Stripe is already loaded first
-    if (!document.getElementById('stripe-import')) {
-      const stripeJs = document.createElement('script');
-      stripeJs.id = 'stripe-import';
-      stripeJs.src = 'https://js.stripe.com/v2/';
-      stripeJs.type = 'text/javascript';
+    if (!document.getElementById("stripe-import")) {
+      const stripeJs = document.createElement("script");
+      stripeJs.id = "stripe-import";
+      stripeJs.src = "https://js.stripe.com/v2/";
+      stripeJs.type = "text/javascript";
       stripeJs.async = true;
 
       document.body.appendChild(stripeJs);
@@ -43,10 +44,16 @@ class CheckoutForm extends Component {
     e.preventDefault();
 
     switch (e.target.id) {
-      case 'cardNumber': return (this.setState({ cardNumber: e.target.value }));
-      case 'cvc': return (this.setState({ cvc: e.target.value }));
-      case 'expMonth': return (this.setState({ expMonth: e.target.value }));
-      case 'expYear': return (this.setState({ expYear: e.target.value }));
+      case "cardNumber":
+        return this.setState({ cardNumber: e.target.value });
+      case "cvc":
+        return this.setState({ cvc: e.target.value });
+      case "expMonth":
+        return this.setState({ expMonth: e.target.value });
+      case "expYear":
+        return this.setState({ expYear: e.target.value });
+      default:
+        return;
     }
   }
 
@@ -55,32 +62,35 @@ class CheckoutForm extends Component {
 
     const that = this;
 
-    that.setState({ error: '' });
+    that.setState({ error: "" });
 
     Stripe.setPublishableKey(this.state.stripePublicKey);
-    Stripe.card.createToken({
-      number: this.state.cardNumber,
-      cvc: this.state.cvc,
-      exp_month: this.state.expMonth,
-      exp_year: this.state.expYear,
-    }, (status, response) => {
-      if (response.error) {
-        that.setState({ error: response.error });
+    Stripe.card.createToken(
+      {
+        number: this.state.cardNumber,
+        cvc: this.state.cvc,
+        exp_month: this.state.expMonth,
+        exp_year: this.state.expYear,
+      },
+      (status, response) => {
+        if (response.error) {
+          that.setState({ error: response.error });
 
-        return;
+          return;
+        }
+
+        // Action to save customer token and create charge
+        const plan = that.props.plan;
+        const stripeToken = response.id;
+        const lastFour = response.card.last4;
+
+        if (!plan) {
+          that.props.updateBilling(stripeToken);
+        } else {
+          that.props.createCustomer(stripeToken, plan, lastFour);
+        }
       }
-
-      // Action to save customer token and create charge
-      const plan = that.props.plan;
-      const stripeToken = response.id;
-      const lastFour = response.card.last4;
-
-      if (!plan) {
-        that.props.updateBilling(stripeToken);
-      } else {
-        that.props.createCustomer(stripeToken, plan, lastFour);
-      }
-    });
+    );
   }
 
   render() {

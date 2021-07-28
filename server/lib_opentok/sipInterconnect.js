@@ -1,4 +1,3 @@
-/* global require, exports */
 /* jshint strict:false, eqnull:true */
 
 /**
@@ -22,14 +21,12 @@
 * @class SipInterconnect
 */
 function SipInterconnect(config, properties) {
-  var hasProp = {}.hasOwnProperty;
-  var key;
-
-  for (key in properties) {
+  const hasProp = {}.hasOwnProperty;
+  Object.keys(properties).forEach((key) => {
     if (hasProp.call(properties, key)) {
       this[key] = properties[key];
     }
-  }
+  });
 
   /**
   * Starts a SIP call.

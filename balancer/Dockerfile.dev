@@ -1,7 +1,0 @@
-FROM nginx:alpine
-EXPOSE 80
-EXPOSE 443
-RUN rm -f /etc/nginx/conf.d/*
-
-COPY nginx-dev.conf /etc/nginx/nginx.conf
-COPY ssl/* /etc/nginx/ssl/

@@ -1,16 +1,17 @@
+/* eslint-disable no-underscore-dangle */
 /*
  * OpenTok server-side SDK
  */
 
 // Dependencies
-var net = require('net');
-var _ = require('lodash');
-var encodeToken = require('opentok-token');
-var Client = require('./client');
-var Session = require('./session');
-var archiving = require('./archiving');
-var SipInterconnect = require('./sipInterconnect');
-var errors = require('./errors');
+const net = require('net');
+const _ = require('lodash');
+const encodeToken = require('opentok-token');
+const Client = require('./client');
+const Session = require('./session');
+const archiving = require('./archiving');
+const SipInterconnect = require('./sipInterconnect');
+const errors = require('./errors');
 
 /**
 * Contains methods for creating OpenTok sessions, generating tokens, and working with archives.
@@ -29,34 +30,34 @@ var errors = require('./errors');
 * @param apiSecret {String} Your OpenTok API secret. (See your
 * <a href="https://tokbox.com/account">TokBox account page</a>.)
 */
-var OpenTok = function OpenTok(apiKey, apiSecret, env) {
+const OpenTok = function OpenTok(apiKey, apiSecret, env) {
   // we're loose about calling this constructor with `new`, we got your back
   if (!(this instanceof OpenTok)) return new OpenTok(apiKey, apiSecret, env);
 
   // validate arguments: apiKey := Number|String, apiSecret := String
   if (!(_.isNumber(apiKey) || _.isString(apiKey)) || !_.isString(apiSecret)) {
-    throw new Error('Invalid arguments when initializing OpenTok: apiKey=' + apiKey + ', apiSecret=' + apiSecret);
+    throw new Error(`Invalid arguments when initializing OpenTok: apiKey=${apiKey}, apiSecret=${apiSecret}`);
   }
 
   // apiKey argument can be a Number, but we will internally store it as a String
   if (_.isNumber(apiKey)) apiKey = apiKey.toString();
 
-  this._client = new Client({ apiKey: apiKey, apiSecret: apiSecret });
+  this._client = new Client({ apiKey, apiSecret });
   this.apiKey = apiKey;
   this.apiSecret = apiSecret;
 
   // TODO: this is a pretty obvious seam, the integration could be more smooth
-  var archiveConfig = {
+  const archiveConfig = {
     apiEndpoint: 'https://api.opentok.com',
-    apiKey: apiKey,
-    apiSecret: apiSecret,
+    apiKey,
+    apiSecret,
     auth: {
       expire: 300
     }
   };
 
   // env can be either an object with a bunch of DI options, or a simple string for the apiUrl
-  var clientConfig = {
+  const clientConfig = {
     request: {}
   };
   if (_.isString(env)) {
@@ -76,7 +77,7 @@ var OpenTok = function OpenTok(apiKey, apiSecret, env) {
       archiveConfig.uaAddendum = env.uaAddendum;
     }
   }
-  var config = this._client.config(clientConfig);
+  const config = this._client.config(clientConfig);
   this.apiUrl = config.apiUrl;
 
   /**
@@ -144,7 +145,6 @@ var OpenTok = function OpenTok(apiKey, apiSecret, env) {
   * @memberof OpenTok
   */
   this.startArchive = archiving.startArchive.bind(null, archiveConfig);
-
 
   /**
   * Stops an OpenTok archive that is being recorded.
@@ -295,9 +295,8 @@ var OpenTok = function OpenTok(apiKey, apiSecret, env) {
   *     <li> "streamId" -- The stream ID of the audio-only stream representing the SIP call.
   *   </ul>
   */
-OpenTok.prototype.dial = function (sessionId, token, sipUri, options, callback) {
-  var self = this;
-  var body;
+OpenTok.prototype.dial = (sessionId, token, sipUri, options, callback) => {
+  const self = this;
 
   if (typeof options === 'function') {
     callback = options;
@@ -319,9 +318,9 @@ OpenTok.prototype.dial = function (sessionId, token, sipUri, options, callback) 
     callback(new errors.ArgumentError('No SIP URI given'));
     return;
   }
-  body = {
-    sessionId: sessionId,
-    token: token,
+  const body = {
+    sessionId,
+    token,
     sip: {
       uri: sipUri
     }
@@ -335,8 +334,8 @@ OpenTok.prototype.dial = function (sessionId, token, sipUri, options, callback) 
   if (options.secure) {
     body.sip.secure = !!options.secure;
   }
-  this._client.dial(body, function (err, json) {
-    if (err) return callback(new Error('Failed to dial endpoint. ' + err));
+  this._client.dial(body, (err, json) => {
+    if (err) return callback(new Error(`Failed to dial endpoint. ${err}`));
     callback(null, new SipInterconnect(self, json));
   });
 };
@@ -423,9 +422,9 @@ OpenTok.prototype.dial = function (sessionId, token, sipUri, options, callback) 
  *   </li>
  * </ul>
  */
-OpenTok.prototype.createSession = function (opts, callback) {
-  var backupOpts;
-  var self = this;
+OpenTok.prototype.createSession = (opts, callback) => {
+  // let backupOpts;
+  const self = this;
 
   if (_.isFunction(opts)) {
     // shift arguments if the opts is left out
@@ -438,7 +437,7 @@ OpenTok.prototype.createSession = function (opts, callback) {
 
   // whitelist the keys allowed
   _.pick(_.defaults(opts, { mediaMode: 'routed', archiveMode: 'manual' }),
-        'mediaMode', 'archiveMode', 'location');
+    'mediaMode', 'archiveMode', 'location');
   if (opts.mediaMode !== 'routed' && opts.mediaMode !== 'relayed') {
     opts.mediaMode = 'relayed';
   }
@@ -447,37 +446,34 @@ OpenTok.prototype.createSession = function (opts, callback) {
   }
 
   if (opts.archiveMode === 'always' && opts.mediaMode !== 'routed') {
-    return process.nextTick(function () {
+    return process.nextTick(() => {
       callback(new Error('A session with always archive mode must also have the routed media mode.'));
     });
   }
   if ('location' in opts && !net.isIPv4(opts.location)) {
-    return process.nextTick(function () {
-      callback(new Error('Invalid arguments when calling createSession, location must be an ' +
-                         'IPv4 address'));
+    return process.nextTick(() => {
+      callback(new Error('Invalid arguments when calling createSession, location must be an '
+                         + 'IPv4 address'));
     });
   }
 
   // rename mediaMode -> p2p.preference
   // store backup for use in constucting Session
-  backupOpts = _.clone(opts);
+  const backupOpts = _.clone(opts);
   // avoid mutating passed in options
   opts = _.clone(opts);
-  var mediaModeToParam = {
+  const mediaModeToParam = {
     routed: 'disabled',
     relayed: 'enabled'
   };
   opts['p2p.preference'] = mediaModeToParam[opts.mediaMode];
   // delete opts.mediaMode;
-  console.log("*************************************");
-  console.log("New opts", opts);
-  console.log("*************************************");
-
-  this._client.createSession(opts, function createSessionCallback(err, json) {
+  console.log('[MEDIA]:[NEW]:[OPTS]:', opts);
+  console.log(this._client);
+  this._client.createSession(opts, (err, json) => {
     if (err) {
-      callback(new Error('Failed to createSession. ' + err));
-    }
-    else {
+      callback(new Error(`Failed to createSession. ${err}`));
+    } else {
       callback(null, new Session(self, json[0].session_id, backupOpts));
     }
   });
@@ -527,10 +523,33 @@ OpenTok.prototype.createSession = function (opts, callback) {
 *
 * @return The token string.
 */
-OpenTok.prototype.generateToken = function (sessionId, opts) {
-  var decoded;
-  var tokenData;
-  var now = Math.round(new Date().getTime() / 1000);
+
+/*
+ * decodes a sessionId into the metadata that it contains
+ * @param     {string}         sessionId
+ * @returns   {?SessionInfo}    sessionInfo
+ */
+function decodeSessionId(sessionId) {
+  // let fields;
+  // remove sentinal (e.g. '1_', '2_')
+  sessionId = sessionId.substring(2);
+  // replace invalid base64 chars
+  sessionId = sessionId.replace(/-/g, '+').replace(/_/g, '/');
+  // base64 decode
+  sessionId = Buffer.from(sessionId, 'base64').toString('ascii');
+  // separate fields
+  const fields = sessionId.split('~');
+  return {
+    apiKey: fields[1],
+    location: fields[2],
+    create_time: new Date(fields[3])
+  };
+}
+
+OpenTok.prototype.generateToken = (sessionId, opts) => {
+  // let decoded;
+  // let tokenData;
+  const now = Math.round(new Date().getTime() / 1000);
 
   if (!opts) opts = {};
   // avoid mutating passed in options
@@ -541,7 +560,7 @@ OpenTok.prototype.generateToken = function (sessionId, opts) {
   }
 
   // validate the sessionId belongs to the apiKey of this OpenTok instance
-  decoded = decodeSessionId(sessionId);
+  const decoded = decodeSessionId(sessionId);
   if (!decoded || decoded.apiKey !== this.apiKey) {
     throw new Error('Token cannot be generated unless the session belongs to the API Key');
   }
@@ -554,7 +573,7 @@ OpenTok.prototype.generateToken = function (sessionId, opts) {
   if (opts.data) {
     opts.connection_data = opts.data;
   }
-  tokenData = _.pick(_.defaults(opts, {
+  const tokenData = _.pick(_.defaults(opts, {
     session_id: sessionId,
     create_time: now,
     expire_time: now + (60 * 60 * 24), // 1 day
@@ -564,44 +583,22 @@ OpenTok.prototype.generateToken = function (sessionId, opts) {
 
   // validate tokenData
   if (!_.includes(['publisher', 'subscriber', 'moderator'], tokenData.role)) {
-    throw new Error('Invalid role for token generation: ' + tokenData.role);
+    throw new Error(`Invalid role for token generation: ${tokenData.role}`);
   }
   if (!_.isNumber(tokenData.expire_time)) {
-    throw new Error('Invalid expireTime for token generation: ' + tokenData.expire_time);
+    throw new Error(`Invalid expireTime for token generation: ${tokenData.expire_time}`);
   }
   if (tokenData.expire_time < now) {
-    throw new Error('Invalid expireTime for token generation, time cannot be in the past: ' +
-                    tokenData.expire_time + ' < ' + now);
+    throw new Error(`Invalid expireTime for token generation, time cannot be in the past: ${
+      tokenData.expire_time} < ${now}`);
   }
-  if (tokenData.connection_data &&
-      (tokenData.connection_data.length > 1024 || !_.isString(tokenData.connection_data))) {
+  if (tokenData.connection_data
+      && (tokenData.connection_data.length > 1024 || !_.isString(tokenData.connection_data))) {
     throw new Error('Invalid data for token generation, must be a string with maximum length 1024');
   }
 
   return encodeToken(tokenData, this.apiKey, this.apiSecret);
 };
-
-/*
- * decodes a sessionId into the metadata that it contains
- * @param     {string}         sessionId
- * @returns   {?SessionInfo}    sessionInfo
- */
-function decodeSessionId(sessionId) {
-  var fields;
-  // remove sentinal (e.g. '1_', '2_')
-  sessionId = sessionId.substring(2);
-  // replace invalid base64 chars
-  sessionId = sessionId.replace(/-/g, '+').replace(/_/g, '/');
-  // base64 decode
-  sessionId = new Buffer(sessionId, 'base64').toString('ascii');
-  // separate fields
-  fields = sessionId.split('~');
-  return {
-    apiKey: fields[1],
-    location: fields[2],
-    create_time: new Date(fields[3])
-  };
-}
 
 /*
  * decodes a sessionId into the metadata that it contains
@@ -647,9 +644,8 @@ OpenTok.prototype.generateJwt = function generateJwt() {
 
 module.exports = OpenTok;
 
-var key;
-for (key in errors) {
-  if (errors.hasOwnProperty(key)) {
+Object.keys(errors).forEach((key) => {
+  if (Object.prototype.hasOwnProperty.call(errors, key)) {
     OpenTok[key] = errors[key];
   }
-}
+});

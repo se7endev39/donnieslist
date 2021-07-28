@@ -1,5 +1,18 @@
 const stripe = require('stripe');
+const multer = require('multer');
+const express = require('express');
+const passport = require('passport');
+// const bcrypt = require('bcryptjs');
 
+const MainSettings = require('./config/main');
+// const passportService = require('./config/passport');
+
+const { ROLE_ADMIN } = require('./constants');
+// const ROLE_MEMBER = require('./constants').ROLE_MEMBER;
+// const ROLE_CLIENT = require('./constants').ROLE_CLIENT;
+// const ROLE_OWNER = require('./constants').ROLE_OWNER;
+
+/* import controllers */
 const AuthenticationController = require('./controllers/authentication');
 const UserController = require('./controllers/user');
 const CommentController = require('./controllers/comment');
@@ -12,9 +25,13 @@ const ExpertChatController = require('./controllers/expertchat');
 const CommunicationController = require('./controllers/communication');
 const StripeController = require('./controllers/stripe');
 const VideoSessionStripeController = require('./controllers/video-session-stripe');
-const MainSettings = require('./config/main');
+const AdminController = require('./controllers/theAdminController');
+// const AdminsUsersList = require('./controllers/getlist')
 
-const multer = require('multer');
+/** import model */
+
+const User = require('./models/user');
+// const VideoSession = require('./models/videosession');
 
 // storage needed for saving images from forms
 const storage = multer.diskStorage({
@@ -29,26 +46,8 @@ const storage = multer.diskStorage({
 // var upload = multer({ storage : storage}).array('ProfileImage',2);
 const upload = multer({ storage }).fields([{ name: 'RelatedImages1', maxCount: 1 }]); // upload Midleware
 
-// const bcrypt = require('bcryptjs');
-
 // const saltRounds = 10;
 // const salt = bcrypt.genSaltSync(saltRounds);
-
-// const AdminsUsersList = require('./controllers/getlist')
-
-const AdminController = require('./controllers/theAdminController');
-
-const User = require('./models/user');
-// const VideoSession = require('./models/videosession');
-
-const express = require('express');
-const passport = require('passport');
-// const ROLE_MEMBER = require('./constants').ROLE_MEMBER;
-// const ROLE_CLIENT = require('./constants').ROLE_CLIENT;
-// const ROLE_OWNER = require('./constants').ROLE_OWNER;
-const ROLE_ADMIN = require('./constants').ROLE_ADMIN;
-
-// const passportService = require('./config/passport');
 
 // Middleware to require login/auth
 const requireAuth = passport.authenticate('jwt', { session: false });
@@ -75,7 +74,7 @@ module.exports = (app) => {
   //= ========================
 
   // Set auth routes as subgroup/middleware to apiRoutes
-  apiRoutes.use('/api/auth', authRoutes);
+  apiRoutes.use('/auth', authRoutes);
 
   //= ========================
   // Facebook Routes
@@ -99,11 +98,6 @@ module.exports = (app) => {
   //= ========================
   // Twitter Routes
   //= ========================
-  // apiRoutes.get('/confirm-payements-done', function(req,res){
-  //   console.log(req.query)
-  //   res.json({m:"working"})
-
-  // })
 
   apiRoutes.get('/auth/twitter', passport.authenticate('twitter'));
 
@@ -130,12 +124,15 @@ module.exports = (app) => {
   // Login route
   authRoutes.post('/login', requireLogin, AuthenticationController.login);
 
+  // Logout route
+  authRoutes.post('/logout/:userId', AuthenticationController.logout);
+
   // Password reset request route (generate/send token)
   authRoutes.post('/forgot-password', AuthenticationController.forgotPassword);
 
   // Password reset route (change password using token)
   authRoutes.post('/reset-password/:token', AuthenticationController.verifyToken);
-
+  authRoutes.post('/change-password', AuthenticationController.changePassword);
   // Signup link for expert
   authRoutes.post(
     '/signupExpertSendSignupLink',
@@ -147,8 +144,8 @@ module.exports = (app) => {
   //= ========================
 
   // Set user routes as a subgroup/middleware to apiRoutes
-  apiRoutes.use('/api/user', userRoutes);
-  apiRoutes.use('/api/myuserprofile', usersOwnRoutes);
+  apiRoutes.use('/user', userRoutes);
+  apiRoutes.use('/myuserprofile', usersOwnRoutes);
 
   // View user profile route
   userRoutes.get('/:userId', requireAuth, UserController.viewProfile);
@@ -174,11 +171,14 @@ module.exports = (app) => {
   //= ========================
   // Experts Routes
   //= ========================
-  apiRoutes.get('/api/getExpertsCategoryList', ExpertsController.getExpertsCategoryList);
+  apiRoutes.get('/getExpertsCategoryList', ExpertsController.getExpertsCategoryList);
+  apiRoutes.get('/getExpertsSubCategoryList/:category', ExpertsController.getExpertsSubCategoryList);
   apiRoutes.get('/getExpertsListing/:category', ExpertsController.getExpertsListing);
   apiRoutes.get('/getExpertsListingByKeyword/:keyword', ExpertsController.getExpertsListingByKeyword);
+  // apiRoutes.get('/getExpertsListingByKeyword', ExpertsController.getExpertsListingByKeyword);
   apiRoutes.get('/getExpertsListing/topRated/:category', ExpertsController.getTopExpertsListing);
   apiRoutes.get('/getExpertDetail/:slug', ExpertsController.getExpertDetail);
+  apiRoutes.get('/getExpert/:slug', ExpertsController.getExpert);
 
   apiRoutes.post('/sendEmailMessageToExpert', ExpertsController.sendEmailMessageToExpert);
   apiRoutes.post('/sendTextMessageToExpert', ExpertsController.sendTextMessageToExpert);
@@ -190,6 +190,10 @@ module.exports = (app) => {
 
   apiRoutes.get('/getExpertStories/:expertEmail', ExpertsController.getExpertStories);
 
+  apiRoutes.post('/userExpert/', ExpertsController.userExpert);
+  apiRoutes.post('/userExpertUpdate/', ExpertsController.userExpertUpdate);
+
+  apiRoutes.post('/upload/', ExpertsController.upload);
   apiRoutes.get(
     '/getExpertStoriesBasedOnRole/:expertRole',
     ExpertsController.getExpertStoriesBasedOnRole
@@ -331,6 +335,7 @@ module.exports = (app) => {
   apiRoutes.get('/getUsersList', AdminController.theAdminsUserList);
   apiRoutes.post('/BanHim', AdminController.AdminToBanOrUnBanUser);
 
+  apiRoutes.post('/deleteHim', AdminController.deleteHim);
   // /api/getuserInfo/
   apiRoutes.post('/getuserInfo/:id', AdminController.AdminGetUserInfo);
 
@@ -361,9 +366,8 @@ module.exports = (app) => {
         { $sort: { sessionCreationDate: -1 } },
         { $limit: 1 }
       ],
-      (err, allusers) => {
-        // console.log(JSON.stringify(allusers))
-        res.json({ AllUsers: allusers });
+      (err, allUsers) => {
+        res.json({ AllUsers: allUsers });
       }
     );
   });

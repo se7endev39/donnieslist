@@ -1,29 +1,27 @@
-import React, { Component } from 'react';
+import React from "react";
 
-class RotatorNav extends Component {
-  renderNav() {
+const RotatorNav = (props) => {
+  const renderNav = () => {
     const toMap = [];
-
-    for (let i = 0; i < this.props.length; i++) {
+    for (let i = 0; i < props.length; i++) {
       toMap.push(
         <li
           key={`${i}nav`}
           value={i}
-          className={i == this.props.active ? 'slider-nav-bullet active' : 'slider-nav-bullet'}
-          onClick={this.props.setPage}
-        />,
+          className={
+            i === props.active
+              ? "slider-nav-bullet active"
+              : "slider-nav-bullet"
+          }
+          onClick={(e) => {
+            props.setPage(e);
+          }}
+        />
       );
     }
     return toMap;
-  }
-
-  render() {
-    return (
-      <ul>
-        {this.renderNav()}
-      </ul>
-    );
-  }
-}
+  };
+  return <ul>{renderNav()}</ul>;
+};
 
 export default RotatorNav;

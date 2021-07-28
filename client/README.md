@@ -24,8 +24,8 @@
 
 ## 💼 Requirements
 
-- node `^8.11.3`
-- yarn `^1.7.0` or npm `^3.10.10`
+- node `^14.17.2`
+- yarn `^1.22.5` or npm `^6.14.13`
 
 ## 💾 Installation
 

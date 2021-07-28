@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
-import { Link,IndexLink } from 'react-router';
-import { connect } from 'react-redux';
-import * as actions from '../../../actions/messaging';
+import React, { Component } from "react";
+import { Link, NavLink, withRouter } from "react-router-dom";
+import { connect } from "react-redux";
+import * as actions from "../../../actions/messaging";
 
-import MessageList from './message-list';
-import ReplyMessage from './reply-message';
+import MessageList from "./message-list";
+import ReplyMessage from "./reply-message";
 
 const socket = actions.socket;
 
@@ -15,33 +15,34 @@ class Conversation extends Component {
     const { params, fetchConversation } = this.props;
     // Fetch conversation thread (messages to/from user)
     fetchConversation(params.conversationId);
-    socket.emit('enter conversation', params.conversationId);
+    socket.emit("enter conversation", params.conversationId);
 
     // Listen for refresh messages from socket server
-    socket.on('refresh messages', (data) => {
-      console.log('refresh messages called');
+    socket.on("refresh messages", (data) => {
+      console.log("refresh messages called");
       fetchConversation(params.conversationId);
     });
-
   }
 
   componentWillUnmount() {
-    socket.emit('leave conversation', this.props.params.conversationId);
+    socket.emit("leave conversation", this.props.match.params.conversationId);
   }
 
   renderInbox() {
     if (this.props.messages) {
-      return (
-        <MessageList displayMessages={this.props.messages} />
-      );
+      return <MessageList displayMessages={this.props.messages} />;
     }
   }
 
-  breadcrumb(){
-    return(
+  breadcrumb() {
+    return (
       <ol className="breadcrumb">
-        <li className="breadcrumb-item"><IndexLink to="/">Home</IndexLink></li>
-        <li className="breadcrumb-item"><Link to="/dashboard">Dashboard</Link></li>
+        <li className="breadcrumb-item">
+          <NavLink to="/">Home</NavLink>
+        </li>
+        <li className="breadcrumb-item">
+          <Link to="/dashboard">Dashboard</Link>
+        </li>
         <li className="breadcrumb-item">Inbox</li>
       </ol>
     );
@@ -50,8 +51,18 @@ class Conversation extends Component {
   userMenu() {
     return (
       <ul className="nav nav-sidebar" id="menu">
-        <li><Link to="/profile/edit"><i className="glyphicon glyphicon-list-alt"></i> <span className="collapse in hidden-xs"> Edit Profile</span></Link></li>
-        <li><Link to="/dashboard/inbox"><i className="glyphicon glyphicon-list-alt"></i> <span className="collapse in hidden-xs"> Inbox</span></Link></li>
+        <li>
+          <Link to="/profile/edit">
+            <i className="glyphicon glyphicon-list-alt"></i>
+            <span className="collapse in hidden-xs"> Edit Profile</span>
+          </Link>
+        </li>
+        <li>
+          <Link to="/dashboard/inbox">
+            <i className="glyphicon glyphicon-list-alt"></i>
+            <span className="collapse in hidden-xs"> Inbox</span>
+          </Link>
+        </li>
       </ul>
     );
   }
@@ -64,18 +75,23 @@ class Conversation extends Component {
             {this.breadcrumb()}
             <div className="wrapper-sidebar-page">
               <div className="row row-offcanvas row-offcanvas-left">
-                <div className="column col-sm-3 col-xs-1 sidebar-offcanvas" id="sidebar">
+                <div
+                  className="column col-sm-3 col-xs-1 sidebar-offcanvas"
+                  id="sidebar"
+                >
                   {this.userMenu()}
                 </div>
                 <div className="column col-sm-9 col-xs-11" id="main">
                   <div id="pageTitle">
-                    <div className="title">Conversation with {this.props.params.conversationId}</div>
+                    <div className="title">
+                      Conversation with {this.props.match.params.conversationId}
+                    </div>
                   </div>
                   <div className="conversation-list-section">
-                    { this.renderInbox() }
+                    {this.renderInbox()}
                   </div>
                   <div className="conversation-reply-section">
-                    <ReplyMessage replyTo={this.props.params.conversationId} />
+                    <ReplyMessage replyTo={this.props.match.params.conversationId} />
                   </div>
                 </div>
               </div>
@@ -93,4 +109,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps, actions)(Conversation);
+export default connect(mapStateToProps, actions)(withRouter(Conversation));

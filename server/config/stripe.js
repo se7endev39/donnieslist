@@ -1,4 +1,6 @@
+const Stripe = require('stripe');
 const config = require('./main');
-const stripe = require('stripe')(config.stripeApiKey);
 
-stripe.setTimeout(20000);
+const stripe = Stripe(config.stripeApiKey, { timeout: 20000 });
+
+module.exports = stripe;

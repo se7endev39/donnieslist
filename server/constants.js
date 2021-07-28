@@ -1,20 +1,20 @@
 const ROLE_EXPERT = 'Expert';
-const ROLE_USER   = 'User';
-const ROLE_ADMIN  = 'Admin';
+const ROLE_USER = 'User';
+const ROLE_ADMIN = 'Admin';
 
-const GENDER_MALE     = 'Male';
-const GENDER_FEMALE   = 'Female';
-const GENDER_OTHER    = 'Other';
+const GENDER_MALE = 'Male';
+const GENDER_FEMALE = 'Female';
+const GENDER_OTHER = 'Other';
 
 const LOGIN_SOURCE_FACEBOOK = 'Facebook';
-const LOGIN_SOURCE_TWITTER  = 'Twitter';
-const LOGIN_SOURCE_GMAIL    = 'Gmail';
+const LOGIN_SOURCE_TWITTER = 'Twitter';
+const LOGIN_SOURCE_GMAIL = 'Gmail';
 
-const SESSION_ACTIVE    = 'ACTIVE';
-const SESSION_INACTIVE  = 'INACTIVE';
+const SESSION_ACTIVE = 'ACTIVE';
+const SESSION_INACTIVE = 'INACTIVE';
 
-const STATUS_ONLINE    = 'ONLINE';
-const STATUS_OFFLINE  = 'OFFLINE';
+const STATUS_ONLINE = 'ONLINE';
+const STATUS_OFFLINE = 'OFFLINE';
 
 module.exports = {
   ROLE_EXPERT,
@@ -29,5 +29,8 @@ module.exports = {
   SESSION_INACTIVE,
 
   STATUS_ONLINE,
-  STATUS_OFFLINE
+  STATUS_OFFLINE,
+  LOGIN_SOURCE_FACEBOOK,
+  LOGIN_SOURCE_TWITTER,
+  LOGIN_SOURCE_GMAIL
 };

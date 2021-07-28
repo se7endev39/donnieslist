@@ -1,161 +1,136 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+/* eslint-disable jsx-a11y/anchor-is-valid */
+import React, {useState, useEffect} from 'react';
+import { useDispatch } from 'react-redux';
 import { Field, reduxForm } from 'redux-form';
-import { Link } from 'react-router';
-import { API_URL, CLIENT_ROOT_URL, errorHandler } from '../../actions/index';
-import { loginUser, facebookLoginUser } from '../../actions/auth';
-import cookie from 'react-cookie';
-import FacebookLogin from 'react-facebook-login';
-var Recaptcha = require('react-recaptcha');
+import {Link} from 'react-router-dom';
+import {useCookies} from 'react-cookie';
+import { useHistory } from 'react-router';
 
-const form = reduxForm({
-  form: 'login',
-});
+import { loginUser } from '../../actions/auth';
 
-// specifying your onload callback function
-var callback = function () {
-  //console.log('Done!!!!');
-};
-
-class Login extends Component {
-
-  constructor(props, context) {
-    super(props, context);
-    this.state = {
-        recaptcha_value: '',
-        errorMessage:""
+const Login = props => {
+    const default_props = {
+        errorMessage: '',
+        message: '',
     };
-  }
 
-  responseFacebook(response) {
-    if(response != undefined && response != ""){
-      this.props.facebookLoginUser(response);
-    }
-  }
+    const [state, setState] = useState(default_props);
+    const dispatch = useDispatch();
+    const [cookies,] = useCookies();
+    const {handleSubmit} = props;
+    const history = useHistory();
 
-  handleFormSubmit(formProps) {
-    try{
-      if($('#login_form').valid()){
-        this.props.loginUser(formProps).then(
-         (response)=>{
-          if(response.errorMessage && response.errorMessage!==null && response.errorMessage!==undefined && response.errorMessage!==""){
-            this.setState({errorMessage:response.errorMessage})
+    const handleFormSubmit = formProps => {
+        if (window.$("#login_form").valid()) {
+            dispatch(loginUser(formProps, history)).then(
+              (response) => {
+                if (
+                  response.errorMessage &&
+                  response.errorMessage !== null &&
+                  response.errorMessage !== undefined &&
+                  response.errorMessage !== ""
+                ) {
+                  setState({ ...state, errorMessage: response.errorMessage });
+                }
+              }).catch(err => {
+                console.log("[ERROR]:", err);
+            });
           }
-         },
-         (err) => /*err.response.json().then(({errors})=>*/ {
-         }
-       )
+    }
+
+    useEffect(() => {
+        window.$(document).ready(() => {
+            window.$("#login_form").validate({
+                rules: {
+                    email: {required: true, email: true},
+                    password: {required: true},
+                },
+                messages: {
+                    email: {required: "Please enter this field"},
+                    password: {required: "Please enter this field"},
+                }
+            });
+        });
+    }, []);
+
+    useEffect(() => {
+      if (cookies.user) {
+        history.push('/');
       }
-    }catch(e){console.log("Catch"); console.log("ERRRRR"); console.log(e)}
-  }
+    }, [cookies, history]);
 
-  // specifying verify callback function
-  verifyCallback = function (response) {
-    console.log('verifyCallback '+response);
-    $('#hiddenRecaptcha').val(response);
-    var recaptcha_value = response;
-    this.setState({
-        recaptcha_value
-    });
-  };
-
-  componentDidMount(){
-    $(document).ready(function(){
-      jQuery("#login_form").validate({
-        rules: {
-             email: { required: true, email: true },
-             password: { required: true },
-             hiddenRecaptcha: { required: true }
-        },
-        messages: {
-             email: { required: "Please enter this field" },
-             password:{ required: "Please enter this field" },
-             hiddenRecaptcha:{ required: "Please enter this field" }
-        }
-      });
-    });
-
-    // console.log('*** requiredLogin ***'+ cookie.load('requiredLogin'));
-  }
-
-  handleFacebookClick() {
-    window.open(`${API_URL}/auth/facebook`, 'sharer', 'toolbar=0,top=50,status=0,width=748,height=525');
-  }
-
-  renderRequiredLogin_for_session(){
-      const requiredLogin_msg = cookie.load('requiredLogin_for_session');
-      cookie.remove('requiredLogin_for_session', { path: '/' });
-      return (
+    const renderRequiredLogin_for_session = () => {
+        const requiredLogin_msg = cookies.requiredLogin_for_session;
+        cookies.removeCookie("requireLogin_for_session", {path: "/"});
+        return(
             <div className="alert alert-warning">
-                <strong>{ requiredLogin_msg } </strong>
-                <a href="#" className="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+                <strong>{requiredLogin_msg}</strong>
+                <a className="close" data-dismiss="alert" aria-label="close" title="close">
+                    x
+                </a>
             </div>
         );
-  }
+    };
 
-  render() {
-    const { handleSubmit } = this.props;
-    return (
-      <div className="container">
+    return(
+        <div className="container">
         <div className="col-sm-6 col-sm-offset-3">
-          <div className="page-title text-center"><h2>Login</h2></div>
+          <div className="page-title text-center">
+            <h2>Login</h2>
+          </div>
 
-              { cookie.load('requiredLogin_for_session') ? this.renderRequiredLogin_for_session() : '' }
+          {cookies.requiredLogin_for_session
+            ? renderRequiredLogin_for_session()
+            : ""}
 
           <p className="text-center">Welcome back members.</p>
-          {this.state.errorMessage && this.state.errorMessage!==null && this.state.errorMessage!=undefined && this.state.errorMessage!="" && <div className="alert alert-danger"><i className="fa fa-exclamation-circle" aria-hidden="true"></i>  {this.state.errorMessage}</div>}
-          <form id="login_form" onSubmit={handleSubmit(this.handleFormSubmit.bind(this))}>
+          {state.errorMessage &&
+            state.errorMessage !== null &&
+            state.errorMessage !== undefined &&
+            state.errorMessage !== "" && (
+              <div className="alert alert-danger">
+                <i className="fa fa-exclamation-circle" aria-hidden="true"></i>
+                {state.errorMessage}
+              </div>
+            )}
+          <form
+            id="login_form"
+            onSubmit={handleSubmit((e) => handleFormSubmit(e))}
+          >
             <div className="form-group">
               <label>Email</label>
-              <Field name="email" className="form-control" required component="input" type="text" />
+              <Field
+                name="email"
+                className="form-control"
+                required
+                component="input"
+                type="text"
+              />
             </div>
             <div className="form-group">
               <label>Password</label>
-              <Field name="password" className="form-control" required component="input" type="password" />
+              <Field
+                name="password"
+                className="form-control"
+                required
+                component="input"
+                type="password"
+              />
             </div>
-              {/*<div className="form-group text-center g-recaptcha-wrapper">
-                <Field id="hiddenRecaptcha" name="hiddenRecaptcha" className="g-recaptcha" required component="input" type="text" />
-                <input type="text" name="hiddenRecaptcha" value={ this.state.recaptcha_value } id="hiddenRecaptcha" className="g-recaptcha error" required="" />
-              <Recaptcha sitekey="6LeMERsUAAAAACSYqxDZEOOicHM8pG023iDHZiH5" render="explicit" onloadCallback={callback} verifyCallback={this.verifyCallback.bind(this)} />
-            </div>*/}
             <div className="form-group text-center">
-              <button type="submit" className="btn btn-primary">Login</button>
+              <button type="submit" className="btn btn-primary">
+                Login
+              </button>
             </div>
           </form>
-
-          <div className="form-group social-login text-center">
-            <p>OR</p>
-
-            <FacebookLogin
-                appId= "979601722141411"
-                autoLoad={false}
-                fields="name,email,picture"
-                scope="email,public_profile,user_friends"
-                callback={this.responseFacebook.bind(this)}
-              />
-
-            {/*}
-            <a href="javascript:void()" onClick={this.handleFacebookClick} className="btn btn-default facebook"> <i className="fa fa-facebook modal-icons"></i> Sign In with Facebook </a>&nbsp;
-            <a href="javascript:void()" onClick={this.handleTwitterClick} className="btn btn-default twitter"> <i className="fa fa-twitter modal-icons"></i> Sign In with Twitter </a>&nbsp;
-            <a href="javascript:void()" className="btn btn-default google"> <i className="fa fa-google-plus modal-icons"></i> Sign In with Google </a>
-            {*/}
-          </div>
           <div className="form-group text-center">
             <Link to="/forgot-password">Forgot Password?</Link>
           </div>
         </div>
       </div>
     );
-  }
-}
+};
 
-function mapStateToProps(state) {
-  //console.log('state: '+JSON.stringify(state));
-  return {
-    errorMessage: state.auth.error,
-    message: state.auth.message,
-    authenticated: state.auth.authenticated,
-  };
-}
-
-export default connect(mapStateToProps, { loginUser,facebookLoginUser })(form(Login));
+export default reduxForm({
+    form: 'login'
+})(Login);

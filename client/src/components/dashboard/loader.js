@@ -1,9 +1,13 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
 class Loader extends Component {
-  render(){
+  render() {
     return (
-        <img className="loader-center-ajax" src="/src/public/img/ajax-loader-l.gif"/>
+      <img
+        className="loader-center-ajax"
+        src="/img/ajax-loader-l.gif"
+        alt="loader center"
+      />
     );
   }
 }

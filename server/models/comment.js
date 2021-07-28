@@ -1,5 +1,6 @@
-const mongoose = require('mongoose'),
-      Schema = mongoose.Schema;
+const mongoose = require('mongoose');
+
+const { Schema } = mongoose;
 
 const CommentsSchema = new Schema({
   author: String,
@@ -7,12 +8,18 @@ const CommentsSchema = new Schema({
   name: String,
   text: String,
   parentId: String,
-  voters : [
+  voters: [
     {
       slug: String,
       createdAt: { type: Date, default: Date.now() }
     }
   ],
+  voters_dislikes: [
+    {
+      slug: String,
+      createdAt: { type: Date, default: Date.now() }
+    }
+  ]
 }, {
   timestamps: true,
   usePushEach: true

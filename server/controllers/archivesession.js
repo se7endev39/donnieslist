@@ -1,14 +1,16 @@
-const ArchiveSession = require('../models/archivesession');
-const config = require('../config/main');
-const User = require('../models/user');
-const OpenTok = require('../lib_opentok/opentok');
 const nodemailer = require('nodemailer');
+/** config & constant */
+const config = require('../config/main');
+const OpenTok = require('../lib_opentok/opentok');
+/** model */
+const User = require('../models/user');
+const ArchiveSession = require('../models/archivesession');
 
 const opentok = new OpenTok(config.opentok_apiKey, config.opentok_apiSecret);
 
 exports.getArchiveSessionAndToken = (req, res) => {
-  const expertEmail = req.body.expertEmail;
-  const archiveSessionId = req.body.archiveSessionId;
+  const { expertEmail } = req.body;
+  const { archiveSessionId } = req.body;
   User.findOne({ email: expertEmail }, (error, user) => {
     const bind = {};
     if (error) {
@@ -29,7 +31,7 @@ exports.getArchiveSessionAndToken = (req, res) => {
           bind.status = 0;
           bind.message = 'Oops! error occur while creating archive session';
         } else {
-          const sessionId = session.sessionId;
+          const { sessionId } = session;
           bind.status = 1;
           bind.archiveSessionId = sessionId;
           bind.archiveStreamtoken = opentok.generateToken(sessionId);
@@ -44,8 +46,8 @@ exports.getArchiveSessionAndToken = (req, res) => {
 };
 
 exports.start_recording = (req, res) => {
-  const expertEmail = req.body.expertEmail;
-  const archiveSessionId = req.body.archiveSessionId;
+  const { expertEmail } = req.body;
+  const { archiveSessionId } = req.body;
 
   User.findOne({ email: expertEmail }, (error, user) => {
     const bind = {};
@@ -81,7 +83,7 @@ exports.start_recording = (req, res) => {
 };
 
 exports.stop_recording = (req, res) => {
-  const archiveID = req.params.archiveID;
+  const { archiveID } = req.params;
   const bind = {};
 
   opentok.stopArchive(archiveID, (err, archive) => {
@@ -92,14 +94,14 @@ exports.stop_recording = (req, res) => {
       bind.status = 1;
       bind.archive = archive;
     }
-    res.json(bind);
+    return res.json(bind);
   });
 };
 
 exports.send_recording = (req, res) => {
-  const expertEmail = req.body.expertEmail;
-  const userEmail = req.body.userEmail;
-  const archiveID = req.body.archiveID;
+  const { expertEmail } = req.body;
+  const { userEmail } = req.body;
+  const { archiveID } = req.body;
 
   User.findOne({ email: expertEmail }, (error, user) => {
     const bind = {};
@@ -141,9 +143,9 @@ exports.send_recording = (req, res) => {
 
           smtpTransport.sendMail(mailOptions, (error1, info) => {
             if (error1) {
-              console.log(`*** nodemailer error ***${error}`);
+              console.error('*** nodemailer error ***', error1);
             } else {
-              console.log('*** nodemailer success *** Message %s', info.messageId);
+              console.error('*** nodemailer success *** Message %s', info.messageId);
             }
             // return res.json(bind);
           });
@@ -171,7 +173,7 @@ exports.send_recording = (req, res) => {
 };
 
 exports.getExpertRecordings = (req, res) => {
-  const expertEmail = req.body.expertEmail;
+  const { expertEmail } = req.body;
   const bind = {};
   ArchiveSession.aggregate(
     [
@@ -223,7 +225,7 @@ exports.getExpertRecordings = (req, res) => {
 };
 
 exports.playRecordedAudio = (req, res) => {
-  const archiveId = req.body.archiveId;
+  const { archiveId } = req.body;
   const bind = {};
 
   opentok.getArchive(archiveId, (err, archive) => {
@@ -235,13 +237,13 @@ exports.playRecordedAudio = (req, res) => {
       bind.archive_url = archive.url;
     }
 
-    res.json(bind);
+    return res.json(bind);
   });
 };
 
 exports.deleteRecordedAudio = (req, res) => {
-  const archiveId = req.body.archiveId;
-  const id = req.body.id;
+  const { archiveId } = req.body;
+  const { id } = req.body;
   const bind = {};
 
   ArchiveSession.remove({ _id: id }, (error) => {

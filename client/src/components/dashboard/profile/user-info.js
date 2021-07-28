@@ -1,12 +1,8 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
 class UserInfo extends Component {
   render() {
-    return (
-      <div>
-        {this.props.profile}
-      </div>
-    );
+    return <div>{this.props.profile}</div>;
   }
 }
 

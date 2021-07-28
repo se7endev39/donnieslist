@@ -1,9 +1,13 @@
+const mailGunJS = require('mailgun-js');
 const config = require('./main');
-const mailgun = require('mailgun-js')({ apiKey: config.mailgun_priv_key,
-  domain: config.mailgun_domain });
+
+const mailgun = mailGunJS({
+  apiKey: config.mailgun_priv_key,
+  domain: config.mailgun_domain
+});
 
 // Create and export function to send emails through Mailgun API
-exports.sendEmail = function (recipient, message) {
+exports.sendEmail = (recipient, message) => {
   const data = {
     from: 'Your Site <info@yourdomain.com>',
     to: recipient,
@@ -12,11 +16,11 @@ exports.sendEmail = function (recipient, message) {
   };
 
   mailgun.messages().send(data, (error, body) => {
-    //  console.log(body);
+    console.log('[MAIL]:[GUN]:', body);
   });
 };
 
-exports.contactForm = function (sender, message) {
+exports.contactForm = (sender, message) => {
   const data = {
     from: sender,
     to: 'you@yourdomain.com',
@@ -25,6 +29,6 @@ exports.contactForm = function (sender, message) {
   };
 
   mailgun.messages().send(data, (error, body) => {
-  //  console.log(body);
+    console.log('[MAIL]:[GUN]:', body);
   });
 };

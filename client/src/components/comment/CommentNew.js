@@ -1,66 +1,58 @@
-// CommentForm.js
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
 
-const CommentNew = props => (
-  <form onSubmit={ props.handleSubmitComment }>
+const CommentNew = (props) => (
+  <form
+    onSubmit={(e) => {
+      props.handleSubmitComment(e);
+    }}
+  >
     <div className="input-column">
       <div className="image-wrapper">
-        <img role="presentation" src="/src/public/img/person.jpg" className="comment-user"/>
+        <img
+          role="presentation"
+          alt="presentation"
+          src="/img/person.jpg"
+          className="comment-user"
+        />
       </div>
     </div>
-    {
-      props.showButton ? (
-        <div className="input-column full-width">
-          <div className="input-row">
-            <textarea
-              name="text"
-              rows="1"
-              maxLength="10000"
-              placeholder="Add a public comment..."
-              autoComplete="off"
-              value={ props.text }
-              onChange={ props.handleChangeText }
-              onFocus={ (e) => props.handleShowButton(e, true) }
-            />
-          </div>
-          <div className="input-row">
-            <div className="button-wrapper">
-              <button className="button-cancel" onClick={ (e) => props.handleShowButton(e, false) }>Cancel</button>
-              <button type="submit">Comment</button>
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div className="input-column full-width">
-          <div className="input-row">
-            <textarea
-              name="text"
-              rows="1"
-              maxLength="10000"
-              placeholder="Add a public comment..."
-              autoComplete="off"
-              value=""
-              onFocus={ (e) => props.handleShowButton(e, true) }
-            />
+    <div className="input-column full-width">
+      <div className="input-row">
+        <textarea
+          name="text"
+          rows="1"
+          maxLength="10000"
+          placeholder="Add a public comment..."
+          autoComplete="off"
+          value={props.text}
+          onChange={(e) => {
+            props.handleChangeText(e.target.value);
+          }}
+          onFocus={() => {
+            props.handleShowButton(true, null);
+          }}
+          onBlur={() => {
+            props.text.length === 0
+              ? props.handleShowButton(false, null)
+              : props.handleShowButton(true, null);
+          }}
+        />
+      </div>
+      {props.showButton && (
+        <div className="input-row">
+          <div className="button-wrapper">
+            <button
+              className="button-cancel"
+              onClick={() => props.handleShowButton(false, "cancel")}
+            >
+              Cancel
+            </button>
+            <button type="submit">Comment</button>
           </div>
         </div>
-      )
-    }
+      )}
+    </div>
   </form>
 );
-
-CommentNew.propTypes = {
-  text: PropTypes.string,
-  showButton: PropTypes.boolean,
-  handleChangeText: PropTypes.func.isRequired,
-  handleShowButton: PropTypes.func.isRequired,
-  handleSubmitComment: PropTypes.func.isRequired,
-};
-
-CommentNew.defaultProps = {
-  text: '',
-  showButton: false,
-};
 
 export default CommentNew;

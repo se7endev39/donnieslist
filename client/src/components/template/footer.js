@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router';
 import { Modal, Button} from 'react-bootstrap';
 import { Field, reduxForm } from 'redux-form';
-import ExpertLoginPopup from './expert-login-popup';
+// import ExpertLoginPopup from './expert-login-popup';
 import {signupExpertSendSignupLink} from '../../actions/auth';
-import cookie from 'react-cookie';
+import {Cookies, withCookies} from 'react-cookie';
+import { instanceOf } from 'prop-types';
 
 const form = reduxForm({
   form: 'email-form'
@@ -37,14 +37,16 @@ const email = value =>
     : undefined
 
 class FooterTemplate extends Component {
+  static propTypes = {
+    cookies: instanceOf(Cookies).isRequired
+  };
   constructor(props, context) {
     super(props, context);
     this.handleShow = this.handleShow.bind(this);
     this.handleClose = this.handleClose.bind(this);
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
 
-    const currentUser = cookie.load('user');
-    console.log('currentUser: ',currentUser);
+    const currentUser = this.props.cookies.get('user');
     if(currentUser){
       this.state = {
         show: false
@@ -65,7 +67,7 @@ class FooterTemplate extends Component {
   }
 
   componentDidMount(){
-    let path=location.pathname.substring(1,15);
+    let path=window.location.pathname.substring(1,15);
     if(path==='expert-signup/'){
        this.setState({ show: false })
     }
@@ -108,17 +110,20 @@ class FooterTemplate extends Component {
   handleShow() { this.setState({ show: true }); }
 
   render() {
-    const { error, handleSubmit, pristine, reset, submitting ,authenticated} = this.props;
+    const {
+      // error,
+      handleSubmit,
+      pristine,
+      // reset,
+      submitting,
+      // authenticated
+    } = this.props;
 
     return (
       <footer className="footer">
         <center>A Donny Dey Production
-            {/*<div className="pull-right exprt-lgn-btn" >
-           <Link onClick={this.handleOnClick} to="login">{!authenticated && 'Expert Login'}</Link>
-         </div>*/}
        </center>
-        {/*}<ExpertLoginPopup showStatus={this.state.show} onHide={this.handleClose}/>{*/}
-        <Modal
+        {/* <Modal
           show={this.state.show}
           onHide={this.handleClose}
           dialogClassName="custom-modal text-center"
@@ -127,14 +132,14 @@ class FooterTemplate extends Component {
             <Modal.Body>
               <h5><p>Everybody is an expert at something.</p>
               <p><b>What's your expertise?</b></p></h5><br/>
-              <p><Field
+              <Field
                 name="email"
                 component={renderField}
                 type="email"
                 label="Enter email here"
                 className="form-control"
                 validate={email}
-              /></p>
+              />
               <div dangerouslySetInnerHTML={{__html: this.state.responseTextMsg}} />
             </Modal.Body>
             <Modal.Footer>
@@ -146,7 +151,7 @@ class FooterTemplate extends Component {
               </div>
             </Modal.Footer>
           </form>
-        </Modal>
+        </Modal> */}
       </footer>
     );
   }
@@ -158,4 +163,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps, {signupExpertSendSignupLink})(form(FooterTemplate));
+export default connect(mapStateToProps, {signupExpertSendSignupLink})(withCookies(form(FooterTemplate)));
