@@ -136,7 +136,7 @@ class ViewExpert extends Component {
       first_name: "",
       last_name: "",
       profile_image: "",
-      editable: "",
+      editable: "true",
       file: "",
       base64_image: "",
       submit_disabled: "",
@@ -467,7 +467,8 @@ class ViewExpert extends Component {
     } else {
       console.log("submit enabled");
     }
-
+    debugger;
+    
     const {
       updated_name,
       updated_university,
@@ -629,7 +630,7 @@ class ViewExpert extends Component {
         this.setState({
           editable: true,
         });
-        localStorage.setItem("editable", "");
+        // localStorage.setItem("editable", "");
       } else {
         this.setState({
           editable: "",
@@ -693,6 +694,7 @@ class ViewExpert extends Component {
           updated_area_of_experties2: this.state.expert.expertCategories[0],
           updated_years_of_experties: this.state.expert.yearsexpertise,
           updated_focus_of_experties: this.state.expert.expertFocusExpertise,
+          updated_university: this.state.expert.university,
         });
 
         const logged_user_email = this.state.currentUser

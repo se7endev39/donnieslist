@@ -1283,7 +1283,6 @@ exports.userExpertUpdate = async function (req, res, next) {
   updateuser.university = req.body.updated_university;
   updateuser.expertFocusExpertise = req.body.updated_focus_of_experties;
   updateuser.yearsexpertise = req.body.updated_years_of_experties;
-  updateuser.yearsexpertise = req.body.updated_years_of_experties;
   updateuser.expertCategories = req.body.updated_area_of_experties2;
   updateuser.slug = slug;
   updateuser.role = 'Expert';
