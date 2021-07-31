@@ -30,6 +30,7 @@ const UserSchema = new Schema({
   password: { type: String, required: true },
   profile: { firstName: { type: String }, lastName: { type: String } },
   role: { type: String, enum: [ROLE_EXPERT, ROLE_USER, ROLE_ADMIN], default: ROLE_USER },
+  university: { type: String },
   // stripe                : { customerId: { type: String }, subscriptionId: { type: String }, lastFour: { type: String }, plan: { type: String }, activeUntil: { type: Date } },
   stripe: {
     customerId: String,
@@ -92,9 +93,9 @@ const UserSchema = new Schema({
   expertSessionAvailability: { type: Boolean, default: false },
   isUserJoinVideoSession: { type: Boolean, default: false }
 },
-{
-  timestamps: true
-});
+  {
+    timestamps: true
+  });
 
 //= ===============================
 // User ORM Methods
