@@ -80,7 +80,7 @@ export function errorHandler(dispatch, error, type) {
     return dispatch(logoutUser(errorMessage));
   }
 
-  dispatch({
+  dispatch({  
     type,
     payload: errorMessage,
   });

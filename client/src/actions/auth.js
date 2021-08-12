@@ -83,7 +83,9 @@ export function registerUser({ email, firstName, lastName, password }) {
         (err) => {
           console.log(err);
         }
-      );
+      ).catch((error) => {
+        errorHandler(dispatch, error.response, AUTH_ERROR);
+      });
   };
 }
 
@@ -138,10 +140,12 @@ export function resetPassword(token, { password }) {
           payload: response.data.message,
         });
         // Redirect to login page on successful password reset
-        this.props.history.push("/login");
+        console.log('reset');
+        window.location.href = "/login";
       })
       .catch((error) => {
-        errorHandler(dispatch, error.response, AUTH_ERROR);
+        console.log(error);
+        // errorHandler(dispatch, error.response, AUTH_ERROR);
       });
   };
 }

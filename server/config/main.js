@@ -49,7 +49,7 @@ module.exports = {
   twitterAuthCallbackURL: 'http://donnieslist.com/api/auth/twitter/callback',
 
   // gmail credentials for sending email : nodemailer
-  gmailEmail: 'antony19951221@gmail.com',
-  gmailPassword: 'Fivestar12/'
+  gmailEmail: 'deydonny@gmail.com',
+  gmailPassword: 'Donnyslist22'
 
 };
