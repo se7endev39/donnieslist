@@ -419,46 +419,52 @@ exports.forgotPassword = (req, res, next) => {
 //= =======================================
 
 exports.verifyToken = function (req, res, next) {
-  User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, (err, resetUser) => {
+  console.log(req.params.token)
+  User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, async (err, resetUser) => {
     // If query returned no results, token expired or was invalid. Return error.
     if (!resetUser) {
       res.status(422).json({ error: 'Your token has expired. Please attempt to reset your password again.' });
     }
     else {
-      console.log(resetUser)
       // Otherwise, save new password and clear resetToken from database
-      resetUser.password = req.body.password;
-      resetUser.resetPasswordToken = undefined;
-      resetUser.resetPasswordExpires = undefined;
+      await bcrypt.genSalt(5, (err, salt) => {
+        if (err) return next(err);
+        bcrypt.hash(req.body.password, salt, null, (err1, hash) => {
+          if (err1) return next(err1);
+          resetUser.password = hash;
+        });
+        resetUser.resetPasswordToken = undefined;
+        resetUser.resetPasswordExpires = undefined;
 
-      resetUser.save((err1) => {
-        if (err1) { return next(err1); }
+        resetUser.save((err1) => {
+          if (err1) { return next(err1); }
 
-        // If password change saved successfully, alert user via email
-        const message = {
-          subject: 'Password Changed',
-          text: 'You are receiving this email because you changed your password. \n\n'
-            + 'If you did not request this change, please contact us immediately.'
-        };
+          // If password change saved successfully, alert user via email
+          const message = {
+            subject: 'Password Changed',
+            text: 'You are receiving this email because you changed your password. \n\n'
+              + 'If you did not request this change, please contact us immediately.'
+          };
 
-        // Otherwise, send user email confirmation of password change via Mailgun
-        // mailgun.sendEmail(resetUser.email, message);
-        const html = `${'You are receiving this email because you changed your password. \n\n'
-          + 'If you did not request this change, please contact us immediately.'}`
+          // Otherwise, send user email confirmation of password change via Mailgun
+          // mailgun.sendEmail(resetUser.email, message);
+          const html = `${'You are receiving this email because you changed your password. \n\n'
+            + 'If you did not request this change, please contact us immediately.'}`
 
-        const mailOptions = {
-          from: 'Donnies List <no-reply@donnieslist.com>',
-          to: resetUser.email,
-          subject: 'Password Changed',
-          html
-        };
-        transporter.sendMail(mailOptions, (error, response) => {
-          if (error) {
-            console.log(error);
-          } else {
-            console.log('password changed mail sent!');
-            console.log(response);
-          }
+          const mailOptions = {
+            from: 'Donnies List <no-reply@donnieslist.com>',
+            to: resetUser.email,
+            subject: 'Password Changed',
+            html
+          };
+          transporter.sendMail(mailOptions, (error, response) => {
+            if (error) {
+              console.log(error);
+            } else {
+              console.log('password changed mail sent!');
+              console.log(response);
+            }
+          });
         });
         return res.status(200).json({ message: 'Password changed successfully. Please login with your new password.' });
       });
