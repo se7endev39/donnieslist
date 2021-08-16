@@ -73,14 +73,14 @@ function CategoriesWithExpertsCounts(categories) {
         newsubCat.expertsCount = await getExpertCount(subcategory.slug);
         // console.log(newsubCat);
         newSubCats.push(newsubCat);
-      // console.log(newSubCats);
+        // console.log(newSubCats);
       });
       newCat.subcategories = newSubCats;
       // console.log(category['subcategories']);
       newCategories.push(newCat);
     });
-  // console.log(newCategories);
-  // return newCategories;
+    // console.log(newCategories);
+    // return newCategories;
   }, 2000);
   return newCategories;
 }
@@ -206,51 +206,32 @@ exports.getExpertsListing = function (req, res, next) {
     return next();
   }
 
-  let { category } = req.params;
-  if (category.indexOf('-') > -1) {
-    category = category.split('-');
-    category = category.join(' ').toUpperCase();
-  }
+  const { category } = req.params;
 
   res.header('Access-Control-Allow-Origin', '*');
-  User.aggregate(
-    [
-      {
-        $match: {
-          expertCategories: { $regex: new RegExp(category, 'i') },
-          role: 'Expert'
-        }
-      },
-      {
-        $project: {
-          _id: 0,
-          accountCreationDate: 0,
-          createdAt: 0,
-          enableAccount: 0,
-          email: 0,
-          contact: 0
-          // 'onlineStatus':0,
-        }
-      },
-      { $sort: { createdAt: -1 } },
-      {
-        $addFields: {
-          onlineStatus: {
-            $cond: {
-              if: {
-                $eq: ['$onlineStatus', 'ONLINE']
-              },
-              then: true,
-              else: false
-            }
-          }
-        }
-      }
-    ], (err, expertsList) => {
+  User.find({
+    expertCategories: {
+      $regex: new RegExp(category, 'i')
+    },
+    role: 'Expert',
+  }, {
+    _id: 0,
+    accountCreationDate: 0,
+    createdAt: 0,
+    enableAccount: 0,
+    // locationCity :0,
+    // locationCountry : 0,
+    // locationState : 0,
+    locationZipcode: 0,
+    password: 0,
+    websiteURL: 0
+  }).sort({
+    createdAt: -1
+  }).exec(
+    (err, expertsList) => {
       if (expertsList) {
         res.json(expertsList);
       } else {
-        console.log(err);
         res.json({
           success: false,
           data: {},
@@ -259,6 +240,7 @@ exports.getExpertsListing = function (req, res, next) {
       }
     }
   );
+};
 
   /* ExpertsSubcategories.findOne({'slug':{ $regex : new RegExp(category, "i") }}, function (err, expertsList) {
       if(expertsList){
@@ -271,7 +253,6 @@ exports.getExpertsListing = function (req, res, next) {
           });
       }
   }); */
-};
 //
 exports.getTopExpertsListing = function (req, res, next) {
   if (!req.params.category) {
@@ -288,12 +269,8 @@ exports.getTopExpertsListing = function (req, res, next) {
     expertCategories: {
       $regex: new RegExp(category, 'i')
     },
-    expertRating: {
-      $lte: 5,
-      $gte: 4
-    },
-    role: 'Expert'
-    // 'expertRating' : ['5','4']
+    role: 'Expert',
+    'expertRating': ['5', '4']
   }, {
     _id: 0,
     accountCreationDate: 0,
@@ -811,20 +788,20 @@ exports.getExpertDetail = function (req, res, next) {
     locationZipcode: 0,
     password: 0
   },
-  (err, expertsList) => {
-    if (expertsList) {
-      // console.log('found');
-      // console.log(expertsList);
-      res.json(expertsList);
-    } else {
-      // console.log('not found');
-      res.json({
-        success: false,
-        data: {},
-        code: 404
-      });
-    }
-  });
+    (err, expertsList) => {
+      if (expertsList) {
+        // console.log('found');
+        // console.log(expertsList);
+        res.json(expertsList);
+      } else {
+        // console.log('not found');
+        res.json({
+          success: false,
+          data: {},
+          code: 404
+        });
+      }
+    });
 
   /* ExpertsSubcategories.aggregate( [
     {   "$match": {
@@ -863,18 +840,18 @@ exports.getExpert = function (req, res, next) {
   User.find({
     email
   },
-  (err, expertsList) => {
-    if (expertsList) {
-      res.json(expertsList);
-    } else {
-      // console.log('not found');
-      res.json({
-        success: false,
-        data: {},
-        code: 404
-      });
-    }
-  });
+    (err, expertsList) => {
+      if (expertsList) {
+        res.json(expertsList);
+      } else {
+        // console.log('not found');
+        res.json({
+          success: false,
+          data: {},
+          code: 404
+        });
+      }
+    });
 };
 // get expert details
 
@@ -942,17 +919,17 @@ exports.getEndorsements = function (req, res, next) {
       $in: slug
     }
   }, { profileImage: 1, slug: 1 },
-  (err, expertsList) => {
-    if (expertsList) {
-      res.json(expertsList);
-    } else {
-      res.json({
-        success: false,
-        data: {},
-        code: 404
-      });
-    }
-  });
+    (err, expertsList) => {
+      if (expertsList) {
+        res.json(expertsList);
+      } else {
+        res.json({
+          success: false,
+          data: {},
+          code: 404
+        });
+      }
+    });
 };
 
 exports.getMyExpertsListing = function (req, res, next) {
@@ -985,18 +962,18 @@ exports.getMyExpertsListing = function (req, res, next) {
     password: 0,
     websiteURL: 0
   },
-  (err, expertsList) => {
-    if (expertsList) {
-      console.log(expertsList);
-      res.json(expertsList);
-    } else {
-      res.json({
-        success: false,
-        data: {},
-        code: 404
-      });
-    }
-  });
+    (err, expertsList) => {
+      if (expertsList) {
+        console.log(expertsList);
+        res.json(expertsList);
+      } else {
+        res.json({
+          success: false,
+          data: {},
+          code: 404
+        });
+      }
+    });
 };
 
 exports.getExpertStories = function (req, res, next) {
@@ -1011,17 +988,17 @@ exports.getExpertStories = function (req, res, next) {
     _id: 0,
     'timestamps.updatedAt': 0
   },
-  (err, expertStoryList) => {
-    if (expertStoryList) {
-      res.json(expertStoryList);
-    } else {
-      res.json({
-        success: false,
-        data: {},
-        code: 404
-      });
-    }
-  });
+    (err, expertStoryList) => {
+      if (expertStoryList) {
+        res.json(expertStoryList);
+      } else {
+        res.json({
+          success: false,
+          data: {},
+          code: 404
+        });
+      }
+    });
 };
 
 exports.saveUserReview = function (req, res) {
@@ -1104,7 +1081,7 @@ exports.saveUserReview = function (req, res) {
         subject: 'Donnies List: User Review',
         html
       };
-      smtpTransport.sendMail(mailOptions, (error1, response) => {});
+      smtpTransport.sendMail(mailOptions, (error1, response) => { });
     }
     return res.json(bind);
   });
@@ -1119,12 +1096,12 @@ exports.getExpertStoriesBasedOnRole = function (req, res, next) {
   ExpertStory.aggregate([
     {
       $lookup:
-        {
-          from: 'users',
-          localField: 'expert.email',
-          foreignField: 'email',
-          as: 'expert_details'
-        }
+      {
+        from: 'users',
+        localField: 'expert.email',
+        foreignField: 'email',
+        as: 'expert_details'
+      }
     },
     {
       $match: {
@@ -1147,17 +1124,17 @@ exports.getExpertStoriesBasedOnRole = function (req, res, next) {
       }
     }
   ],
-  (err, expertStoryList) => {
-    if (expertStoryList) {
-      res.json(expertStoryList);
-    } else {
-      res.json({
-        success: false,
-        data: {},
-        code: 404
-      });
-    }
-  });
+    (err, expertStoryList) => {
+      if (expertStoryList) {
+        res.json(expertStoryList);
+      } else {
+        res.json({
+          success: false,
+          data: {},
+          code: 404
+        });
+      }
+    });
 };
 
 exports.getExpertReviews = function (req, res, next) {

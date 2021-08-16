@@ -94,7 +94,7 @@ class HeaderTemplate extends Component {
                       style={{ cursor: "pointer" }}
                     >
                       <i className="fa fa-pencil" title="Update Profile"></i>
-                      update profile
+                      Update profile
                     </a>
                   </li>
                 )}
