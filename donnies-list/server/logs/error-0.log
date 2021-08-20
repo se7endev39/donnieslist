@@ -1,0 +1,2 @@
+(node:105628) DeprecationWarning: Mongoose: `findOneAndUpdate()` and `findOneAndDelete()` without the `useFindAndModify` option set to false are deprecated. See: https://mongoosejs.com/docs/deprecations.html#findandmodify
+(Use `node --trace-deprecation ...` to show where the warning was created)

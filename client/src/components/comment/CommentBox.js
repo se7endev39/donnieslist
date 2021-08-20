@@ -210,7 +210,7 @@ const CommentBox = props => {
                   alt=""
                   src={
                     "/profile_images/" +
-                    comments.users[0].profileImage
+                    comments.users[0]?.profileImage
                   }
                   height="50px"
                   width="50px"
@@ -218,15 +218,15 @@ const CommentBox = props => {
                 <a
                   href={
                     "/expert/" +
-                    comments.users[0].expertCategories[0] +
+                    comments.users[0]?.expertCategories[0] +
                     "/" +
-                    comments.users[0].slug
+                    comments.users[0]?.slug
                   }
                   style={{ cursor: "pointer" }}
                 >
-                  {comments.users[0].profile.firstName +
+                  {comments.users[0]?.profile.firstName +
                     " " +
-                    comments.users[0].profile.lastName}
+                    comments.users[0]?.profile.lastName}
                 </a>
                 <p>{comments.text}</p>
 
@@ -279,7 +279,7 @@ const CommentBox = props => {
                           alt=""
                         src={
                           "/profile_images/" +
-                          comments.users[0].profileImage
+                          comments.users[0]?.profileImage
                         }
                         height="50px"
                         width="50px"

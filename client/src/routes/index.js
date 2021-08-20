@@ -14,6 +14,7 @@ import PrivacyPolicy from "../pages/privacy-policy";
 import ContactPage from "../pages/contact-page";
 import ExpertsListingPage from "../pages/experts-listing-page";
 import ViewExpert from "../pages/view-expert";
+import EditExpert from "../pages/editable-expert";
 import UserSessionPage from "../components/dashboard/user-session-page";
 import ExpertSessionPage from "../components/dashboard/expert-session-page";
 import TokboxPage from "../components/dashboard/tokbox-page";
@@ -77,6 +78,7 @@ const Routes = () => {
       <Route path="/profile" component={RequireAuth(ViewProfile)} />
       <Route path="/update-profile" component={RequireAuth(UserProfileUpdation)} />
       <Route path="/expert/:category/:slug" component={ViewExpert} />
+      <Route path="/edit/expert/:category/:slug" component={EditExpert} />
       <Route path="/session/:slug" component={RequireAuth(UserSessionPage)} />
       <Route path="/mysession/:slug" component={RequireAuth(ExpertSessionPage)} />
       <Route path="/recordings" component={RequireAuth(Recordings)} />

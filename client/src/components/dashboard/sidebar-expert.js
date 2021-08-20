@@ -1,14 +1,24 @@
-import React, { Component } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
+import { useHistory } from "react-router-dom"
 
-class SidebarMenuExpert extends Component {
-  render() {
+const SidebarMenuExpert = () => {
+  const history = useHistory();
+ const updateProfile = () => {
+        const category = localStorage.category
+        const slug = localStorage.slug
+        if (category !== undefined && category !== "" && category !== null) {
+          history.push("/edit/expert/" + category + "/" + slug);
+        } else {
+          history.push("/edit/expert/new_category/" + slug);
+        }
+  };
     return (
       <div className="column col-sm-3 col-xs-1 sidebar-offcanvas" id="sidebar">
         <span className="sidebar-caption">Expert Controls</span>
         <ul className="nav nav-sidebar" id="menu">
-          <li>
-            <Link to="/update-profile">
+          <li onClick={updateProfile}>
+            <Link>
               <i className="fa fa-user"></i>
               <span className="collapse in hidden-xs"> Update Profile</span>
             </Link>
@@ -29,6 +39,6 @@ class SidebarMenuExpert extends Component {
       </div>
     );
   }
-}
+
 
 export default SidebarMenuExpert;

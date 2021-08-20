@@ -31,8 +31,12 @@ class HeaderTemplate extends Component {
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
-    if(!this.state.currentUser || this.state.currentUser?.firstName !== nextProps.cookies.get('user')?.firstName) {
-      this.setState({currentUser: nextProps.cookies.get('user')});
+    if (
+      !this.state.currentUser ||
+      this.state.currentUser?.firstName !==
+        nextProps.cookies.get("user")?.firstName
+    ) {
+      this.setState({ currentUser: nextProps.cookies.get("user") });
     }
   }
 
@@ -48,7 +52,7 @@ class HeaderTemplate extends Component {
 
   renderLinks() {
     if (this.props.authenticated) {
-      return(
+      return (
         <>
           <li key={`${1}header`}>
             <Link onClick={this.handleOnClick} to="/">
@@ -66,7 +70,8 @@ class HeaderTemplate extends Component {
                 <span className="name">
                   <i className="fa fa-user"></i>
                   {this.state.currentUser.firstName}
-                  {this.state.currentUser.lastName}({this.state.currentUser.role})
+                  {this.state.currentUser.lastName}(
+                  {this.state.currentUser.role})
                 </span>
                 <b className="caret"></b>
               </a>
@@ -74,7 +79,8 @@ class HeaderTemplate extends Component {
                 <div className="log-arrow-up"></div>
                 <li>
                   <Link onClick={this.handleOnClick} to="/profile">
-                    <i className="fa fa-user" title="Update Profile"></i> profile
+                    <i className="fa fa-user" title="Update Profile"></i>{" "}
+                    profile
                   </Link>
                 </li>
 
@@ -102,9 +108,12 @@ class HeaderTemplate extends Component {
 
                 {this.state.currentUser.role === "User" && (
                   <li>
-                    <Link onClick={this.handleOnClick} to="/dashboard/my-reviews">
-                      <i className="fa fa-commenting-o" aria-hidden="true"></i> my
-                      reviews
+                    <Link
+                      onClick={this.handleOnClick}
+                      to="/dashboard/my-reviews"
+                    >
+                      <i className="fa fa-commenting-o" aria-hidden="true"></i>{" "}
+                      my reviews
                     </Link>
                   </li>
                 )}
@@ -147,7 +156,7 @@ class HeaderTemplate extends Component {
                 )}
 
                 <li>
-                  <Link onClick={this.handleOnClick} to="logout">
+                  <Link onClick={this.handleOnClick} to="/logout">
                     <i className="fa fa-key"></i> logout
                   </Link>
                 </li>
@@ -166,27 +175,31 @@ class HeaderTemplate extends Component {
               </Link>
             </li>
             <li key={2}>
-              <Link onClick={this.handleOnClick} to="login">
+              <Link onClick={this.handleOnClick} to="/login">
                 Login
               </Link>
             </li>
             <li key={3}>
-              <Link onClick={this.handleOnClick} to="register">
+              <Link onClick={this.handleOnClick} to="/register">
                 Join
               </Link>
             </li>
             <li key={4}>
-              <Link onClick={this.handleOnClick} to="map">
+              <Link onClick={this.handleOnClick} to="/map">
                 Map
               </Link>
             </li>
             <li key={5}>
-              <Link onClick={this.handleOnClick} to="how-it-works">How it works</Link>
+              <Link onClick={this.handleOnClick} to="/how-it-works">
+                How it works
+              </Link>
             </li>
             <li key={6}>
-              <Link onClick={this.handleOnClick} to="contact-us">Contact</Link>
+              <Link onClick={this.handleOnClick} to="/contact-us">
+                Contact
+              </Link>
             </li>
-          </ul>          
+          </ul>
         </>
       );
     }
@@ -226,11 +239,13 @@ class HeaderTemplate extends Component {
 
         var slug = res.data[0].slug;
         var category = res.data[0].expertCategories[0];
+        localStorage.setItem("slug", slug)
+        localStorage.setItem("category", category)
         localStorage.setItem("editable", "true");
         if (category !== undefined && category !== "" && category !== null) {
-          this.props.history.push('/expert/'+category+'/'+slug);
+          this.props.history.push("/edit/expert/" + category + "/" + slug);
         } else {
-          this.props.history.push('/expert/new_category/'+slug);
+          this.props.history.push("/edit/expert/new_category/" + slug);
         }
       })
       .catch((err) => {
@@ -290,7 +305,6 @@ class HeaderTemplate extends Component {
                 <span className="icon-bar" />
               </button>
               <div className="logo-tag">
-                
                 <NavLink className="navbar-brand" to="/">
                   donnie's list
                 </NavLink>
@@ -331,4 +345,7 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps, {setPage, setSearch})(withRouter(withCookies(HeaderTemplate)));
+export default connect(mapStateToProps, { setPage, setSearch })(
+  withRouter(withCookies(HeaderTemplate))
+);
+

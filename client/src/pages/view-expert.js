@@ -1009,7 +1009,7 @@ class ViewExpert extends Component {
     const endorsements_render = this.state.endorsements.map(
       (endorsement, index) => {
         // const url = `${Image_URL}`+endorsement.profileImage;
-        const url = "/profile_images/" + endorsement.profileImage;
+        const url = Image_URL + endorsement.profileImage;
         const default_url = "/img/profile.png";
         return (
           <img
@@ -1019,9 +1019,9 @@ class ViewExpert extends Component {
             width="50"
             src={
               endorsement.profileImage &&
-                endorsement.profileImage !== null &&
-                endorsement.profileImage !== undefined &&
-                endorsement.profileImage !== ""
+              endorsement.profileImage !== null &&
+              endorsement.profileImage !== undefined &&
+              endorsement.profileImage !== ""
                 ? url
                 : default_url
             }
@@ -1109,25 +1109,22 @@ class ViewExpert extends Component {
                           }}
                         >
                           {this.state.profileImage &&
-                            this.state.profileImage !== null &&
-                            this.state.profileImage !== undefined &&
-                            this.state.profileImage !== "" ? (
+                          this.state.profileImage !== null &&
+                          this.state.profileImage !== undefined &&
+                          this.state.profileImage !== "" ? (
                             <img
                               className="image_view"
                               height=""
                               width=""
-                              src={
-                                "/profile_images/" +
-                                this.state.profileImage
-                              }
+                              src={Image_URL + this.state.profileImage}
                               alt=""
                             />
                           ) : (
                             ""
                           )}
                           {this.state.profileImage === null ||
-                            this.state.profileImage === undefined ||
-                            this.state.profileImage === "" ? (
+                          this.state.profileImage === undefined ||
+                          this.state.profileImage === "" ? (
                             <img
                               className="image_view"
                               src="/img/profile.png"
@@ -1158,14 +1155,18 @@ class ViewExpert extends Component {
                                     this.selectVideoSessionMinutes
                                   }
                                   className="Start-Session"
-                                > </a>
+                                >
+                                  {" "}
+                                </a>
                               ) : (
                                 <div>
                                   <a
                                     title="Start Video Session"
                                     onClick={this.redirectToLogin.bind(this)}
                                     className="Start-Session"
-                                  > </a>
+                                  >
+                                    {" "}
+                                  </a>
                                 </div>
                               )}
                             </li>
@@ -1177,7 +1178,6 @@ class ViewExpert extends Component {
                               data-target="#myModalEmail"
                               className="Send_E-Mail"
                             >
-
                               Send E-Mail
                             </a>
                           </li>
@@ -1188,7 +1188,6 @@ class ViewExpert extends Component {
                               data-target="#myModalTextMessage"
                               className="Send-Text-Message"
                             >
-
                               Send Text Message
                             </a>
                           </li>
@@ -1199,7 +1198,6 @@ class ViewExpert extends Component {
                               download
                               className="Download-Resume"
                             >
-
                               Download Resume
                             </a>
                           </li>
@@ -1213,7 +1211,6 @@ class ViewExpert extends Component {
                                   )}
                                   className="Audio-Call"
                                 >
-
                                   Audio Call
                                 </a>
                               ) : (
@@ -1223,7 +1220,6 @@ class ViewExpert extends Component {
                                   data-target="#myModalAudio"
                                   className="Audio-Call"
                                 >
-
                                   Audio Call
                                 </a>
                               )}
@@ -1275,10 +1271,7 @@ class ViewExpert extends Component {
                           <div className="panel-heading">Audio Calling...</div>
                           <div className="panel-body audio_call_body">
                             <div className="audio_user_call_img">
-                              <img
-                                src="/img/Client-img.png"
-                                alt=""
-                              />
+                              <img src="/img/Client-img.png" alt="" />
                             </div>
                             <div className="audio_userrgt_content">
                               <div id="userPublisherAudio"></div>
@@ -1297,7 +1290,6 @@ class ViewExpert extends Component {
                               onClick={this.disconnectAudioCall.bind(this)}
                               className="btn btn-danger"
                             >
-
                               <img
                                 className="incoming_call disconnect_call"
                                 src="/img/call_cancel.png"
@@ -1319,10 +1311,7 @@ class ViewExpert extends Component {
                           <div className="panel-body audio_call_body">
                             <div className="connecting_call_con">
                               <div className="audio_user_call_img">
-                                <img
-                                  src="/img/Client-img.png"
-                                  alt=""
-                                />
+                                <img src="/img/Client-img.png" alt="" />
                               </div>
                               <div className="connect_loading">
                                 <div className="spinner">
@@ -1332,14 +1321,10 @@ class ViewExpert extends Component {
                                 </div>
                               </div>
                               <div className="audio_user_call_img flt_rgt">
-                                <img
-                                  src="/img/Client-img.png"
-                                  alt=""
-                                />
+                                <img src="/img/Client-img.png" alt="" />
                               </div>
                             </div>
                             <button className="btn btn-danger">
-
                               <img
                                 className="incoming_call disconnect_call"
                                 src="/img/call_cancel.png"
@@ -1350,395 +1335,12 @@ class ViewExpert extends Component {
                         </div>
                       </div>
                       <div className="col-md-9 col-sm-8">
-                        {this.state.editable === true ? (
-                          <div className="profile-detail">
-                            <div className="name">
-                              <dl className="dl-horizontal">
-                                <div className="profile-bor-detail">
-                                  <dt>Name</dt>
-                                  <dd>
-                                    {/*<div className="text-left-detail">{ this.state.expert.profile.firstName } { this.state.expert.profile.lastName }</div>*/}
-                                    <div className="text-left-detail">
-                                      <input
-                                        className="form-control"
-                                        onChange={(e) => {
-                                          this.setState({
-                                            updated_name: e.target.value,
-                                          });
-                                        }}
-                                        defaultValue={this.state.updated_name}
-                                      />
-                                    </div>
-                                    <div
-                                      style={{
-                                        float: "right",
-                                        textTransform: "capitalize",
-                                      }}
-                                      className="text-right label label-primary"
-                                    >
-                                      <i
-                                        className="fa fa-bars"
-                                        aria-hidden="true"
-                                      ></i>
-                                      {this.props.match.params.category}
-                                    </div>
-                                  </dd>
-                                </div>
-                                <div className="profile-bor-detail">
-                                  <dt>University</dt>
-                                  {/*<dd>{ this.state.expert.university }</dd>*/}
-                                  <dd>
-                                    <input
-                                      className="form-control"
-                                      onChange={(e) => {
-                                        this.setState({
-                                          updated_university: e.target.value,
-                                        });
-                                      }}
-                                      defaultValue={
-                                        this.state.expert.university
-                                      }
-                                    />
-                                  </dd>
-                                </div>
-                                <div className="profile-bor-detail">
-                                  <dt>Area of expertise</dt>
-                                  {/*<dd>{ this.state.expert.expertCategories }</dd>*/}
-                                  <dd>
-                                    <div className="inputs">
-                                      <Field
-                                        name="categories"
-                                        className="form-control"
-                                        onChange={(e) => {
-                                          this.setState({
-                                            updated_area_of_experties1:
-                                              e.target.value,
-                                          });
-                                        }}
-                                        component={renderFieldexpertCategories}
-                                        type="select"
-                                        required
-                                      />
-                                      <Field
-                                        name="expertise"
-                                        className="form-control"
-                                        onChange={(e) => {
-                                          this.setState({
-                                            updated_area_of_experties2:
-                                              e.target.value,
-                                          });
-                                        }}
-                                        component={
-                                          renderFieldexpertSubCategories
-                                        }
-                                        type="select"
-                                        required
-                                      />
-                                    </div>
-                                  </dd>
-                                </div>
-                                <div className="profile-bor-detail">
-                                  <dt>Years of expertise</dt>
-                                  {/*<dd>{ this.state.expert.yearsexpertise }</dd>*/}
-                                  <dd>
-                                    <input
-                                      className="form-control"
-                                      onChange={(e) => {
-                                        this.setState({
-                                          updated_years_of_experties:
-                                            e.target.value,
-                                        });
-                                      }}
-                                      defaultValue={
-                                        this.state.updated_years_of_experties
-                                      }
-                                    />
-                                  </dd>
-                                </div>
-                                <div className="profile-bor-detail">
-                                  <dt>Focus of expertise</dt>
-                                  {/*<dd>{ this.state.expert.expertFocusExpertise }</dd>*/}
-                                  <dd>
-                                    <input
-                                      className="form-control"
-                                      onChange={(e) => {
-                                        this.setState({
-                                          updated_focus_of_experties:
-                                            e.target.value,
-                                        });
-                                      }}
-                                      defaultValue={
-                                        this.state.updated_focus_of_experties
-                                      }
-                                    />
-                                  </dd>
-                                </div>
-                                {/*}<div className="profile-bor-detail">
-                                <dt>Rates</dt>
-                                <dd>{ this.state.expert.expertRates }</dd>
-                            </div>{*/}
-                                <div className="profile-bor-detail">
-                                  <dt>Rating</dt>
-                                  <dd>
-                                    {this.state.expert.expertRating &&
-                                      this.state.expert.expertRating !== null &&
-                                      this.state.expert.expertRating !==
-                                      undefined &&
-                                      this.state.expert.expertRating !== ""
-                                      ? this.state.expert.expertRating
-                                      : "No Ratings Available"}
-                                    {this.state.expert.expertRating &&
-                                      this.state.expert.expertRating !== null &&
-                                      this.state.expert.expertRating !==
-                                      undefined &&
-                                      this.state.expert.expertRating !== "" && (
-                                        <i
-                                          className="fa fa-star"
-                                          aria-hidden="true"
-                                        ></i>
-                                      )}
-                                  </dd>
-                                </div>
-                                {/*<div className="profile-bor-detail">
-                              <dt>About Expert </dt>
-                              <dd>{ this.state.expert.userBio && this.state.expert.userBio!=null && this.state.expert.userBio!=undefined && this.state.expert.userBio!="" ? this.state.expert.userBio : "-"}</dd>
-                            </div>
-                            <div className="profile-bor-detail">
-                              <dt>Country </dt>
-                              <dd>{ this.state.expert.locationCountry && this.state.expert.locationCountry!=null && this.state.expert.locationCountry!=undefined && this.state.expert.locationCountry!="" ? this.state.expert.locationCountry :"-"}</dd>
-                            </div>
-                            <div className="profile-bor-detail">
-                              <dt>State </dt>
-                              <dd>{ this.state.expert.locationState && this.state.expert.locationState!=null && this.state.expert.locationState!=undefined && this.state.expert.locationState!="" ? this.state.expert.locationState : "-"}</dd>
-                            </div>
-                            <div className="profile-bor-detail">
-                              <dt>City </dt>
-                              <dd>{ this.state.expert.locationCity && this.state.expert.locationCity!=null && this.state.expert.locationCity!=undefined && this.state.expert.locationCity!="" ? this.state.expert.locationCity : "-"}</dd>
-                            </div>*/}
-                                <div className="profile-bor-detail expert-social-links">
-                                  <dt>Social link </dt>
-                                  <dd>
-                                    {this.state.expert.facebookURL &&
-                                      this.state.expert.facebookURL !== null &&
-                                      this.state.expert.facebookURL !==
-                                      undefined &&
-                                      this.state.expert.facebookURL !== "" && (
-                                        <a
-                                          target="_blank"
-                                          href={
-                                            this.state.expert.facebookURL
-                                              ? this.state.expert.facebookURL
-                                              : "#"
-                                          }
-                                          title="facebook"
-                                          rel="noreferrer"
-                                        >
-                                          <i
-                                            className="fa fa-facebook-official"
-                                            aria-hidden="true"
-                                          ></i>
-                                        </a>
-                                      )}
-                                    {this.state.expert.twitterURL &&
-                                      this.state.expert.twitterURL !== null &&
-                                      this.state.expert.twitterURL !==
-                                      undefined &&
-                                      this.state.expert.twitterURL !== "" && (
-                                        <a
-                                          target="_blank"
-                                          href={
-                                            this.state.expert.twitterURL
-                                              ? this.state.expert.twitterURL
-                                              : "#"
-                                          }
-                                          title="twitter"
-                                          rel="noreferrer"
-                                        >
-                                          <i
-                                            className="fa fa-twitter"
-                                            aria-hidden="true"
-                                          ></i>
-                                        </a>
-                                      )}
-                                    {this.state.expert.linkedinURL &&
-                                      this.state.expert.linkedinURL !== null &&
-                                      this.state.expert.linkedinURL !==
-                                      undefined &&
-                                      this.state.expert.linkedinURL !== "" && (
-                                        <a
-                                          target="_blank"
-                                          href={
-                                            this.state.expert.linkedinURL
-                                              ? this.state.expert.linkedinURL
-                                              : "#"
-                                          }
-                                          title="linkedin"
-                                          rel="noreferrer"
-                                        >
-                                          <i
-                                            className="fa fa-linkedin"
-                                            aria-hidden="true"
-                                          ></i>
-                                        </a>
-                                      )}
-                                    {this.state.expert.instagramURL &&
-                                      this.state.expert.instagramURL !== null &&
-                                      this.state.expert.instagramURL !==
-                                      undefined &&
-                                      this.state.expert.instagramURL !== "" && (
-                                        <a
-                                          target="_blank"
-                                          href={
-                                            this.state.expert.instagramURL
-                                              ? this.state.expert.instagramURL
-                                              : "#"
-                                          }
-                                          title="instagram"
-                                          rel="noreferrer"
-                                        >
-                                          <i
-                                            className="fa fa-instagram"
-                                            aria-hidden="true"
-                                          ></i>
-                                        </a>
-                                      )}
-                                    {this.state.expert.snapchatURL &&
-                                      this.state.expert.snapchatURL !== null &&
-                                      this.state.expert.snapchatURL !==
-                                      undefined &&
-                                      this.state.expert.snapchatURL !== "" && (
-                                        <a
-                                          target="_blank"
-                                          href={
-                                            this.state.expert.snapchatURL
-                                              ? this.state.expert.snapchatURL
-                                              : "#"
-                                          }
-                                          title="snapchat"
-                                          rel="noreferrer"
-                                        >
-                                          <i
-                                            className="fa fa-snapchat"
-                                            aria-hidden="true"
-                                          ></i>
-                                        </a>
-                                      )}
-                                    {this.state.expert.websiteURL &&
-                                      this.state.expert.websiteURL !== null &&
-                                      this.state.expert.websiteURL !==
-                                      undefined &&
-                                      this.state.expert.websiteURL !== "" && (
-                                        <a
-                                          target="_blank"
-                                          href={
-                                            this.state.expert.websiteURL
-                                              ? this.state.expert.websiteURL
-                                              : "#"
-                                          }
-                                          title="website"
-                                          rel="noreferrer"
-                                        >
-                                          <i
-                                            className="fa fa-anchor"
-                                            aria-hidden="true"
-                                          ></i>
-                                        </a>
-                                      )}
-                                    {this.state.expert.googleURL &&
-                                      this.state.expert.googleURL !== null &&
-                                      this.state.expert.googleURL !==
-                                      undefined &&
-                                      this.state.expert.googleURL !== "" && (
-                                        <a
-                                          target="_blank"
-                                          href={
-                                            this.state.expert.googleURL
-                                              ? this.state.expert.googleURL
-                                              : "#"
-                                          }
-                                          title="google"
-                                          rel="noreferrer"
-                                        >
-                                          <i
-                                            className="fa fa-google"
-                                            aria-hidden="true"
-                                          ></i>
-                                        </a>
-                                      )}
-                                    {this.state.expert.youtubeURL &&
-                                      this.state.expert.youtubeURL !== null &&
-                                      this.state.expert.youtubeURL !==
-                                      undefined &&
-                                      this.state.expert.youtubeURL !== "" && (
-                                        <a
-                                          target="_blank"
-                                          href={
-                                            this.state.expert.youtubeURL
-                                              ? this.state.expert.youtubeURL
-                                              : "#"
-                                          }
-                                          title="youtube"
-                                          rel="noreferrer"
-                                        >
-                                          <i
-                                            className="fa fa-youtube"
-                                            aria-hidden="true"
-                                          ></i>
-                                        </a>
-                                      )}
-                                    {this.state.expert.soundcloudURL &&
-                                      this.state.expert.soundcloudURL !== null &&
-                                      this.state.expert.soundcloudURL !==
-                                      undefined &&
-                                      this.state.expert.soundcloudURL !== "" && (
-                                        <a
-                                          target="_blank"
-                                          href={
-                                            this.state.expert.soundcloudURL
-                                              ? this.state.expert.soundcloudURL
-                                              : "#"
-                                          }
-                                          title="soundcloud"
-                                          rel="noreferrer"
-                                        >
-                                          <i
-                                            className="fa fa-soundcloud"
-                                            aria-hidden="true"
-                                          ></i>
-                                        </a>
-                                      )}
-                                    {this.state.expert.facebookURL === "" &&
-                                      this.state.expert.twitterURL === "" &&
-                                      this.state.expert.linkedinURL === "" &&
-                                      this.state.expert.instagramURL === "" &&
-                                      this.state.expert.snapchatURL === "" &&
-                                      this.state.expert.websiteURL === "" &&
-                                      this.state.expert.googleURL === "" &&
-                                      "No Social Links Available Yet"}
-                                  </dd>
-                                </div>
-                                <div className="profile-bor-detail expert-endorsements">
-                                  <dt>Endorsements </dt>
-                                  <dd>{endorsements_render}</dd>
-                                </div>
-                              </dl>
-                              <button
-                                className="btn btn-info"
-                                onClick={() => {
-                                  this.saveChanges();
-                                }}
-                              >
-                                Save Changes
-                              </button>
-                            </div>
-                          </div>
-                        ) : (
                           <div className="profile-detail">
                             <div className="name">
                               <dl className="dl-horizontal">
                                 {this.state.firstName !== "undefined" &&
-                                  this.state.firstName !== "" &&
-                                  this.state.firstName !== null ? (
+                                this.state.firstName !== "" &&
+                                this.state.firstName !== null ? (
                                   <div className="profile-bor-detail">
                                     <dt>Name</dt>
                                     <dd>
@@ -1785,10 +1387,40 @@ class ViewExpert extends Component {
                                     </dd>
                                   </div>
                                 )}
+         {this.state.expert.expertCategories !==
+                                  "undefined" &&
+                                this.state.expert.expertCategories !== "" &&
+                                this.state.expert.expertCategories !== null ? (
+                                  <div className="profile-bor-detail">
+                                    <dt>Area of expertise</dt>
+                                    <dd>
+                                      {this.state.expert.expertCategories}
+                                    </dd>
+                                  </div>
+                                ) : (
+                                  <div className="profile-bor-detail inactive_div">
+                                    <dt>Area of expertise</dt>
+                                    <dd>
+                                      {this.state.expert.expertCategories}
+                                    </dd>
+                                  </div>
+                                )}
 
+                                  <div className="profile-bor-detail">
+                                    <dt>Years of expertise</dt>
+                                    <dd>{this.state.expert?.yearsexpertise}</dd>
+                                  </div>
+
+                                  <div className="profile-bor-detail">
+                                    <dt>Focus of expertise</dt>
+                                    <dd>
+                                      {this.state.expert?.expertFocusExpertise}
+                                    </dd>
+                                  </div>
+                                  
                                 {this.state.expert.university !== "undefined" &&
-                                  this.state.expert.university !== "" &&
-                                  this.state.expert.university !== null ? (
+                                this.state.expert.university !== "" &&
+                                this.state.expert.university !== null ? (
                                   <div className="profile-bor-detail">
                                     <dt>University</dt>
                                     <dd>{this.state.expert.university}</dd>
@@ -1800,86 +1432,32 @@ class ViewExpert extends Component {
                                   </div>
                                 )}
 
-                                {this.state.expert.expertCategories !==
-                                  "undefined" &&
-                                  this.state.expert.expertCategories !== "" &&
-                                  this.state.expert.expertCategories !== null ? (
-                                  <div className="profile-bor-detail">
-                                    <dt>Area of expertise</dt>
-                                    <dd>
-                                      {this.state.expert.expertCategories}
-                                    </dd>
-                                  </div>
-                                ) : (
-                                  <div className="profile-bor-detail inactive_div">
-                                    <dt>Area of expertise</dt>
-                                    <dd>
-                                      {this.state.expert.expertCategories}
-                                    </dd>
-                                  </div>
-                                )}
-
-                                {this.state.expert.yearsexpertise !==
-                                  "undefined" &&
-                                  this.state.expert.yearsexpertise !== "" &&
-                                  this.state.expert.yearsexpertise !== null ? (
-                                  <div className="profile-bor-detail">
-                                    <dt>Years of expertise</dt>
-                                    <dd>{this.state.expert.yearsexpertise}</dd>
-                                  </div>
-                                ) : (
-                                  <div className="profile-bor-detail inactive_div">
-                                    <dt>Years of expertise</dt>
-                                    <dd>{this.state.expert.yearsexpertise}</dd>
-                                  </div>
-                                )}
-
-                                {this.state.expert.expertFocusExpertise !==
-                                  "undefined" &&
-                                  this.state.expert.expertFocusExpertise !== "" &&
-                                  this.state.expert.expertFocusExpertise !=
-                                  null ? (
-                                  <div className="profile-bor-detail">
-                                    <dt>Focus of expertise</dt>
-                                    <dd>
-                                      {this.state.expert.expertFocusExpertise}
-                                    </dd>
-                                  </div>
-                                ) : (
-                                  <div className="profile-bor-detail inactive_div">
-                                    <dt>Focus of expertise</dt>
-                                    <dd>
-                                      {this.state.expert.expertFocusExpertise}
-                                    </dd>
-                                  </div>
-                                )}
-
-                                {/*}<div className="profile-bor-detail">
+                                                               <div className="profile-bor-detail">
                                 <dt>Rates</dt>
-                                <dd>{ this.state.expert.expertRates }</dd>
-                            </div>{*/}
+                                <dd>{ this.state.expert?.expertRates }</dd>
+                            </div>
 
                                 {this.state.expert.expertRating !==
                                   "undefined" &&
-                                  this.state.expert.expertRating !== "" &&
-                                  this.state.expert.expertRating !== null ? (
+                                this.state.expert.expertRating !== "" &&
+                                this.state.expert.expertRating !== null ? (
                                   <div className="profile-bor-detail">
                                     <dt>Rating</dt>
                                     <dd>
                                       {this.state.expert.expertRating &&
-                                        this.state.expert.expertRating !== null &&
-                                        this.state.expert.expertRating !==
+                                      this.state.expert.expertRating !== null &&
+                                      this.state.expert.expertRating !==
                                         undefined &&
-                                        this.state.expert.expertRating !== ""
+                                      this.state.expert.expertRating !== ""
                                         ? this.state.expert.expertRating
                                         : "No Ratings Available"}
                                       {this.state.expert.expertRating &&
                                         this.state.expert.expertRating !==
-                                        null &&
+                                          null &&
                                         this.state.expert.expertRating !==
-                                        undefined &&
+                                          undefined &&
                                         this.state.expert.expertRating !==
-                                        "" && (
+                                          "" && (
                                           <i
                                             className="fa fa-star"
                                             aria-hidden="true"
@@ -1892,19 +1470,19 @@ class ViewExpert extends Component {
                                     <dt>Rating</dt>
                                     <dd>
                                       {this.state.expert.expertRating &&
-                                        this.state.expert.expertRating !== null &&
-                                        this.state.expert.expertRating !==
+                                      this.state.expert.expertRating !== null &&
+                                      this.state.expert.expertRating !==
                                         undefined &&
-                                        this.state.expert.expertRating !== ""
+                                      this.state.expert.expertRating !== ""
                                         ? this.state.expert.expertRating
                                         : "No Ratings Available"}
                                       {this.state.expert.expertRating &&
                                         this.state.expert.expertRating !=
-                                        null &&
+                                          null &&
                                         this.state.expert.expertRating !==
-                                        undefined &&
+                                          undefined &&
                                         this.state.expert.expertRating !==
-                                        "" && (
+                                          "" && (
                                           <i
                                             className="fa fa-star"
                                             aria-hidden="true"
@@ -1914,64 +1492,53 @@ class ViewExpert extends Component {
                                   </div>
                                 )}
 
-                                {/*<div className="profile-bor-detail">
-                              <dt>About Expert </dt>
-                              <dd>{ this.state.expert.userBio && this.state.expert.userBio!=null && this.state.expert.userBio!=undefined && this.state.expert.userBio!="" ? this.state.expert.userBio : "-"}</dd>
-                            </div>
-                            <div className="profile-bor-detail">
-                              <dt>Country </dt>
-                              <dd>{ this.state.expert.locationCountry && this.state.expert.locationCountry!=null && this.state.expert.locationCountry!=undefined && this.state.expert.locationCountry!="" ? this.state.expert.locationCountry :"-"}</dd>
-                            </div>
-                            <div className="profile-bor-detail">
-                              <dt>State </dt>
-                              <dd>{ this.state.expert.locationState && this.state.expert.locationState!=null && this.state.expert.locationState!=undefined && this.state.expert.locationState!="" ? this.state.expert.locationState : "-"}</dd>
-                            </div>
-                            <div className="profile-bor-detail">
-                              <dt>City </dt>
-                              <dd>{ this.state.expert.locationCity && this.state.expert.locationCity!=null && this.state.expert.locationCity!=undefined && this.state.expert.locationCity!="" ? this.state.expert.locationCity : "-"}</dd>
-                            </div>*/}
 
                                 {(this.state.expert.facebookURL ===
                                   "undefined" &&
                                   this.state.expert.facebookURL === "" &&
                                   this.state.expert.facebookURL === null) ||
-                                  (this.state.expert.twitterURL === "undefined" &&
-                                    this.state.expert.twitterURL === "" &&
-                                    this.state.expert.twitterURL === null) ||
-                                  (this.state.expert.linkedinURL === "undefined" &&
-                                    this.state.expert.linkedinURL === "" &&
-                                    this.state.expert.linkedinURL === null) ||
-                                  (this.state.expert.instagramURL ===
-                                    "undefined" &&
-                                    this.state.expert.instagramURL === "" &&
-                                    this.state.expert.instagramURL === null) ||
-                                  (this.state.expert.snapchatURL === "undefined" &&
-                                    this.state.expert.snapchatURL === "" &&
-                                    this.state.expert.snapchatURL === null) ||
-                                  (this.state.expert.websiteURL === "undefined" &&
-                                    this.state.expert.websiteURL === "" &&
-                                    this.state.expert.websiteURL === null) ||
-                                  (this.state.expert.googleURL === "undefined" &&
-                                    this.state.expert.googleURL === "" &&
-                                    this.state.expert.googleURL === null) ||
-                                  (this.state.expert.youtubeURL === "undefined" &&
-                                    this.state.expert.youtubeURL === "" &&
-                                    this.state.expert.youtubeURL === null) ||
-                                  (this.state.expert.soundcloudURL ===
-                                    "undefined" &&
-                                    this.state.expert.soundcloudURL === "" &&
-                                    this.state.expert.soundcloudURL === null) ||
-                                  (this.state.expert.facebookURL === "undefined" &&
-                                    this.state.expert.facebookURL === "" &&
-                                    this.state.expert.facebookURL === null) ? (
+                                (this.state.expert.twitterURL === "undefined" &&
+                                  this.state.expert.twitterURL === "" &&
+                                  this.state.expert.twitterURL === null) ||
+                                (this.state.expert.linkedinURL ===
+                                  "undefined" &&
+                                  this.state.expert.linkedinURL === "" &&
+                                  this.state.expert.linkedinURL === null) ||
+                                (this.state.expert.instagramURL ===
+                                  "undefined" &&
+                                  this.state.expert.instagramURL === "" &&
+                                  this.state.expert.instagramURL === null) ||
+                                (this.state.expert.snapchatURL ===
+                                  "undefined" &&
+                                  this.state.expert.snapchatURL === "" &&
+                                  this.state.expert.snapchatURL === null) ||
+                                (this.state.expert.websiteURL === "undefined" &&
+                                  this.state.expert.websiteURL === "" &&
+                                  this.state.expert.websiteURL === null) ||
+                                (this.state.expert.googleURL === "undefined" &&
+                                  this.state.expert.googleURL === "" &&
+                                  this.state.expert.googleURL === null) ||
+                                (this.state.expert.youtubeURL === "undefined" &&
+                                  this.state.expert.youtubeURL === "" &&
+                                  this.state.expert.youtubeURL === null) ||
+                                (this.state.expert.soundcloudURL ===
+                                  "undefined" &&
+                                  this.state.expert.soundcloudURL === "" &&
+                                  this.state.expert.soundcloudURL === null) ||
+                                (this.state.expert.facebookURL ===
+                                  "undefined" &&
+                                  this.state.expert.facebookURL === "" &&
+                                  this.state.expert.facebookURL === null) ? (
                                   <div className="profile-bor-detail expert-social-links">
                                     <dt>Social link </dt>
                                     <dd>
                                       {this.state.expert.facebookURL &&
-                                        this.state.expert.facebookURL !== null &&
                                         this.state.expert.facebookURL !==
-                                        undefined &&
-                                        this.state.expert.facebookURL !== "" && (
+                                          null &&
+                                        this.state.expert.facebookURL !==
+                                          undefined &&
+                                        this.state.expert.facebookURL !==
+                                          "" && (
                                           <a
                                             target="_blank"
                                             href={
@@ -1991,7 +1558,7 @@ class ViewExpert extends Component {
                                       {this.state.expert.twitterURL &&
                                         this.state.expert.twitterURL !== null &&
                                         this.state.expert.twitterURL !==
-                                        undefined &&
+                                          undefined &&
                                         this.state.expert.twitterURL !== "" && (
                                           <a
                                             target="_blank"
@@ -2010,10 +1577,12 @@ class ViewExpert extends Component {
                                           </a>
                                         )}
                                       {this.state.expert.linkedinURL &&
-                                        this.state.expert.linkedinURL !== null &&
                                         this.state.expert.linkedinURL !==
-                                        undefined &&
-                                        this.state.expert.linkedinURL !== "" && (
+                                          null &&
+                                        this.state.expert.linkedinURL !==
+                                          undefined &&
+                                        this.state.expert.linkedinURL !==
+                                          "" && (
                                           <a
                                             target="_blank"
                                             href={
@@ -2032,11 +1601,11 @@ class ViewExpert extends Component {
                                         )}
                                       {this.state.expert.instagramURL &&
                                         this.state.expert.instagramURL !=
-                                        null &&
+                                          null &&
                                         this.state.expert.instagramURL !==
-                                        undefined &&
+                                          undefined &&
                                         this.state.expert.instagramURL !==
-                                        "" && (
+                                          "" && (
                                           <a
                                             target="_blank"
                                             href={
@@ -2054,10 +1623,12 @@ class ViewExpert extends Component {
                                           </a>
                                         )}
                                       {this.state.expert.snapchatURL &&
-                                        this.state.expert.snapchatURL !== null &&
                                         this.state.expert.snapchatURL !==
-                                        undefined &&
-                                        this.state.expert.snapchatURL !== "" && (
+                                          null &&
+                                        this.state.expert.snapchatURL !==
+                                          undefined &&
+                                        this.state.expert.snapchatURL !==
+                                          "" && (
                                           <a
                                             target="_blank"
                                             href={
@@ -2077,7 +1648,7 @@ class ViewExpert extends Component {
                                       {this.state.expert.websiteURL &&
                                         this.state.expert.websiteURL !== null &&
                                         this.state.expert.websiteURL !==
-                                        undefined &&
+                                          undefined &&
                                         this.state.expert.websiteURL !== "" && (
                                           <a
                                             target="_blank"
@@ -2098,7 +1669,7 @@ class ViewExpert extends Component {
                                       {this.state.expert.googleURL &&
                                         this.state.expert.googleURL !== null &&
                                         this.state.expert.googleURL !==
-                                        undefined &&
+                                          undefined &&
                                         this.state.expert.googleURL !== "" && (
                                           <a
                                             target="_blank"
@@ -2119,7 +1690,7 @@ class ViewExpert extends Component {
                                       {this.state.expert.youtubeURL &&
                                         this.state.expert.youtubeURL !== null &&
                                         this.state.expert.youtubeURL !==
-                                        undefined &&
+                                          undefined &&
                                         this.state.expert.youtubeURL !== "" && (
                                           <a
                                             target="_blank"
@@ -2139,17 +1710,17 @@ class ViewExpert extends Component {
                                         )}
                                       {this.state.expert.soundcloudURL &&
                                         this.state.expert.soundcloudURL !=
-                                        null &&
+                                          null &&
                                         this.state.expert.soundcloudURL !==
-                                        undefined &&
+                                          undefined &&
                                         this.state.expert.soundcloudURL !==
-                                        "" && (
+                                          "" && (
                                           <a
                                             target="_blank"
                                             href={
                                               this.state.expert.soundcloudURL
                                                 ? this.state.expert
-                                                  .soundcloudURL
+                                                    .soundcloudURL
                                                 : "#"
                                             }
                                             title="soundcloud"
@@ -2176,10 +1747,12 @@ class ViewExpert extends Component {
                                     <dt>Social link </dt>
                                     <dd>
                                       {this.state.expert.facebookURL &&
-                                        this.state.expert.facebookURL !== null &&
                                         this.state.expert.facebookURL !==
-                                        undefined &&
-                                        this.state.expert.facebookURL !== "" && (
+                                          null &&
+                                        this.state.expert.facebookURL !==
+                                          undefined &&
+                                        this.state.expert.facebookURL !==
+                                          "" && (
                                           <a
                                             target="_blank"
                                             href={
@@ -2199,7 +1772,7 @@ class ViewExpert extends Component {
                                       {this.state.expert.twitterURL &&
                                         this.state.expert.twitterURL !== null &&
                                         this.state.expert.twitterURL !==
-                                        undefined &&
+                                          undefined &&
                                         this.state.expert.twitterURL !== "" && (
                                           <a
                                             target="_blank"
@@ -2218,10 +1791,12 @@ class ViewExpert extends Component {
                                           </a>
                                         )}
                                       {this.state.expert.linkedinURL &&
-                                        this.state.expert.linkedinURL !== null &&
                                         this.state.expert.linkedinURL !==
-                                        undefined &&
-                                        this.state.expert.linkedinURL !== "" && (
+                                          null &&
+                                        this.state.expert.linkedinURL !==
+                                          undefined &&
+                                        this.state.expert.linkedinURL !==
+                                          "" && (
                                           <a
                                             target="_blank"
                                             href={
@@ -2240,11 +1815,11 @@ class ViewExpert extends Component {
                                         )}
                                       {this.state.expert.instagramURL &&
                                         this.state.expert.instagramURL !=
-                                        null &&
+                                          null &&
                                         this.state.expert.instagramURL !==
-                                        undefined &&
+                                          undefined &&
                                         this.state.expert.instagramURL !==
-                                        "" && (
+                                          "" && (
                                           <a
                                             target="_blank"
                                             href={
@@ -2262,10 +1837,12 @@ class ViewExpert extends Component {
                                           </a>
                                         )}
                                       {this.state.expert.snapchatURL &&
-                                        this.state.expert.snapchatURL !== null &&
                                         this.state.expert.snapchatURL !==
-                                        undefined &&
-                                        this.state.expert.snapchatURL !== "" && (
+                                          null &&
+                                        this.state.expert.snapchatURL !==
+                                          undefined &&
+                                        this.state.expert.snapchatURL !==
+                                          "" && (
                                           <a
                                             target="_blank"
                                             href={
@@ -2274,7 +1851,8 @@ class ViewExpert extends Component {
                                                 : "#"
                                             }
                                             title="snapchat"
-                                            rel="noreferrer"                                          >
+                                            rel="noreferrer"
+                                          >
                                             <i
                                               className="fa fa-snapchat"
                                               aria-hidden="true"
@@ -2284,7 +1862,7 @@ class ViewExpert extends Component {
                                       {this.state.expert.websiteURL &&
                                         this.state.expert.websiteURL !== null &&
                                         this.state.expert.websiteURL !==
-                                        undefined &&
+                                          undefined &&
                                         this.state.expert.websiteURL !== "" && (
                                           <a
                                             target="_blank"
@@ -2305,7 +1883,7 @@ class ViewExpert extends Component {
                                       {this.state.expert.googleURL &&
                                         this.state.expert.googleURL !== null &&
                                         this.state.expert.googleURL !==
-                                        undefined &&
+                                          undefined &&
                                         this.state.expert.googleURL !== "" && (
                                           <a
                                             target="_blank"
@@ -2326,7 +1904,7 @@ class ViewExpert extends Component {
                                       {this.state.expert.youtubeURL &&
                                         this.state.expert.youtubeURL !== null &&
                                         this.state.expert.youtubeURL !==
-                                        undefined &&
+                                          undefined &&
                                         this.state.expert.youtubeURL !== "" && (
                                           <a
                                             target="_blank"
@@ -2346,17 +1924,17 @@ class ViewExpert extends Component {
                                         )}
                                       {this.state.expert.soundcloudURL &&
                                         this.state.expert.soundcloudURL !=
-                                        null &&
+                                          null &&
                                         this.state.expert.soundcloudURL !==
-                                        undefined &&
+                                          undefined &&
                                         this.state.expert.soundcloudURL !==
-                                        "" && (
+                                          "" && (
                                           <a
                                             target="_blank"
                                             href={
                                               this.state.expert.soundcloudURL
                                                 ? this.state.expert
-                                                  .soundcloudURL
+                                                    .soundcloudURL
                                                 : "#"
                                             }
                                             title="soundcloud"
@@ -2379,10 +1957,13 @@ class ViewExpert extends Component {
                                     </dd>
                                   </div>
                                 )}
-
+ <div className="profile-bor-detail expert-endorsements">
+                                              <dt>social Link  </dt>
+                                              <dd></dd>
+                                            </div>
                                 {endorsements_render !== "undefined" &&
-                                  endorsements_render !== "" &&
-                                  endorsements_render !== null ? (
+                                endorsements_render !== "" &&
+                                endorsements_render !== null ? (
                                   <div className="profile-bor-detail expert-endorsements">
                                     <dt>Endorsements </dt>
                                     <dd>{endorsements_render}</dd>
@@ -2392,11 +1973,24 @@ class ViewExpert extends Component {
                                     <dt>Endorsements </dt>
                                     <dd>{endorsements_render}</dd>
                                   </div>
-                                )}
+                                  )}
+                                    <div className="profile-bor-detail">
+                                  <dt>Download Resume</dt>
+                                  <dd>
+                                    <a
+                                      href={
+                                        `${Image_URL}` + this.state.expert?.resume_path
+                                      }
+                                      title="Download"
+                                      download
+                                      className="fa fa-file-pdf-o"
+                                    ></a>
+                                  </dd>
+                                </div>
+                                 
                               </dl>
                             </div>
                           </div>
-                        )}
                       </div>
                     </div>
                   </div>
@@ -2706,3 +2300,4 @@ export default connect(mapStateToProps, {
   rechargeVideoSession,
   getVideoSession,
 })(withRouter(withCookies(form(ViewExpert))));
+

@@ -1,0 +1,3 @@
+TypeError: Cannot set property 'onlineStatus' of null
+    at /media/cyberman/Workstation/_donnies/server/controllers/authentication.js:61:25
+    at processTicksAndRejections (internal/process/task_queues.js:95:5)

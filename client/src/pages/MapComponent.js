@@ -122,25 +122,13 @@ export default class MapComponent extends React.Component{
           console.log(position.coords.latitude, position.coords.longitude); 
           new mapboxgl.Marker()
             .setLngLat([position.coords.longitude, position.coords.latitude])
-            .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
+            .setPopup(new mapboxgl.Popup({ offset: 0 }) // add popups
               .setHTML("You are here")
             ).addTo(map);  
       }); 
     }
 
-    geojson.features.forEach(function(marker){
-        var markerElement = document.createElement('div');
-        markerElement.className = 'marker';
-        markerElement.style.backgroundImage = "url(" + marker.properties.image + ")";
-        markerElement.style.width = '40px';
-        markerElement.style.height = '40px';
-        new mapboxgl.Marker(markerElement)
-        .setLngLat(marker.geometry.coordinates)
-        .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
-        .setHTML(marker.properties.title + ", " + marker.properties.state + " | <a href='https://en.wikipedia.org/wiki/" + marker.properties.title + "'" + ">Wikipedia</a>" + "<br><img class='imgcenter' src=" + marker.properties.image + ">"))
-        .addTo(map);
-
-    });
+  
 	}
 
 	render() {

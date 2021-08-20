@@ -104,11 +104,13 @@ const Register = props => {
       .then((res) => {
         var slug = res.data[0].slug;
         var category = res.data[0].expertCategories[0];
+        localStorage.setItem("slug", slug)
+        localStorage.setItem("category", category)
         localStorage.setItem("editable", "true");
         if (category !== undefined && category !== "" && category !== null) {
-          history.push('/expert/' + category + '/' + slug);
+          history.push('/edit/expert/' + category + '/' + slug);
         } else {
-          history.push('/expert/new_category/' + slug);
+          history.push('/edit/expert/new_category/' + slug);
         }
       })
       .catch((err) => {

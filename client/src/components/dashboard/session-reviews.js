@@ -35,6 +35,7 @@ const SessionReviews = (props) => {
       }
   }, []);
 
+
   return (
     <div className="container my-reviews-wrapper">
       <div className="row">

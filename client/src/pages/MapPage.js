@@ -1,5 +1,5 @@
 import React from 'react';
-import MapComponent from './MapComponent';
+import MapComponent from './Map';
 
 class MapPage extends React.Component{
 	render() {

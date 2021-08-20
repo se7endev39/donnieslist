@@ -34,6 +34,17 @@ export function loginUser({ email, password }, browserHistory) {
           } else {
             cookies.set("token", response.data.token, { path: "/", secure: false, sameSite: "Lax" });
             cookies.set("user", response.data.user, { path: "/", secure: false, sameSite: "Lax" });
+            axios
+            .get(`${API_URL}/getExpert/${email}`)
+            .then((res) => {
+              var slug = res.data[0].slug;
+              var category = res.data[0].expertCategories[0];
+              localStorage.setItem("slug", slug)
+              localStorage.setItem("category", category)
+            })
+            .catch((err) => {
+              console.error(err);
+            });
             dispatch({ type: AUTH_USER });
             browserHistory.push('/profile');
             return response;

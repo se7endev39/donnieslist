@@ -5,7 +5,8 @@ import { Field, reduxForm } from 'redux-form';
 import {Link} from 'react-router-dom';
 import {useCookies} from 'react-cookie';
 import { useHistory } from 'react-router';
-
+import { API_URL } from '../../constants/api';
+import axios from 'axios';
 import { loginUser } from '../../actions/auth';
 
 const Login = props => {
@@ -14,7 +15,7 @@ const Login = props => {
         message: '',
     };
 
-    const [state, setState] = useState(default_props);
+  const [state, setState] = useState(default_props);
     const dispatch = useDispatch();
     const [cookies,] = useCookies();
     const {handleSubmit} = props;
@@ -24,6 +25,7 @@ const Login = props => {
         if (window.$("#login_form").valid()) {
             dispatch(loginUser(formProps, history)).then(
               (response) => {
+                
                 if (
                   response.errorMessage &&
                   response.errorMessage !== null &&
@@ -32,6 +34,7 @@ const Login = props => {
                 ) {
                   setState({ ...state, errorMessage: response.errorMessage });
                 }
+
               }).catch(err => {
                 console.log("[ERROR]:", err);
             });
@@ -105,6 +108,7 @@ const Login = props => {
                 required
                 component="input"
                 type="text"
+                
               />
             </div>
             <div className="form-group">

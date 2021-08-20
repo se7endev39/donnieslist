@@ -234,7 +234,7 @@ class ViewProfile extends Component {
                         this.state.profileImage !== "" ? (
                           <div className="expert-img">
                             <img
-                              src={`${Image_URL}/profile_images/` + this.state.profileImage}
+                              src={`${Image_URL}/` + this.state.profileImage}
                               alt=""
                             />
                             <i
@@ -620,7 +620,6 @@ class ViewProfile extends Component {
                                 <div className="profile-bor-detail">
                                   <dt>Download Resume</dt>
                                   <dd>
-                                    
                                     <a
                                       href={
                                         `${Image_URL}` + this.state.resume_path
@@ -628,8 +627,7 @@ class ViewProfile extends Component {
                                       title="Download"
                                       download
                                       className="fa fa-file-pdf-o"
-                                    >
-                                    </a>
+                                    ></a>
                                   </dd>
                                 </div>
                               )}
@@ -665,3 +663,4 @@ function mapStateToProps(state) {
 export default connect(mapStateToProps, { fetchUser, uploadImage })(
   withCookies(ViewProfile)
 );
+

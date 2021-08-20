@@ -280,7 +280,7 @@ class ExpertsListingPage extends Component {
               <div className="tab-content">
                 <div role="tabpanel" className="tab-pane active" id="home">
                   <div className="expertise-all-detail-wrap">
-                  {console.log(this.state.posts)}
+                    {console.log(this.state.posts)}
                     {this.state.posts.map((post, index) => (
                       <div
                         className="expertise-detail-only"
@@ -299,19 +299,12 @@ class ExpertsListingPage extends Component {
                                     <img
                                       width="100"
                                       alt=""
-                                      src={
-                                        `${Image_URL}/profile_images/` +
-                                        post.profileImage
-                                      }
+                                      src={`${Image_URL}` + post.profileImage}
                                     />
                                   ) : (
                                     <img src="/img/pro1.png" alt="" />
                                   )}
-                                  {
-                                    console.log(post.onlineStatus)
-                                  }
-                                  {
-                                    post.onlineStatus && (
+                                  {post.onlineStatus === "ONLINE" && (
                                     <i
                                       data-toggle="title"
                                       title="Online"
@@ -437,10 +430,7 @@ class ExpertsListingPage extends Component {
                                   post.profileImage !== "" ? (
                                     <img
                                       width="100"
-                                      src={
-                                        `${Image_URL}/profile_images/` +
-                                        post.profileImage
-                                      }
+                                      src={`${Image_URL}` + post.profileImage}
                                       alt=""
                                     />
                                   ) : (
@@ -580,10 +570,7 @@ class ExpertsListingPage extends Component {
                                   post.profileImage !== "" ? (
                                     <img
                                       width="100"
-                                      src={
-                                        `${Image_URL}/profile_images/` +
-                                        post.profileImage
-                                      }
+                                      src={`${Image_URL}` + post.profileImage}
                                       alt=""
                                     />
                                   ) : (
@@ -672,7 +659,7 @@ class ExpertsListingPage extends Component {
                                   Connect
                                 </Link>
                               ) : (
-                                <div 
+                                <div
                                   onClick={this.redirectToLogin.bind(this)}
                                   className="Start-Session btn-strt-session btn btn-primary pull-right"
                                 >
@@ -718,3 +705,4 @@ function mapStateToProps(state) {
 export default connect(mapStateToProps, { sendEmail, isLoggedIn, setPage })(
   withRouter(withCookies(ExpertsListingPage))
 );
+
