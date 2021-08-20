@@ -113,14 +113,26 @@ export default function Map() {
     };
 
     if ("geolocation" in navigator) {
-        console.log(navigator);
         navigator.geolocation.getCurrentPosition(function (position) {
             setViewport({longitude: position.coords.longitude, latitude: position.coords.latitude, width: "100%",
             height: "100vh",
             zoom: 13})
           });
       } else {
-        console.log("Not Available");
+        navigator.permissions
+        .query({ name: "geolocation" })
+        .then(function (result) {
+          if (result.state === "granted") {
+            console.log(result.state);
+          } else if (result.state === "prompt") {
+            console.log(result.state);
+          } else if (result.state === "denied") {
+              console.log("denied")
+          }
+          result.onchange = function () {
+            console.log(result.state);
+          };
+        });
       }
     return () => {
       window.removeEventListener("keydown", listener);
