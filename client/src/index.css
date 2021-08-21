@@ -1,0 +1,14 @@
+.input-holder {
+    padding: 10px;
+}
+
+.button-holder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+}
+
+.button-holder button {
+    width: 100%;
+}

@@ -5,8 +5,6 @@ import { Field, reduxForm } from 'redux-form';
 import {Link} from 'react-router-dom';
 import {useCookies} from 'react-cookie';
 import { useHistory } from 'react-router';
-import { API_URL } from '../../constants/api';
-import axios from 'axios';
 import { loginUser } from '../../actions/auth';
 
 const Login = props => {

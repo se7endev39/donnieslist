@@ -110,7 +110,7 @@ export default function Map() {
             state: "live location",
             image: locationIcon,
             message: "Baz",
-            iconSize: [35, 35],
+            iconSize: [25, 35],
           },
           geometry: {
             type: "Point",
