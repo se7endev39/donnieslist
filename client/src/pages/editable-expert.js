@@ -589,7 +589,7 @@ class ViewExpert extends Component {
             updated_years_of_experties: response.data.user_data.yearsexpertise,
             updated_focus_of_experties:
               response.data.user_data.expertFocusExpertise,
-            editable: false,
+            editable: "",
           });
 
           localStorage.setItem("editable", "");
@@ -673,16 +673,16 @@ class ViewExpert extends Component {
         editable: true,
       });
     } else {
-      if (localStorage.getItem("editable") === "true") {
+      // if (localStorage.getItem("editable") === "true") {
         this.setState({
           editable: true,
         });
         // localStorage.setItem("editable", "");
-      } else {
-        this.setState({
-          editable: "",
-        });
-      }
+      // } else {
+      //   this.setState({
+      //     editable: "",
+      //   });
+      // }
     }
   }
   // i have added
