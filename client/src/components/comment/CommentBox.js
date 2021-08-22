@@ -10,6 +10,7 @@ import CommentNew from './CommentNew';
 import ReplyList from './ReplyList';
 
 import { API_URL, Image_URL } from "../../constants/api";
+import LazyImage from '../common/LazyImage';
 
 let _isMounted = false;
 
@@ -223,9 +224,10 @@ const CommentBox = (props) => {
         {state.data &&
           state.data.map((comments, i) => (
             <div className="comments_list" key={`COMMENT_ITEM_${i}`}>
-              <img
+              <LazyImage
                 alt=""
                 src={Image_URL + comments.users[0]?.profileImage}
+                placeholder="/img/person.jpg"
                 height="50px"
                 width="50px"
               />

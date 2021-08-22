@@ -13,6 +13,7 @@ import { instanceOf } from "prop-types";
 import ExpertReviews from "./ExpertReviews";
 import AudioRecording from "./AudioRecording";
 import CommentBox from "../components/comment/CommentBox";
+import LazyImage from '../components/common/LazyImage';
 import NotificationModal from "./notification-modal";
 // import LoginModal from './login-modal';
 
@@ -136,7 +137,7 @@ class ViewExpert extends Component {
       first_name: "",
       last_name: "",
       profile_image: "",
-      editable: "true",
+      editable: true,
       file: "",
       resumeFile: "",
       base64_image: "",
@@ -288,9 +289,11 @@ class ViewExpert extends Component {
   };
 
   triggerFileUpload = () => {
+    console.log(this.state)
     if (this.state.editable === true) {
       this.fileInput.click();
     }
+    // this.fileInput.click();
   };
 
   onChangeFile(e) {
@@ -488,6 +491,12 @@ class ViewExpert extends Component {
       });
   };
 
+  deleteAccount = () => {
+    if( global.confirm('Do you really want to delete your account?') ){
+
+    }
+  }
+
   saveChanges = () => {
 
     if (this.state.submit_disabled === true) {
@@ -665,16 +674,16 @@ class ViewExpert extends Component {
         editable: true,
       });
     } else {
-      if (localStorage.getItem("editable") === "true") {
+      // if (localStorage.getItem("editable") === "true") {
         this.setState({
           editable: true,
         });
         // localStorage.setItem("editable", "");
-      } else {
-        this.setState({
-          editable: "",
-        });
-      }
+      // } else {
+      //   this.setState({
+      //     editable: "",
+      //   });
+      // }
     }
   }
   // i have added
@@ -1142,7 +1151,7 @@ class ViewExpert extends Component {
                       <div className="col-md-3 col-sm-4">
                         <input
                           type="file"
-                          // style={{ display: "none" }}
+                          style={{ display: "none" }}
                           ref={(fileInput) => (this.fileInput = fileInput)}
                           name="file"
                           className="form-control"
@@ -1160,18 +1169,27 @@ class ViewExpert extends Component {
                         <div
                           className="expert-img change_image"
                           onClick={() => {
-                            this.triggerFileUpload();
+                            // this.triggerFileUpload();
                           }}
                         >
+                          {
+                            this.state.editable &&
+                            <img 
+                              style={{position:"absolute", left: 40, bottom: 10, width: 30, height: 30, opacity: '80%', background: 'grey', borderRadius: '4px', padding: '1px 3px'}} 
+                              src="/img/camera-icon.png"
+                              onClick={this.triggerFileUpload}
+                            />
+                          }
                           {this.state.profileImage &&
                           this.state.profileImage !== null &&
                           this.state.profileImage !== undefined &&
                           this.state.profileImage !== "" ? (
-                            <img
+                            <LazyImage
                               className="image_view"
                               height=""
                               width=""
                               src={Image_URL + this.state.profileImage}
+                              placeholder="/img/profile.png"
                               alt=""
                             />
                           ) : (
@@ -1401,6 +1419,7 @@ class ViewExpert extends Component {
                                     <div className="text-left-detail">
                                       <input
                                         className="form-control"
+                                        disabled
                                         onChange={(e) => {
                                           this.setState({
                                             updated_name: e.target.value,
@@ -1607,13 +1626,13 @@ class ViewExpert extends Component {
                                       <div className="input-holder">
                                         <input
                                           onChange={this.handleInputChange}
-                                          name="youtubeLink"
-                                          value={this.state.youtubeLink}
+                                          name="youtubeURL"
+                                          value={this.state.youtubeURL}
                                           placeholder="youtube"
                                           className="form-control mt-10"
                                         />
                                       </div>
-                                      <div className="input-holder">
+                                      {/* <div className="input-holder">
                                         <input
                                           onChange={this.handleInputChange}
                                           name="soundcloudLink"
@@ -1621,7 +1640,7 @@ class ViewExpert extends Component {
                                           placeholder="soundcloud"
                                           className="form-control mt-10"
                                         />
-                                      </div>
+                                      </div> */}
                                   </dd>
                                 </div>
                                 <div className="profile-bor-detail expert-endorsements">
@@ -1641,7 +1660,7 @@ class ViewExpert extends Component {
                                 </div>
                               </dl>
                               <button
-                                className="btn btn-info"
+                                className="btn btn-primary"
                                 onClick={this.saveChanges}
                               >
                                 Save Changes
@@ -2357,11 +2376,12 @@ class ViewExpert extends Component {
                     <div className="comment list">
                       {this.state.comments.map((item, index) => (
                         <div key={index}>
-                          <img
+                          <LazyImage
                             src={
                               "/expertCategorieses/" +
                               item.users[0].profileImage
                             }
+                            placeholder="/img/person.jpg"
                             height="50px"
                             width="50px"
                             alt=""
@@ -2384,8 +2404,13 @@ class ViewExpert extends Component {
                       ))}
                     </div>
                     {/* comments */}
-                    <div className="button-holder">
-                      <button className="btn btn-danger">Delete Account</button>
+                    <div style={{paddingTop: '10px', display: 'flex'}}>
+                      <button
+                        className="btn btn-danger"
+                        style={{width: '25vw', margin: 'auto', padding: "10px 20px"}}
+                      >
+                        Delete Account
+                      </button>
                     </div>
                   </div>
                 </div>
