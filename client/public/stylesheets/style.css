@@ -185,7 +185,7 @@ cta
   padding: 10px 20px;
   margin: 0 auto;
   display: block;
-  width: 50%;
+  width: 40%;
 }
 .profile-detail {
   padding-bottom: 30px;
@@ -864,3 +864,5 @@ margin: 0px -10px;
 .modal-container .modal-dialog {
   width: 400px !important;
 }
+
+

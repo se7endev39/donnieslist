@@ -136,7 +136,7 @@ class ViewExpert extends Component {
       first_name: "",
       last_name: "",
       profile_image: "",
-      editable: "true",
+      editable: true,
       file: "",
       base64_image: "",
       submit_disabled: "",
@@ -259,9 +259,11 @@ class ViewExpert extends Component {
   };
 
   triggerFileUpload = () => {
+    console.log(this.state)
     if (this.state.editable === true) {
       this.fileInput.click();
     }
+    // this.fileInput.click();
   };
 
   onChangeFile(e) {
@@ -460,6 +462,12 @@ class ViewExpert extends Component {
       });
   };
 
+  deleteAccount = () => {
+    if( global.confirm('Do you really want to delete your account?') ){
+
+    }
+  }
+
   saveChanges = () => {
     if (this.state.submit_disabled === true) {
       console.log("submit is disabled");
@@ -540,7 +548,7 @@ class ViewExpert extends Component {
             updated_years_of_experties: response.data.user_data.yearsexpertise,
             updated_focus_of_experties:
               response.data.user_data.expertFocusExpertise,
-            editable: "",
+            editable: false,
           });
 
 
@@ -1089,9 +1097,17 @@ class ViewExpert extends Component {
                         <div
                           className="expert-img change_image"
                           onClick={() => {
-                            this.triggerFileUpload();
+                            // this.triggerFileUpload();
                           }}
                         >
+                          {
+                            this.state.editable &&
+                            <img 
+                              style={{position:"absolute", right: 40, top: 10, width: 30, height: 30, opacity: '80%', background: 'grey', borderRadius: '4px', padding: '1px 3px'}} 
+                              src="/img/camera-icon.png"
+                              onClick={this.triggerFileUpload}
+                            />
+                          }
                           {this.state.profileImage &&
                           this.state.profileImage !== null &&
                           this.state.profileImage !== undefined &&
@@ -1695,10 +1711,8 @@ class ViewExpert extends Component {
                               
                               </dl>
                               <button
-                                className="btn btn-info"
-                                onClick={() => {
-                                  this.saveChanges();
-                                }}
+                                className="btn btn-primary"
+                                onClick={this.saveChanges}
                               >
                                 Save Changes
                               </button>

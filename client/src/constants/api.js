@@ -3,6 +3,6 @@ export const tokBoxApikey = '45801242';
 
 
 export const CLIENT_ROOT_URL = 'https://donnieslist.com';
-export const API_URL = 'https://api.donnieslist.com';
-export const Image_URL = 'https://images.donnieslist.com/';
+export const API_URL = 'http://localhost:3000';
+export const Image_URL = '/profile_images/';
 
