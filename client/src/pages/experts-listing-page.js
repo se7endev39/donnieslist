@@ -302,7 +302,7 @@ class ExpertsListingPage extends Component {
                                       src={`${Image_URL}` + post.profileImage}
                                     />
                                   ) : (
-                                    <img src="/img/pro1.png" alt="" />
+                                    <img src="/img/pro1.png" width="100%"  alt="" />
                                   )}
                                   {post.onlineStatus === "ONLINE" && (
                                     <i
@@ -393,7 +393,7 @@ class ExpertsListingPage extends Component {
                         <div role="tabpanel" className="tab-pane" id="settings">
                           <div className="expertise-all-detail-wrap">
                             <div className="alert">
-                              No expert found in this section!
+                              No expert found in this sectionnnn!
                             </div>
                           </div>
                         </div>
@@ -434,7 +434,7 @@ class ExpertsListingPage extends Component {
                                       alt=""
                                     />
                                   ) : (
-                                    <img src="/img/pro1.png" alt="" />
+                                    <img src="/img/pro1.png" width="100%"  alt="" />
                                   )}
                                   {this.getOnlineStatus(post.onlineStatus) && (
                                     <i
@@ -574,7 +574,7 @@ class ExpertsListingPage extends Component {
                                       alt=""
                                     />
                                   ) : (
-                                    <img src="/img/pro1.png" alt="" />
+                                    <img src="/img/pro1.png" width="100%"  alt="" />
                                   )}
                                   {this.getOnlineStatus(post.onlineStatus) && (
                                     <i
