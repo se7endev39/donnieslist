@@ -6,3 +6,4 @@
 /server/logs/
 /uploads
 /**/build
+/client/public/profile_images

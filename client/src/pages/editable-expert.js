@@ -13,6 +13,7 @@ import { instanceOf } from "prop-types";
 import ExpertReviews from "./ExpertReviews";
 import AudioRecording from "./AudioRecording";
 import CommentBox from "../components/comment/CommentBox";
+import LazyImage from '../components/common/LazyImage';
 import NotificationModal from "./notification-modal";
 // import LoginModal from './login-modal';
 
@@ -1174,7 +1175,7 @@ class ViewExpert extends Component {
                           {
                             this.state.editable &&
                             <img 
-                              style={{position:"absolute", right: 40, top: 10, width: 30, height: 30, opacity: '80%', background: 'grey', borderRadius: '4px', padding: '1px 3px'}} 
+                              style={{position:"absolute", left: 40, bottom: 10, width: 30, height: 30, opacity: '80%', background: 'grey', borderRadius: '4px', padding: '1px 3px'}} 
                               src="/img/camera-icon.png"
                               onClick={this.triggerFileUpload}
                             />
@@ -1183,11 +1184,12 @@ class ViewExpert extends Component {
                           this.state.profileImage !== null &&
                           this.state.profileImage !== undefined &&
                           this.state.profileImage !== "" ? (
-                            <img
+                            <LazyImage
                               className="image_view"
                               height=""
                               width=""
                               src={Image_URL + this.state.profileImage}
+                              placeholder="/img/profile.png"
                               alt=""
                             />
                           ) : (
@@ -2562,11 +2564,12 @@ class ViewExpert extends Component {
                     <div className="comment list">
                       {this.state.comments.map((item, index) => (
                         <div key={index}>
-                          <img
+                          <LazyImage
                             src={
                               "/expertCategorieses/" +
                               item.users[0].profileImage
                             }
+                            placeholder="/img/person.jpg"
                             height="50px"
                             width="50px"
                             alt=""
