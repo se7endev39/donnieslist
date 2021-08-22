@@ -2589,9 +2589,10 @@ class ViewExpert extends Component {
                       ))}
                     </div>
                     {/* comments */}
-                    <div className="button-holder">
+                    <div style={{paddingTop: '10px', display: 'flex'}}>
                       <button
                         className="btn btn-danger"
+                        style={{width: '25vw', margin: 'auto', padding: "10px 20px"}}
                       >
                         Delete Account
                       </button>
