@@ -227,30 +227,47 @@ class HeaderTemplate extends Component {
   }
 
   updateProfile = () => {
-    var email = this.state.currentUser.email;
-    axios
-      .get(`${API_URL}/getExpert/${email}`)
-      .then((res) => {
-        this.setState({
-          logged_in_user: res.data[0],
-          slug: res.data[0].slug,
-          category: res.data[0].expertCategories[0],
-        });
+    if (localStorage.category && localStorage.slug) {
+      this.props.history.push(
+        "/edit/expert/" + localStorage.category + "/" + localStorage.slug
+      );
 
-        var slug = res.data[0].slug;
-        var category = res.data[0].expertCategories[0];
-        localStorage.setItem("slug", slug)
-        localStorage.setItem("category", category)
-        localStorage.setItem("editable", "true");
-        if (category !== undefined && category !== "" && category !== null) {
-          this.props.history.push("/edit/expert/" + category + "/" + slug);
-        } else {
-          this.props.history.push("/edit/expert/new_category/" + slug);
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+      return;
+    }
+    const email = this.state.currentUser.email;
+    const slug = this.state.currentUser?.slug;
+    const category = this.state.currentUser?.expertCategories[0];
+
+    localStorage.setItem("slug", slug);
+    localStorage.setItem("category", category);
+    localStorage.setItem("editable", "true");
+    if (category) {
+      this.props.history.push("/edit/expert/" + category + "/" + slug);
+    } else {
+       axios
+         .get(`${API_URL}/getExpert/${email}`)
+         .then((res) => {
+           this.setState({
+             logged_in_user: res.data[0],
+             slug: res.data[0].slug,
+             category: res.data[0].expertCategories[0],
+           });
+
+           var slug = res.data[0].slug;
+           var category = res.data[0].expertCategories[0];
+           localStorage.setItem("slug", slug);
+           localStorage.setItem("category", category);
+           localStorage.setItem("editable", "true");
+           if (category !== undefined && category !== "" && category !== null) {
+             this.props.history.push("/edit/expert/" + category + "/" + slug);
+           } else {
+             this.props.history.push("/edit/expert/new_category/" + slug);
+           }
+         })
+         .catch((err) => {
+           console.error(err);
+         });
+    }
   };
 
   getPlaceHolder() {

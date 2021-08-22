@@ -8,6 +8,7 @@ import Routes from './routes';
 
 import HeaderTemplate from './components/template/header';
 import FooterTemplate from "./components/template/footer";
+import "./index.css";
 
 
 import { AUTH_USER } from './constants/actions';

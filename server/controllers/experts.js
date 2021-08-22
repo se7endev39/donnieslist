@@ -1191,8 +1191,6 @@ exports.userExpertUpdate = async function (req, res, next) {
     }
   });
 
-  console.log('userExpertUpdate controller');
-
   let filename = '';
   const d = new Date();
   const name = d.getTime();
@@ -1263,6 +1261,12 @@ exports.userExpertUpdate = async function (req, res, next) {
   updateuser.expertCategories = req.body.updated_area_of_experties2;
   updateuser.slug = slug;
   updateuser.role = 'Expert';
+  updateuser.instagramURL = req.body.instagramURL;
+  updateuser.linkedinURL = req.body.linkedinURL;
+  updateuser.facebookURL = req.body.facebookURL;
+  updateuser.twitterURL = req.body.twitterURL;
+  updateuser.websiteURL = req.body.websiteURL;
+  updateuser.youtubeURL = req.body.youtubeURL;
   if (filename !== '') {
     updateuser.profileImage = filename;
   }

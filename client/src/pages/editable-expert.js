@@ -138,9 +138,17 @@ class ViewExpert extends Component {
       profile_image: "",
       editable: true,
       file: "",
+      resumeFile: "",
       base64_image: "",
+      base64_file: "",
       submit_disabled: "",
       comments: [],
+      instagramURL: "",
+      linkedinURL: "",
+      facebookURL: "",
+      youtubeURL: "",
+      websiteURL: "",
+      twitterURL: "",
     };
 
     this.onChangeFile = this.onChangeFile.bind(this);
@@ -166,7 +174,7 @@ class ViewExpert extends Component {
         socket.emit("expert audio call session", userAudioCallSokcetname);
         console.log(
           "*** expert audio call session : from user ***" +
-          this.state.userAudioCallSokcetname
+            this.state.userAudioCallSokcetname
         );
       }
     }
@@ -208,6 +216,7 @@ class ViewExpert extends Component {
     this.setState({ showModal: false });
   }
   /*email form submittion*/
+
   handleFormSubmit(formProps) {
     try {
       this.props.sendEmail(formProps).then(
@@ -241,7 +250,7 @@ class ViewExpert extends Component {
             }, 2500);
           })
       );
-    } catch (e) { }
+    } catch (e) {}
   }
 
   getBase64 = (file) => {
@@ -258,6 +267,26 @@ class ViewExpert extends Component {
     );
   };
 
+    getBase64Second = (file) => {
+    var reader = new FileReader();
+    reader.readAsDataURL(file);
+    var temp = "";
+    reader.onload = function () {
+      temp = reader.result;
+    };
+    setTimeout(
+      () => this.setState({ base64_file: temp }),
+      1500
+    );
+  };
+
+  handleInputChange = (event) => {
+    let newState = { ...this.state };
+    newState[event.target.name] = event.target.value;
+    console.log(newState)
+    this.setState(newState);
+  };
+
   triggerFileUpload = () => {
     console.log(this.state)
     if (this.state.editable === true) {
@@ -267,9 +296,13 @@ class ViewExpert extends Component {
   };
 
   onChangeFile(e) {
-    this.setState({ submit_disabled: true });
-    this.getBase64(e.target.files[0]);
-    this.setState({ file: e.target.files[0] });
+    const name = e.target.name;
+    if (name === "file") {
+      this.getBase64(e.target.files[0]);
+    } else {
+      this.getBase64Second(e.target.files[0]);
+    }
+    this.setState({ [e.target.name]: e.target.files[0] });
   }
 
   upload = () => {
@@ -324,7 +357,7 @@ class ViewExpert extends Component {
             }, 2500);
           })
       );
-    } catch (e) { }
+    } catch (e) {}
   }
 
   audioCallNowButtonClick(e) {
@@ -349,7 +382,7 @@ class ViewExpert extends Component {
       (response) => {
         console.log(
           "**** createAudioSession this.state.sessionId ****" +
-          JSON.stringify(response)
+            JSON.stringify(response)
         );
         this.setState({ sessionId: response.sessionId });
         this.setState({ apiToken: response.token });
@@ -376,12 +409,8 @@ class ViewExpert extends Component {
             publisherObj: publisher,
           });
           var options = { width: 100, height: 75, insertMode: "append" };
-          // var subscriber = 
-          session.subscribe(
-            event.stream,
-            "expertSubscriberAudio",
-            options
-          );
+          // var subscriber =
+          session.subscribe(event.stream, "expertSubscriberAudio", options);
           window.$("#user-audio-call-interface-wrapper").fadeIn();
           self.setState({
             openCallConnecting: false,
@@ -452,8 +481,7 @@ class ViewExpert extends Component {
     console.log("sub category-----");
     console.log(event.target.value);
     this.setState({
-      updated_area_of_experties1:
-        event.target.value,
+      updated_area_of_experties1: event.target.value,
     });
     axios
       .get(`${API_URL}/getExpertsSubCategoryList/` + event.target.value)
@@ -469,13 +497,14 @@ class ViewExpert extends Component {
   }
 
   saveChanges = () => {
+
     if (this.state.submit_disabled === true) {
       console.log("submit is disabled");
       return false;
     } else {
       console.log("submit enabled");
     }
-    
+
     const {
       updated_name,
       updated_university,
@@ -505,7 +534,19 @@ class ViewExpert extends Component {
       updated_focus_of_experties: updated_focus_of_experties,
       profileImage: profileImage,
       file: this.state.base64_image,
+      resume: this.state.base64_file,
+      files: {
+        profile: this.state.file,
+        resume: this.state.resumeFile,
+      },
+      instagramURL: this.state.instagramURL,
+      linkedinURL: this.state.linkedinURL,
+      twitterURL: this.state.twitterURL,
+      facebookURL: this.state.facebookURL,
+      websiteURL: this.state.websiteURL,
+      youtubeURL: this.state.youtubeURL,
     };
+
 
     return axios
       .post(`${API_URL}/userExpertUpdate`, request_array, {
@@ -531,7 +572,7 @@ class ViewExpert extends Component {
           console.log("----here in success ---");
           console.log(response.data);
           console.log("----here in success 2---");
-
+          this.props.history.push("/profile")
           this.setState({
             updated_name:
               response.data.first_name + " " + response.data.last_name,
@@ -551,6 +592,7 @@ class ViewExpert extends Component {
             editable: false,
           });
 
+          localStorage.setItem("editable", "");
 
           var path = window.location.pathname;
           var url = window.location.href;
@@ -567,7 +609,6 @@ class ViewExpert extends Component {
 
           console.log("-----------reached here-----------");
 
-          window.location.href = final_url;
 
           this.setState({
             responseMsg:
@@ -596,7 +637,7 @@ class ViewExpert extends Component {
     window.$(document).on("click", ".change_image", function () {
       window.$("#upload_image").trigger("click");
     });
-
+    window.scrollTo(0, 0);
     var slug = this.props.match.params.slug;
     axios.get(`${API_URL}/getExpertDetail/${slug}`).then((res) => {
       // const expert = res.data[0];
@@ -627,7 +668,22 @@ class ViewExpert extends Component {
     // });
     // for get comments duplicate
 
-   
+    if (this.props.match.params.category === "new_category") {
+      this.setState({
+        editable: true,
+      });
+    } else {
+      if (localStorage.getItem("editable") === "true") {
+        this.setState({
+          editable: true,
+        });
+        // localStorage.setItem("editable", "");
+      } else {
+        this.setState({
+          editable: "",
+        });
+      }
+    }
   }
   // i have added
 
@@ -648,7 +704,7 @@ class ViewExpert extends Component {
         const expert = res.data[0];
         // console.log("componentDidMount")
 
-        console.log(res.data[0])
+        console.log(res.data[0]);
         this.setState({ firstName: res.data[0].profile.firstName });
         this.setState({ lastName: res.data[0].profile.lastName });
         // this.setState({ profileImage : res.data[0].profile.profileImage });
@@ -656,6 +712,12 @@ class ViewExpert extends Component {
         this.setState({ expertEmail: res.data[0].email });
         this.setState({ onlineStatus: res.data[0].onlineStatus });
         this.setState({ profileImage: res.data[0].profileImage });
+        this.setState({ instagramURL: res.data[0].instagramURL });
+        this.setState({ linkedinURL: res.data[0].linkedinURL });
+        this.setState({ facebookURL: res.data[0].facebookURL });
+        this.setState({ twitterURL: res.data[0].twitterURL });
+        this.setState({ youtubeURL: res.data[0].youtubeURL });
+        this.setState({ websiteURL: res.data[0].websiteURL });
         this.setState({ resume_path: res.data[0].resume_path });
         this.setState({ university: res.data[0].university });
         this.setState({ expert, loading: true, error: null });
@@ -756,7 +818,7 @@ class ViewExpert extends Component {
     socket.on("disconnect incoming audio call to user", function (data) {
       console.log(
         "*** disconnect incoming audio call to user ***" +
-        data.userAudioCallSokcetname
+          data.userAudioCallSokcetname
       );
       self.state.sessionObj.disconnect();
       self.setState({ openCallConnecting: false });
@@ -801,7 +863,9 @@ class ViewExpert extends Component {
                 </ol>
                 <div id="center">
                   <div id="pageTitle">
-                    <div className="title">{this.props.match.params.category}</div>
+                    <div className="title">
+                      {this.props.match.params.category}
+                    </div>
                     <div className="alert-danger alert">
                       Alas, No expert found in this category!
                     </div>
@@ -828,7 +892,9 @@ class ViewExpert extends Component {
                 </ol>
                 <div id="center">
                   <div id="pageTitle">
-                    <div className="title">{this.props.match.params.category}</div>
+                    <div className="title">
+                      {this.props.match.params.category}
+                    </div>
                     <div className="alert-danger alert">
                       Uh oh: {this.state.error.message}
                     </div>
@@ -878,7 +944,8 @@ class ViewExpert extends Component {
               //if(response.session.stripePaymentStatus === "succeeded") {
               if (response.status === 1) {
                 window.location.href =
-                  `${CLIENT_ROOT_URL}/mysession/` + this.props.match.params.slug;
+                  `${CLIENT_ROOT_URL}/mysession/` +
+                  this.props.match.params.slug;
               } else {
                 this.setState({
                   modalMessageNotification:
@@ -939,7 +1006,9 @@ class ViewExpert extends Component {
             <option>Select</option>
 
             {this.state.categories.map((cats, i) => (
-              <option value={cats._id} key={`OPTION_${i}`}>{cats.name}</option>
+              <option value={cats._id} key={`OPTION_${i}`}>
+                {cats.name}
+              </option>
             ))}
           </select>
           {field.touched && field.error && (
@@ -961,7 +1030,9 @@ class ViewExpert extends Component {
             >
               <option value="">Select</option>
               {this.state.subcategories.map((cats, i) => (
-                <option value={cats.slug} key={`OPT_${i}`}>{cats.name}</option>
+                <option value={cats.slug} key={`OPT_${i}`}>
+                  {cats.name}
+                </option>
               ))}
             </select>
           ) : (
@@ -1081,7 +1152,7 @@ class ViewExpert extends Component {
                           type="file"
                           style={{ display: "none" }}
                           ref={(fileInput) => (this.fileInput = fileInput)}
-                          name="image"
+                          name="file"
                           className="form-control"
                           onChange={this.onChangeFile}
                         />
@@ -1335,11 +1406,12 @@ class ViewExpert extends Component {
                         </div>
                       </div>
                       <div className="col-md-9 col-sm-8">
+                        {true ? (
                           <div className="profile-detail">
                             <div className="name">
                               <dl className="dl-horizontal">
                                 <div className="profile-bor-detail">
-                                  <dt>Name </dt>
+                                  <dt>Name</dt>
                                   <dd>
                                     {/*<div className="text-left-detail">{ this.state.expert.profile.firstName } { this.state.expert.profile.lastName }</div>*/}
                                     <div className="text-left-detail">
@@ -1503,89 +1575,125 @@ class ViewExpert extends Component {
                                   <dt>Social link </dt>
                                   <dd>
                                     {this.state.expert.facebookURL &&
-                                      this.state.expert.facebookURL !== null &&
-                                      this.state.expert.facebookURL !==
-                                        undefined &&
-                                      this.state.expert.facebookURL !== "" && (
-                                        <a
-                                          target="_blank"
-                                          href={
-                                            this.state.expert.facebookURL
-                                              ? this.state.expert.facebookURL
-                                              : "#"
-                                          }
-                                          title="facebook"
-                                          rel="noreferrer"
-                                        >
-                                          <i
-                                            className="fa fa-facebook-official"
-                                            aria-hidden="true"
-                                          ></i>
-                                        </a>
-                                      )}
+                                    this.state.expert.facebookURL !== null &&
+                                    this.state.expert.facebookURL !==
+                                      undefined &&
+                                    this.state.expert.facebookURL !== "" ? (
+                                      <a
+                                        target="_blank"
+                                        href={
+                                          this.state.expert.facebookURL
+                                            ? this.state.expert.facebookURL
+                                            : "#"
+                                        }
+                                        title="facebook"
+                                        rel="noreferrer"
+                                      >
+                                        <i
+                                          className="fa fa-facebook-official"
+                                          aria-hidden="true"
+                                        ></i>
+                                      </a>
+                                    ) : (
+                                      <div className="input-holder">
+                                        <input
+                                          onChange={this.handleInputChange}
+                                          name="facebookURL"
+                                          placeholder="facebook"
+                                          className="form-control mt-10"
+                                        />
+                                      </div>
+                                    )}
                                     {this.state.expert.twitterURL &&
-                                      this.state.expert.twitterURL !== null &&
-                                      this.state.expert.twitterURL !==
-                                        undefined &&
-                                      this.state.expert.twitterURL !== "" && (
-                                        <a
-                                          target="_blank"
-                                          href={
-                                            this.state.expert.twitterURL
-                                              ? this.state.expert.twitterURL
-                                              : "#"
-                                          }
-                                          title="twitter"
-                                          rel="noreferrer"
-                                        >
-                                          <i
-                                            className="fa fa-twitter"
-                                            aria-hidden="true"
-                                          ></i>
-                                        </a>
-                                      )}
+                                    this.state.expert.twitterURL !== null &&
+                                    this.state.expert.twitterURL !==
+                                      undefined &&
+                                    this.state.expert.twitterURL !== "" ? (
+                                      <a
+                                        target="_blank"
+                                        href={
+                                          this.state.expert.twitterURL
+                                            ? this.state.expert.twitterURL
+                                            : "#"
+                                        }
+                                        title="twitter"
+                                        rel="noreferrer"
+                                      >
+                                        <i
+                                          className="fa fa-twitter"
+                                          aria-hidden="true"
+                                        ></i>
+                                      </a>
+                                    ) : (
+                                      <div className="input-holder">
+                                        <input
+                                          onChange={this.handleInputChange}
+                                          name="twitterURL"
+                                          placeholder="twitter"
+                                          className="form-control mt-10"
+                                        />
+                                      </div>
+                                    )}
                                     {this.state.expert.linkedinURL &&
-                                      this.state.expert.linkedinURL !== null &&
-                                      this.state.expert.linkedinURL !==
-                                        undefined &&
-                                      this.state.expert.linkedinURL !== "" && (
-                                        <a
-                                          target="_blank"
-                                          href={
-                                            this.state.expert.linkedinURL
-                                              ? this.state.expert.linkedinURL
-                                              : "#"
-                                          }
-                                          title="linkedin"
-                                          rel="noreferrer"
-                                        >
-                                          <i
-                                            className="fa fa-linkedin"
-                                            aria-hidden="true"
-                                          ></i>
-                                        </a>
-                                      )}
+                                    this.state.expert.linkedinURL !== null &&
+                                    this.state.expert.linkedinURL !==
+                                      undefined &&
+                                    this.state.expert.linkedinURL !== "" ? (
+                                      <a
+                                        target="_blank"
+                                        href={
+                                          this.state.expert.linkedinURL
+                                            ? this.state.expert.linkedinURL
+                                            : "#"
+                                        }
+                                        title="linkedin"
+                                        rel="noreferrer"
+                                      >
+                                        <i
+                                          className="fa fa-linkedin"
+                                          aria-hidden="true"
+                                        ></i>
+                                      </a>
+                                    ) : (
+                                      <div className="input-holder">
+                                        <input
+                                          onChange={this.handleInputChange}
+                                          name="linkedinURL"
+                                          placeholder="linkedin"
+                                          className="form-control mt-10"
+                                        />
+                                      </div>
+                                    )}
                                     {this.state.expert.instagramURL &&
-                                      this.state.expert.instagramURL !== null &&
-                                      this.state.expert.instagramURL !==
-                                        undefined &&
-                                      this.state.expert.instagramURL !== "" && (
-                                        <a
-                                          target="_blank"
-                                          href={
-                                            this.state.expert.instagramURL
-                                              ? this.state.expert.instagramURL
-                                              : "#"
-                                          }
-                                          title="instagram"
-                                          rel="noreferrer"
-                                        >
-                                          <i
-                                            className="fa fa-instagram"
-                                            aria-hidden="true"
-                                          ></i>
-                                        </a>
-                                      )}
+                                    this.state.expert.instagramURL !== null &&
+                                    this.state.expert.instagramURL !==
+                                      undefined &&
+                                    this.state.expert.instagramURL !== "" ? (
+                                      <a
+                                        target="_blank"
+                                        href={
+                                          this.state.expert.instagramURL
+                                            ? this.state.expert.instagramURL
+                                            : "#"
+                                        }
+                                        title="instagram"
+                                        rel="noreferrer"
+                                      >
+                                        <i
+                                          className="fa fa-instagram"
+                                          aria-hidden="true"
+                                        ></i>
+                                      </a>
+                                    ) : (
+                                      <div className="input-holder">
+                                        <input
+                                          onChange={this.handleInputChange}
+                                          name="instagramURL"
+                                          placeholder="instagram"
+                                          className="form-control mt-10"
+                                        />
+                                      </div>
+                                    )}
                                     {this.state.expert.snapchatURL &&
                                       this.state.expert.snapchatURL !== null &&
                                       this.state.expert.snapchatURL !==
@@ -1608,26 +1716,35 @@ class ViewExpert extends Component {
                                         </a>
                                       )}
                                     {this.state.expert.websiteURL &&
-                                      this.state.expert.websiteURL !== null &&
-                                      this.state.expert.websiteURL !==
-                                        undefined &&
-                                      this.state.expert.websiteURL !== "" && (
-                                        <a
-                                          target="_blank"
-                                          href={
-                                            this.state.expert.websiteURL
-                                              ? this.state.expert.websiteURL
-                                              : "#"
-                                          }
-                                          title="website"
-                                          rel="noreferrer"
-                                        >
-                                          <i
-                                            className="fa fa-anchor"
-                                            aria-hidden="true"
-                                          ></i>
-                                        </a>
-                                      )}
+                                    this.state.expert.websiteURL !== null &&
+                                    this.state.expert.websiteURL !==
+                                      undefined &&
+                                    this.state.expert.websiteURL !== "" ? (
+                                      <a
+                                        target="_blank"
+                                        href={
+                                          this.state.expert.websiteURL
+                                            ? this.state.expert.websiteURL
+                                            : "#"
+                                        }
+                                        title="website"
+                                        rel="noreferrer"
+                                      >
+                                        <i
+                                          className="fa fa-anchor"
+                                          aria-hidden="true"
+                                        ></i>
+                                      </a>
+                                    ) : (
+                                      <div className="input-holder">
+                                        <input
+                                          onChange={this.handleInputChange}
+                                          name="websiteURL"
+                                          placeholder="website"
+                                          className="form-control mt-10"
+                                        />
+                                      </div>
+                                    )}
                                     {this.state.expert.googleURL &&
                                       this.state.expert.googleURL !== null &&
                                       this.state.expert.googleURL !==
@@ -1650,26 +1767,35 @@ class ViewExpert extends Component {
                                         </a>
                                       )}
                                     {this.state.expert.youtubeURL &&
-                                      this.state.expert.youtubeURL !== null &&
-                                      this.state.expert.youtubeURL !==
-                                        undefined &&
-                                      this.state.expert.youtubeURL !== "" && (
-                                        <a
-                                          target="_blank"
-                                          href={
-                                            this.state.expert.youtubeURL
-                                              ? this.state.expert.youtubeURL
-                                              : "#"
-                                          }
-                                          title="youtube"
-                                          rel="noreferrer"
-                                        >
-                                          <i
-                                            className="fa fa-youtube"
-                                            aria-hidden="true"
-                                          ></i>
-                                        </a>
-                                      )}
+                                    this.state.expert.youtubeURL !== null &&
+                                    this.state.expert.youtubeURL !==
+                                      undefined &&
+                                    this.state.expert.youtubeURL !== "" ? (
+                                      <a
+                                        target="_blank"
+                                        href={
+                                          this.state.expert.youtubeURL
+                                            ? this.state.expert.youtubeURL
+                                            : "#"
+                                        }
+                                        title="youtube"
+                                        rel="noreferrer"
+                                      >
+                                        <i
+                                          className="fa fa-youtube"
+                                          aria-hidden="true"
+                                        ></i>
+                                      </a>
+                                    ) : (
+                                      <div className="input-holder">
+                                        <input
+                                          onChange={this.handleInputChange}
+                                          name="youtubeURL"
+                                          placeholder="youtube"
+                                          className="form-control mt-10"
+                                        />
+                                      </div>
+                                    )}
                                     {this.state.expert.soundcloudURL &&
                                       this.state.expert.soundcloudURL !==
                                         null &&
@@ -1707,8 +1833,17 @@ class ViewExpert extends Component {
                                   <dt>Endorsements </dt>
                                   <dd>{endorsements_render}</dd>
                                 </div>
-
-                              
+                                <div className="profile-bor-detail expert-endorsements">
+                                  <dt>Upload Resume </dt>
+                                  <dd>
+                                    <input
+                                      type="file"
+                                      name="resumeFile"
+                                      className="form-control"
+                                      onChange={this.onChangeFile}
+                                    />
+                                  </dd>
+                                </div>
                               </dl>
                               <button
                                 className="btn btn-primary"
@@ -1718,6 +1853,687 @@ class ViewExpert extends Component {
                               </button>
                             </div>
                           </div>
+                        ) : (
+                          <div className="profile-detail">
+                            <div className="name">
+                              <dl className="dl-horizontal">
+                                {this.state.firstName !== "undefined" &&
+                                this.state.firstName !== "" &&
+                                this.state.firstName !== null ? (
+                                  <div className="profile-bor-detail">
+                                    <dt>Name</dt>
+                                    <dd>
+                                      <div className="text-left-detail">
+                                        {this.state.firstName}
+                                        {this.state.lastName}
+                                      </div>
+                                      <div
+                                        style={{
+                                          float: "right",
+                                          textTransform: "capitalize",
+                                        }}
+                                        className="text-right label label-primary"
+                                      >
+                                        <i
+                                          className="fa fa-bars"
+                                          aria-hidden="true"
+                                        ></i>
+                                        {this.props.match.params.category}
+                                      </div>
+                                    </dd>
+                                  </div>
+                                ) : (
+                                  <div className="profile-bor-detail inactive_div">
+                                    <dt>Name</dt>
+                                    <dd>
+                                      <div className="text-left-detail">
+                                        {this.state.firstName}
+                                        {this.state.lastName}
+                                      </div>
+                                      <div
+                                        style={{
+                                          float: "right",
+                                          textTransform: "capitalize",
+                                        }}
+                                        className="text-right label label-primary"
+                                      >
+                                        <i
+                                          className="fa fa-bars"
+                                          aria-hidden="true"
+                                        ></i>
+                                        {this.props.match.params.category}
+                                      </div>
+                                    </dd>
+                                  </div>
+                                )}
+
+                                {this.state.expert.university !== "undefined" &&
+                                this.state.expert.university !== "" &&
+                                this.state.expert.university !== null ? (
+                                  <div className="profile-bor-detail">
+                                    <dt>University</dt>
+                                    <dd>{this.state.expert.university}</dd>
+                                  </div>
+                                ) : (
+                                  <div className="profile-bor-detail inactive_div">
+                                    <dt>University</dt>
+                                    <dd>{this.state.expert.university}</dd>
+                                  </div>
+                                )}
+
+                                {this.state.expert.expertCategories !==
+                                  "undefined" &&
+                                this.state.expert.expertCategories !== "" &&
+                                this.state.expert.expertCategories !== null ? (
+                                  <div className="profile-bor-detail">
+                                    <dt>Area of expertise</dt>
+                                    <dd>
+                                      {this.state.expert.expertCategories}
+                                    </dd>
+                                  </div>
+                                ) : (
+                                  <div className="profile-bor-detail inactive_div">
+                                    <dt>Area of expertise</dt>
+                                    <dd>
+                                      {this.state.expert.expertCategories}
+                                    </dd>
+                                  </div>
+                                )}
+
+                                {this.state.expert.yearsexpertise !==
+                                  "undefined" &&
+                                this.state.expert.yearsexpertise !== "" &&
+                                this.state.expert.yearsexpertise !== null ? (
+                                  <div className="profile-bor-detail">
+                                    <dt>Years of expertise</dt>
+                                    <dd>{this.state.expert.yearsexpertise}</dd>
+                                  </div>
+                                ) : (
+                                  <div className="profile-bor-detail inactive_div">
+                                    <dt>Years of expertise</dt>
+                                    <dd>{this.state.expert.yearsexpertise}</dd>
+                                  </div>
+                                )}
+
+                                {this.state.expert.expertFocusExpertise !==
+                                  "undefined" &&
+                                this.state.expert.expertFocusExpertise !== "" &&
+                                this.state.expert.expertFocusExpertise !=
+                                  null ? (
+                                  <div className="profile-bor-detail">
+                                    <dt>Focus of expertise</dt>
+                                    <dd>
+                                      {this.state.expert.expertFocusExpertise}
+                                    </dd>
+                                  </div>
+                                ) : (
+                                  <div className="profile-bor-detail inactive_div">
+                                    <dt>Focus of expertise</dt>
+                                    <dd>
+                                      {this.state.expert.expertFocusExpertise}
+                                    </dd>
+                                  </div>
+                                )}
+
+                                {/*}<div className="profile-bor-detail">
+                                <dt>Rates</dt>
+                                <dd>{ this.state.expert.expertRates }</dd>
+                            </div>{*/}
+
+                                {this.state.expert.expertRating !==
+                                  "undefined" &&
+                                this.state.expert.expertRating !== "" &&
+                                this.state.expert.expertRating !== null ? (
+                                  <div className="profile-bor-detail">
+                                    <dt>Rating</dt>
+                                    <dd>
+                                      {this.state.expert.expertRating &&
+                                      this.state.expert.expertRating !== null &&
+                                      this.state.expert.expertRating !==
+                                        undefined &&
+                                      this.state.expert.expertRating !== ""
+                                        ? this.state.expert.expertRating
+                                        : "No Ratings Available"}
+                                      {this.state.expert.expertRating &&
+                                        this.state.expert.expertRating !==
+                                          null &&
+                                        this.state.expert.expertRating !==
+                                          undefined &&
+                                        this.state.expert.expertRating !==
+                                          "" && (
+                                          <i
+                                            className="fa fa-star"
+                                            aria-hidden="true"
+                                          ></i>
+                                        )}
+                                    </dd>
+                                  </div>
+                                ) : (
+                                  <div className="profile-bor-detail inactive_div">
+                                    <dt>Rating</dt>
+                                    <dd>
+                                      {this.state.expert.expertRating &&
+                                      this.state.expert.expertRating !== null &&
+                                      this.state.expert.expertRating !==
+                                        undefined &&
+                                      this.state.expert.expertRating !== ""
+                                        ? this.state.expert.expertRating
+                                        : "No Ratings Available"}
+                                      {this.state.expert.expertRating &&
+                                        this.state.expert.expertRating !=
+                                          null &&
+                                        this.state.expert.expertRating !==
+                                          undefined &&
+                                        this.state.expert.expertRating !==
+                                          "" && (
+                                          <i
+                                            className="fa fa-star"
+                                            aria-hidden="true"
+                                          ></i>
+                                        )}
+                                    </dd>
+                                  </div>
+                                )}
+
+                                {/*<div className="profile-bor-detail">
+                              <dt>About Expert </dt>
+                              <dd>{ this.state.expert.userBio && this.state.expert.userBio!=null && this.state.expert.userBio!=undefined && this.state.expert.userBio!="" ? this.state.expert.userBio : "-"}</dd>
+                            </div>
+                            <div className="profile-bor-detail">
+                              <dt>Country </dt>
+                              <dd>{ this.state.expert.locationCountry && this.state.expert.locationCountry!=null && this.state.expert.locationCountry!=undefined && this.state.expert.locationCountry!="" ? this.state.expert.locationCountry :"-"}</dd>
+                            </div>
+                            <div className="profile-bor-detail">
+                              <dt>State </dt>
+                              <dd>{ this.state.expert.locationState && this.state.expert.locationState!=null && this.state.expert.locationState!=undefined && this.state.expert.locationState!="" ? this.state.expert.locationState : "-"}</dd>
+                            </div>
+                            <div className="profile-bor-detail">
+                              <dt>City </dt>
+                              <dd>{ this.state.expert.locationCity && this.state.expert.locationCity!=null && this.state.expert.locationCity!=undefined && this.state.expert.locationCity!="" ? this.state.expert.locationCity : "-"}</dd>
+                            </div>*/}
+
+                                {(this.state.expert.facebookURL ===
+                                  "undefined" &&
+                                  this.state.expert.facebookURL === "" &&
+                                  this.state.expert.facebookURL === null) ||
+                                (this.state.expert.twitterURL === "undefined" &&
+                                  this.state.expert.twitterURL === "" &&
+                                  this.state.expert.twitterURL === null) ||
+                                (this.state.expert.linkedinURL ===
+                                  "undefined" &&
+                                  this.state.expert.linkedinURL === "" &&
+                                  this.state.expert.linkedinURL === null) ||
+                                (this.state.expert.instagramURL ===
+                                  "undefined" &&
+                                  this.state.expert.instagramURL === "" &&
+                                  this.state.expert.instagramURL === null) ||
+                                (this.state.expert.snapchatURL ===
+                                  "undefined" &&
+                                  this.state.expert.snapchatURL === "" &&
+                                  this.state.expert.snapchatURL === null) ||
+                                (this.state.expert.websiteURL === "undefined" &&
+                                  this.state.expert.websiteURL === "" &&
+                                  this.state.expert.websiteURL === null) ||
+                                (this.state.expert.googleURL === "undefined" &&
+                                  this.state.expert.googleURL === "" &&
+                                  this.state.expert.googleURL === null) ||
+                                (this.state.expert.youtubeURL === "undefined" &&
+                                  this.state.expert.youtubeURL === "" &&
+                                  this.state.expert.youtubeURL === null) ||
+                                (this.state.expert.soundcloudURL ===
+                                  "undefined" &&
+                                  this.state.expert.soundcloudURL === "" &&
+                                  this.state.expert.soundcloudURL === null) ||
+                                (this.state.expert.facebookURL ===
+                                  "undefined" &&
+                                  this.state.expert.facebookURL === "" &&
+                                  this.state.expert.facebookURL === null) ? (
+                                  <div className="profile-bor-detail expert-social-links">
+                                    <dt>Social link </dt>
+                                    <dd>
+                                      {this.state.expert.facebookURL &&
+                                        this.state.expert.facebookURL !==
+                                          null &&
+                                        this.state.expert.facebookURL !==
+                                          undefined &&
+                                        this.state.expert.facebookURL !==
+                                          "" && (
+                                          <a
+                                            target="_blank"
+                                            href={
+                                              this.state.expert.facebookURL
+                                                ? this.state.expert.facebookURL
+                                                : "#"
+                                            }
+                                            title="facebook"
+                                            rel="noreferrer"
+                                          >
+                                            <i
+                                              className="fa fa-facebook-official"
+                                              aria-hidden="true"
+                                            ></i>
+                                          </a>
+                                        )}
+                                      {this.state.expert.twitterURL &&
+                                        this.state.expert.twitterURL !== null &&
+                                        this.state.expert.twitterURL !==
+                                          undefined &&
+                                        this.state.expert.twitterURL !== "" && (
+                                          <a
+                                            target="_blank"
+                                            href={
+                                              this.state.expert.twitterURL
+                                                ? this.state.expert.twitterURL
+                                                : "#"
+                                            }
+                                            title="twitter"
+                                            rel="noreferrer"
+                                          >
+                                            <i
+                                              className="fa fa-twitter"
+                                              aria-hidden="true"
+                                            ></i>
+                                          </a>
+                                        )}
+                                      {this.state.expert.linkedinURL &&
+                                        this.state.expert.linkedinURL !==
+                                          null &&
+                                        this.state.expert.linkedinURL !==
+                                          undefined &&
+                                        this.state.expert.linkedinURL !==
+                                          "" && (
+                                          <a
+                                            target="_blank"
+                                            href={
+                                              this.state.expert.linkedinURL
+                                                ? this.state.expert.linkedinURL
+                                                : "#"
+                                            }
+                                            title="linkedin"
+                                            rel="noreferrer"
+                                          >
+                                            <i
+                                              className="fa fa-linkedin"
+                                              aria-hidden="true"
+                                            ></i>
+                                          </a>
+                                        )}
+                                      {this.state.expert.instagramURL &&
+                                        this.state.expert.instagramURL !=
+                                          null &&
+                                        this.state.expert.instagramURL !==
+                                          undefined &&
+                                        this.state.expert.instagramURL !==
+                                          "" && (
+                                          <a
+                                            target="_blank"
+                                            href={
+                                              this.state.expert.instagramURL
+                                                ? this.state.expert.instagramURL
+                                                : "#"
+                                            }
+                                            title="instagram"
+                                            rel="noreferrer"
+                                          >
+                                            <i
+                                              className="fa fa-instagram"
+                                              aria-hidden="true"
+                                            ></i>
+                                          </a>
+                                        )}
+                                      {this.state.expert.snapchatURL &&
+                                        this.state.expert.snapchatURL !==
+                                          null &&
+                                        this.state.expert.snapchatURL !==
+                                          undefined &&
+                                        this.state.expert.snapchatURL !==
+                                          "" && (
+                                          <a
+                                            target="_blank"
+                                            href={
+                                              this.state.expert.snapchatURL
+                                                ? this.state.expert.snapchatURL
+                                                : "#"
+                                            }
+                                            title="snapchat"
+                                            rel="noreferrer"
+                                          >
+                                            <i
+                                              className="fa fa-snapchat"
+                                              aria-hidden="true"
+                                            ></i>
+                                          </a>
+                                        )}
+                                      {this.state.expert.websiteURL &&
+                                        this.state.expert.websiteURL !== null &&
+                                        this.state.expert.websiteURL !==
+                                          undefined &&
+                                        this.state.expert.websiteURL !== "" && (
+                                          <a
+                                            target="_blank"
+                                            href={
+                                              this.state.expert.websiteURL
+                                                ? this.state.expert.websiteURL
+                                                : "#"
+                                            }
+                                            title="website"
+                                            rel="noreferrer"
+                                          >
+                                            <i
+                                              className="fa fa-anchor"
+                                              aria-hidden="true"
+                                            ></i>
+                                          </a>
+                                        )}
+                                      {this.state.expert.googleURL &&
+                                        this.state.expert.googleURL !== null &&
+                                        this.state.expert.googleURL !==
+                                          undefined &&
+                                        this.state.expert.googleURL !== "" && (
+                                          <a
+                                            target="_blank"
+                                            href={
+                                              this.state.expert.googleURL
+                                                ? this.state.expert.googleURL
+                                                : "#"
+                                            }
+                                            title="google"
+                                            rel="noreferrer"
+                                          >
+                                            <i
+                                              className="fa fa-google"
+                                              aria-hidden="true"
+                                            ></i>
+                                          </a>
+                                        )}
+                                      {this.state.expert.youtubeURL &&
+                                        this.state.expert.youtubeURL !== null &&
+                                        this.state.expert.youtubeURL !==
+                                          undefined &&
+                                        this.state.expert.youtubeURL !== "" && (
+                                          <a
+                                            target="_blank"
+                                            href={
+                                              this.state.expert.youtubeURL
+                                                ? this.state.expert.youtubeURL
+                                                : "#"
+                                            }
+                                            title="youtube"
+                                            rel="noreferrer"
+                                          >
+                                            <i
+                                              className="fa fa-youtube"
+                                              aria-hidden="true"
+                                            ></i>
+                                          </a>
+                                        )}
+                                      {this.state.expert.soundcloudURL &&
+                                        this.state.expert.soundcloudURL !=
+                                          null &&
+                                        this.state.expert.soundcloudURL !==
+                                          undefined &&
+                                        this.state.expert.soundcloudURL !==
+                                          "" && (
+                                          <a
+                                            target="_blank"
+                                            href={
+                                              this.state.expert.soundcloudURL
+                                                ? this.state.expert
+                                                    .soundcloudURL
+                                                : "#"
+                                            }
+                                            title="soundcloud"
+                                            rel="noreferrer"
+                                          >
+                                            <i
+                                              className="fa fa-soundcloud"
+                                              aria-hidden="true"
+                                            ></i>
+                                          </a>
+                                        )}
+                                      {this.state.expert.facebookURL === "" &&
+                                        this.state.expert.twitterURL === "" &&
+                                        this.state.expert.linkedinURL === "" &&
+                                        this.state.expert.instagramURL === "" &&
+                                        this.state.expert.snapchatURL === "" &&
+                                        this.state.expert.websiteURL === "" &&
+                                        this.state.expert.googleURL === "" &&
+                                        "No Social Links Available Yet"}
+                                    </dd>
+                                  </div>
+                                ) : (
+                                  <div className="profile-bor-detail expert-social-links inactive_div">
+                                    <dt>Social link </dt>
+                                    <dd>
+                                      {this.state.expert.facebookURL &&
+                                        this.state.expert.facebookURL !==
+                                          null &&
+                                        this.state.expert.facebookURL !==
+                                          undefined &&
+                                        this.state.expert.facebookURL !==
+                                          "" && (
+                                          <a
+                                            target="_blank"
+                                            href={
+                                              this.state.expert.facebookURL
+                                                ? this.state.expert.facebookURL
+                                                : "#"
+                                            }
+                                            title="facebook"
+                                            rel="noreferrer"
+                                          >
+                                            <i
+                                              className="fa fa-facebook-official"
+                                              aria-hidden="true"
+                                            ></i>
+                                          </a>
+                                        )}
+                                      {this.state.expert.twitterURL &&
+                                        this.state.expert.twitterURL !== null &&
+                                        this.state.expert.twitterURL !==
+                                          undefined &&
+                                        this.state.expert.twitterURL !== "" && (
+                                          <a
+                                            target="_blank"
+                                            href={
+                                              this.state.expert.twitterURL
+                                                ? this.state.expert.twitterURL
+                                                : "#"
+                                            }
+                                            title="twitter"
+                                            rel="noreferrer"
+                                          >
+                                            <i
+                                              className="fa fa-twitter"
+                                              aria-hidden="true"
+                                            ></i>
+                                          </a>
+                                        )}
+                                      {this.state.expert.linkedinURL &&
+                                        this.state.expert.linkedinURL !==
+                                          null &&
+                                        this.state.expert.linkedinURL !==
+                                          undefined &&
+                                        this.state.expert.linkedinURL !==
+                                          "" && (
+                                          <a
+                                            target="_blank"
+                                            href={
+                                              this.state.expert.linkedinURL
+                                                ? this.state.expert.linkedinURL
+                                                : "#"
+                                            }
+                                            title="linkedin"
+                                            rel="noreferrer"
+                                          >
+                                            <i
+                                              className="fa fa-linkedin"
+                                              aria-hidden="true"
+                                            ></i>
+                                          </a>
+                                        )}
+                                      {this.state.expert.instagramURL &&
+                                        this.state.expert.instagramURL !=
+                                          null &&
+                                        this.state.expert.instagramURL !==
+                                          undefined &&
+                                        this.state.expert.instagramURL !==
+                                          "" && (
+                                          <a
+                                            target="_blank"
+                                            href={
+                                              this.state.expert.instagramURL
+                                                ? this.state.expert.instagramURL
+                                                : "#"
+                                            }
+                                            title="instagram"
+                                            rel="noreferrer"
+                                          >
+                                            <i
+                                              className="fa fa-instagram"
+                                              aria-hidden="true"
+                                            ></i>
+                                          </a>
+                                        )}
+                                      {this.state.expert.snapchatURL &&
+                                        this.state.expert.snapchatURL !==
+                                          null &&
+                                        this.state.expert.snapchatURL !==
+                                          undefined &&
+                                        this.state.expert.snapchatURL !==
+                                          "" && (
+                                          <a
+                                            target="_blank"
+                                            href={
+                                              this.state.expert.snapchatURL
+                                                ? this.state.expert.snapchatURL
+                                                : "#"
+                                            }
+                                            title="snapchat"
+                                            rel="noreferrer"
+                                          >
+                                            <i
+                                              className="fa fa-snapchat"
+                                              aria-hidden="true"
+                                            ></i>
+                                          </a>
+                                        )}
+                                      {this.state.expert.websiteURL &&
+                                        this.state.expert.websiteURL !== null &&
+                                        this.state.expert.websiteURL !==
+                                          undefined &&
+                                        this.state.expert.websiteURL !== "" && (
+                                          <a
+                                            target="_blank"
+                                            href={
+                                              this.state.expert.websiteURL
+                                                ? this.state.expert.websiteURL
+                                                : "#"
+                                            }
+                                            title="website"
+                                            rel="noreferrer"
+                                          >
+                                            <i
+                                              className="fa fa-anchor"
+                                              aria-hidden="true"
+                                            ></i>
+                                          </a>
+                                        )}
+                                      {this.state.expert.googleURL &&
+                                        this.state.expert.googleURL !== null &&
+                                        this.state.expert.googleURL !==
+                                          undefined &&
+                                        this.state.expert.googleURL !== "" && (
+                                          <a
+                                            target="_blank"
+                                            href={
+                                              this.state.expert.googleURL
+                                                ? this.state.expert.googleURL
+                                                : "#"
+                                            }
+                                            title="google"
+                                            rel="noreferrer"
+                                          >
+                                            <i
+                                              className="fa fa-google"
+                                              aria-hidden="true"
+                                            ></i>
+                                          </a>
+                                        )}
+                                      {this.state.expert.youtubeURL &&
+                                        this.state.expert.youtubeURL !== null &&
+                                        this.state.expert.youtubeURL !==
+                                          undefined &&
+                                        this.state.expert.youtubeURL !== "" && (
+                                          <a
+                                            target="_blank"
+                                            href={
+                                              this.state.expert.youtubeURL
+                                                ? this.state.expert.youtubeURL
+                                                : "#"
+                                            }
+                                            title="youtube"
+                                            rel="noreferrer"
+                                          >
+                                            <i
+                                              className="fa fa-youtube"
+                                              aria-hidden="true"
+                                            ></i>
+                                          </a>
+                                        )}
+                                      {this.state.expert.soundcloudURL &&
+                                        this.state.expert.soundcloudURL !=
+                                          null &&
+                                        this.state.expert.soundcloudURL !==
+                                          undefined &&
+                                        this.state.expert.soundcloudURL !==
+                                          "" && (
+                                          <a
+                                            target="_blank"
+                                            href={
+                                              this.state.expert.soundcloudURL
+                                                ? this.state.expert
+                                                    .soundcloudURL
+                                                : "#"
+                                            }
+                                            title="soundcloud"
+                                            rel="noreferrer"
+                                          >
+                                            <i
+                                              className="fa fa-soundcloud"
+                                              aria-hidden="true"
+                                            ></i>
+                                          </a>
+                                        )}
+                                      {this.state.expert.facebookURL === "" &&
+                                        this.state.expert.twitterURL === "" &&
+                                        this.state.expert.linkedinURL === "" &&
+                                        this.state.expert.instagramURL === "" &&
+                                        this.state.expert.snapchatURL === "" &&
+                                        this.state.expert.websiteURL === "" &&
+                                        this.state.expert.googleURL === "" &&
+                                        "No Social Links Available Yet"}
+                                    </dd>
+                                  </div>
+                                )}
+
+                                {endorsements_render !== "undefined" &&
+                                endorsements_render !== "" &&
+                                endorsements_render !== null ? (
+                                  <div className="profile-bor-detail expert-endorsements">
+                                    <dt>Endorsements </dt>
+                                    <dd>{endorsements_render}</dd>
+                                  </div>
+                                ) : (
+                                  <div className="profile-bor-detail expert-endorsements inactive_div">
+                                    <dt>Endorsements </dt>
+                                    <dd>{endorsements_render}</dd>
+                                  </div>
+                                )}
+                              </dl>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -1773,6 +2589,13 @@ class ViewExpert extends Component {
                       ))}
                     </div>
                     {/* comments */}
+                    <div className="button-holder">
+                      <button
+                        className="btn btn-danger"
+                      >
+                        Delete Account
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -2003,11 +2826,7 @@ class ViewExpert extends Component {
   }
   /*** Render the component. */
   render() {
-    return (
-      <div>
-        {this.state.loading ? this.renderLoading() : this.renderPosts()}
-      </div>
-    );
+    return <div>{this.renderPosts()}</div>;
   }
 }
 function mapStateToProps(state) {
@@ -2027,4 +2846,3 @@ export default connect(mapStateToProps, {
   rechargeVideoSession,
   getVideoSession,
 })(withRouter(withCookies(form(ViewExpert))));
-

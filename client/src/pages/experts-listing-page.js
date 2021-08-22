@@ -392,7 +392,7 @@ class ExpertsListingPage extends Component {
                       this.state.posts.length === 0 && (
                         <div role="tabpanel" className="tab-pane" id="settings">
                           <div className="expertise-all-detail-wrap">
-                            <div className="alert alert-danger">
+                            <div className="alert">
                               No expert found in this section!
                             </div>
                           </div>
