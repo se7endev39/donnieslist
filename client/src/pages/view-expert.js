@@ -1092,9 +1092,7 @@ class ViewExpert extends Component {
                           Upload
                         </button>
 
-                        <div
-                          className="expert-img change_image"
-                        >
+                        <div className="expert-img change_image">
                           {this.state.profileImage &&
                           this.state.profileImage !== null &&
                           this.state.profileImage !== undefined &&
@@ -1509,8 +1507,9 @@ class ViewExpert extends Component {
                                       this.state.expert.facebookURL !==
                                         undefined &&
                                       this.state.expert.facebookURL !== "" && (
+                                        <div className="social-link">
                                         <a
-                                          target="_blank"
+                                        target="_blank"
                                           href={
                                             this.state.expert.facebookURL
                                               ? this.state.expert.facebookURL
@@ -1524,14 +1523,16 @@ class ViewExpert extends Component {
                                             aria-hidden="true"
                                           ></i>
                                         </a>
+                                        </div>
                                       )}
                                     {this.state.expert.twitterURL &&
                                       this.state.expert.twitterURL !== null &&
                                       this.state.expert.twitterURL !==
                                         undefined &&
                                       this.state.expert.twitterURL !== "" && (
+                                        <div className="social-link">
                                         <a
-                                          target="_blank"
+                                        target="_blank"
                                           href={
                                             this.state.expert.twitterURL
                                               ? this.state.expert.twitterURL
@@ -1545,14 +1546,16 @@ class ViewExpert extends Component {
                                             aria-hidden="true"
                                           ></i>
                                         </a>
+                                        </div>
                                       )}
                                     {this.state.expert.linkedinURL &&
                                       this.state.expert.linkedinURL !== null &&
                                       this.state.expert.linkedinURL !==
                                         undefined &&
                                       this.state.expert.linkedinURL !== "" && (
+                                        <div className="social-link">
                                         <a
-                                          target="_blank"
+                                        target="_blank"
                                           href={
                                             this.state.expert.linkedinURL
                                               ? this.state.expert.linkedinURL
@@ -1566,14 +1569,16 @@ class ViewExpert extends Component {
                                             aria-hidden="true"
                                           ></i>
                                         </a>
+                                        </div>
                                       )}
                                     {this.state.expert.instagramURL &&
                                       this.state.expert.instagramURL != null &&
                                       this.state.expert.instagramURL !==
                                         undefined &&
                                       this.state.expert.instagramURL !== "" && (
+                                        <div className="social-link">
                                         <a
-                                          target="_blank"
+                                        target="_blank"
                                           href={
                                             this.state.expert.instagramURL
                                               ? this.state.expert.instagramURL
@@ -1587,14 +1592,16 @@ class ViewExpert extends Component {
                                             aria-hidden="true"
                                           ></i>
                                         </a>
+                                        </div>
                                       )}
                                     {this.state.expert.snapchatURL &&
                                       this.state.expert.snapchatURL !== null &&
                                       this.state.expert.snapchatURL !==
                                         undefined &&
                                       this.state.expert.snapchatURL !== "" && (
+                                        <div className="social-link">
                                         <a
-                                          target="_blank"
+                                        target="_blank"
                                           href={
                                             this.state.expert.snapchatURL
                                               ? this.state.expert.snapchatURL
@@ -1608,14 +1615,16 @@ class ViewExpert extends Component {
                                             aria-hidden="true"
                                           ></i>
                                         </a>
+                                        </div>
                                       )}
                                     {this.state.expert.websiteURL &&
                                       this.state.expert.websiteURL !== null &&
                                       this.state.expert.websiteURL !==
                                         undefined &&
                                       this.state.expert.websiteURL !== "" && (
+                                        <div className="social-link">
                                         <a
-                                          target="_blank"
+                                        target="_blank"
                                           href={
                                             this.state.expert.websiteURL
                                               ? this.state.expert.websiteURL
@@ -1629,14 +1638,16 @@ class ViewExpert extends Component {
                                             aria-hidden="true"
                                           ></i>
                                         </a>
+                                        </div>
                                       )}
                                     {this.state.expert.googleURL &&
                                       this.state.expert.googleURL !== null &&
                                       this.state.expert.googleURL !==
                                         undefined &&
                                       this.state.expert.googleURL !== "" && (
+                                        <div className="social-link">
                                         <a
-                                          target="_blank"
+                                        target="_blank"
                                           href={
                                             this.state.expert.googleURL
                                               ? this.state.expert.googleURL
@@ -1650,14 +1661,16 @@ class ViewExpert extends Component {
                                             aria-hidden="true"
                                           ></i>
                                         </a>
+                                        </div>
                                       )}
                                     {this.state.expert.youtubeURL &&
                                       this.state.expert.youtubeURL !== null &&
                                       this.state.expert.youtubeURL !==
                                         undefined &&
                                       this.state.expert.youtubeURL !== "" && (
+                                        <div className="social-link">
                                         <a
-                                          target="_blank"
+                                        target="_blank"
                                           href={
                                             this.state.expert.youtubeURL
                                               ? this.state.expert.youtubeURL
@@ -1671,6 +1684,7 @@ class ViewExpert extends Component {
                                             aria-hidden="true"
                                           ></i>
                                         </a>
+                                        </div>
                                       )}
                                     {this.state.expert.soundcloudURL &&
                                       this.state.expert.soundcloudURL != null &&
@@ -1678,8 +1692,9 @@ class ViewExpert extends Component {
                                         undefined &&
                                       this.state.expert.soundcloudURL !==
                                         "" && (
+                                        <div className="social-link">
                                         <a
-                                          target="_blank"
+                                        target="_blank"
                                           href={
                                             this.state.expert.soundcloudURL
                                               ? this.state.expert.soundcloudURL
@@ -1693,6 +1708,7 @@ class ViewExpert extends Component {
                                             aria-hidden="true"
                                           ></i>
                                         </a>
+                                        </div>
                                       )}
                                     {this.state.expert.facebookURL === "" &&
                                       this.state.expert.twitterURL === "" &&
@@ -1713,8 +1729,9 @@ class ViewExpert extends Component {
                                       this.state.expert.facebookURL !==
                                         undefined &&
                                       this.state.expert.facebookURL !== "" && (
+                                        <div className="social-link">
                                         <a
-                                          target="_blank"
+                                        target="_blank"
                                           href={
                                             this.state.expert.facebookURL
                                               ? this.state.expert.facebookURL
@@ -1728,14 +1745,16 @@ class ViewExpert extends Component {
                                             aria-hidden="true"
                                           ></i>
                                         </a>
+                                        </div>
                                       )}
                                     {this.state.expert.twitterURL &&
                                       this.state.expert.twitterURL !== null &&
                                       this.state.expert.twitterURL !==
                                         undefined &&
                                       this.state.expert.twitterURL !== "" && (
+                                        <div className="social-link">
                                         <a
-                                          target="_blank"
+                                        target="_blank"
                                           href={
                                             this.state.expert.twitterURL
                                               ? this.state.expert.twitterURL
@@ -1749,14 +1768,16 @@ class ViewExpert extends Component {
                                             aria-hidden="true"
                                           ></i>
                                         </a>
+                                        </div>
                                       )}
                                     {this.state.expert.linkedinURL &&
                                       this.state.expert.linkedinURL !== null &&
                                       this.state.expert.linkedinURL !==
                                         undefined &&
                                       this.state.expert.linkedinURL !== "" && (
+                                        <div className="social-link">
                                         <a
-                                          target="_blank"
+                                        target="_blank"
                                           href={
                                             this.state.expert.linkedinURL
                                               ? this.state.expert.linkedinURL
@@ -1770,14 +1791,16 @@ class ViewExpert extends Component {
                                             aria-hidden="true"
                                           ></i>
                                         </a>
+                                        </div>
                                       )}
                                     {this.state.expert.instagramURL &&
                                       this.state.expert.instagramURL != null &&
                                       this.state.expert.instagramURL !==
                                         undefined &&
                                       this.state.expert.instagramURL !== "" && (
+                                        <div className="social-link">
                                         <a
-                                          target="_blank"
+                                        target="_blank"
                                           href={
                                             this.state.expert.instagramURL
                                               ? this.state.expert.instagramURL
@@ -1791,14 +1814,16 @@ class ViewExpert extends Component {
                                             aria-hidden="true"
                                           ></i>
                                         </a>
+                                        </div>
                                       )}
                                     {this.state.expert.snapchatURL &&
                                       this.state.expert.snapchatURL !== null &&
                                       this.state.expert.snapchatURL !==
                                         undefined &&
                                       this.state.expert.snapchatURL !== "" && (
+                                        <div className="social-link">
                                         <a
-                                          target="_blank"
+                                        target="_blank"
                                           href={
                                             this.state.expert.snapchatURL
                                               ? this.state.expert.snapchatURL
@@ -1812,14 +1837,16 @@ class ViewExpert extends Component {
                                             aria-hidden="true"
                                           ></i>
                                         </a>
+                                        </div>
                                       )}
                                     {this.state.expert.websiteURL &&
                                       this.state.expert.websiteURL !== null &&
                                       this.state.expert.websiteURL !==
                                         undefined &&
                                       this.state.expert.websiteURL !== "" && (
+                                        <div className="social-link">
                                         <a
-                                          target="_blank"
+                                        target="_blank"
                                           href={
                                             this.state.expert.websiteURL
                                               ? this.state.expert.websiteURL
@@ -1833,14 +1860,16 @@ class ViewExpert extends Component {
                                             aria-hidden="true"
                                           ></i>
                                         </a>
+                                        </div>
                                       )}
                                     {this.state.expert.googleURL &&
                                       this.state.expert.googleURL !== null &&
                                       this.state.expert.googleURL !==
                                         undefined &&
                                       this.state.expert.googleURL !== "" && (
+                                        <div className="social-link">
                                         <a
-                                          target="_blank"
+                                        target="_blank"
                                           href={
                                             this.state.expert.googleURL
                                               ? this.state.expert.googleURL
@@ -1854,14 +1883,16 @@ class ViewExpert extends Component {
                                             aria-hidden="true"
                                           ></i>
                                         </a>
+                                        </div>
                                       )}
                                     {this.state.expert.youtubeURL &&
                                       this.state.expert.youtubeURL !== null &&
                                       this.state.expert.youtubeURL !==
                                         undefined &&
                                       this.state.expert.youtubeURL !== "" && (
+                                        <div className="social-link">
                                         <a
-                                          target="_blank"
+                                        target="_blank"
                                           href={
                                             this.state.expert.youtubeURL
                                               ? this.state.expert.youtubeURL
@@ -1875,6 +1906,7 @@ class ViewExpert extends Component {
                                             aria-hidden="true"
                                           ></i>
                                         </a>
+                                        </div>
                                       )}
                                     {this.state.expert.soundcloudURL &&
                                       this.state.expert.soundcloudURL != null &&
@@ -1882,8 +1914,9 @@ class ViewExpert extends Component {
                                         undefined &&
                                       this.state.expert.soundcloudURL !==
                                         "" && (
+                                        <div className="social-link">
                                         <a
-                                          target="_blank"
+                                        target="_blank"
                                           href={
                                             this.state.expert.soundcloudURL
                                               ? this.state.expert.soundcloudURL
@@ -1897,6 +1930,7 @@ class ViewExpert extends Component {
                                             aria-hidden="true"
                                           ></i>
                                         </a>
+                                        </div>
                                       )}
                                     {this.state.expert.facebookURL === "" &&
                                       this.state.expert.twitterURL === "" &&
@@ -1911,7 +1945,204 @@ class ViewExpert extends Component {
                               )}
                               <div className="profile-bor-detail expert-endorsements">
                                 <dt>social Link </dt>
-                                <dd></dd>
+                                <dd>
+                                  {this.state.expert.facebookURL &&
+                                    this.state.expert.facebookURL !== null &&
+                                    this.state.expert.facebookURL !==
+                                      undefined &&
+                                    this.state.expert.facebookURL !== "" && (
+                                      <a
+                                        target="_blank"
+                                        href={
+                                          this.state.expert.facebookURL
+                                            ? this.state.expert.facebookURL
+                                            : "#"
+                                        }
+                                        title="facebook"
+                                        rel="noreferrer"
+                                      >
+                                        <i
+                                          className="fa fa-facebook-official"
+                                          aria-hidden="true"
+                                        ></i>
+                                      </a>
+                                    )}
+                                  {this.state.expert.twitterURL &&
+                                    this.state.expert.twitterURL !== null &&
+                                    this.state.expert.twitterURL !==
+                                      undefined &&
+                                    this.state.expert.twitterURL !== "" && (
+                                      <a
+                                        target="_blank"
+                                        href={
+                                          this.state.expert.twitterURL
+                                            ? this.state.expert.twitterURL
+                                            : "#"
+                                        }
+                                        title="twitter"
+                                        rel="noreferrer"
+                                      >
+                                        <i
+                                          className="fa fa-twitter"
+                                          aria-hidden="true"
+                                        ></i>
+                                      </a>
+                                    )}
+                                  {this.state.expert.linkedinURL &&
+                                    this.state.expert.linkedinURL !== null &&
+                                    this.state.expert.linkedinURL !==
+                                      undefined &&
+                                    this.state.expert.linkedinURL !== "" && (
+                                      <a
+                                        target="_blank"
+                                        href={
+                                          this.state.expert.linkedinURL
+                                            ? this.state.expert.linkedinURL
+                                            : "#"
+                                        }
+                                        title="linkedin"
+                                        rel="noreferrer"
+                                      >
+                                        <i
+                                          className="fa fa-linkedin"
+                                          aria-hidden="true"
+                                        ></i>
+                                      </a>
+                                    )}
+                                  {this.state.expert.instagramURL &&
+                                    this.state.expert.instagramURL != null &&
+                                    this.state.expert.instagramURL !==
+                                      undefined &&
+                                    this.state.expert.instagramURL !== "" && (
+                                      <a
+                                        target="_blank"
+                                        href={
+                                          this.state.expert.instagramURL
+                                            ? this.state.expert.instagramURL
+                                            : "#"
+                                        }
+                                        title="instagram"
+                                        rel="noreferrer"
+                                      >
+                                        <i
+                                          className="fa fa-instagram"
+                                          aria-hidden="true"
+                                        ></i>
+                                      </a>
+                                    )}
+                                  {this.state.expert.snapchatURL &&
+                                    this.state.expert.snapchatURL !== null &&
+                                    this.state.expert.snapchatURL !==
+                                      undefined &&
+                                    this.state.expert.snapchatURL !== "" && (
+                                      <a
+                                        target="_blank"
+                                        href={
+                                          this.state.expert.snapchatURL
+                                            ? this.state.expert.snapchatURL
+                                            : "#"
+                                        }
+                                        title="snapchat"
+                                        rel="noreferrer"
+                                      >
+                                        <i
+                                          className="fa fa-snapchat"
+                                          aria-hidden="true"
+                                        ></i>
+                                      </a>
+                                    )}
+                                  {this.state.expert.websiteURL &&
+                                    this.state.expert.websiteURL !== null &&
+                                    this.state.expert.websiteURL !==
+                                      undefined &&
+                                    this.state.expert.websiteURL !== "" && (
+                                      <a
+                                        target="_blank"
+                                        href={
+                                          this.state.expert.websiteURL
+                                            ? this.state.expert.websiteURL
+                                            : "#"
+                                        }
+                                        title="website"
+                                        rel="noreferrer"
+                                      >
+                                        <i
+                                          className="fa fa-anchor"
+                                          aria-hidden="true"
+                                        ></i>
+                                      </a>
+                                    )}
+                                  {this.state.expert.googleURL &&
+                                    this.state.expert.googleURL !== null &&
+                                    this.state.expert.googleURL !== undefined &&
+                                    this.state.expert.googleURL !== "" && (
+                                      <a
+                                        target="_blank"
+                                        href={
+                                          this.state.expert.googleURL
+                                            ? this.state.expert.googleURL
+                                            : "#"
+                                        }
+                                        title="google"
+                                        rel="noreferrer"
+                                      >
+                                        <i
+                                          className="fa fa-google"
+                                          aria-hidden="true"
+                                        ></i>
+                                      </a>
+                                    )}
+                                  {this.state.expert.youtubeURL &&
+                                    this.state.expert.youtubeURL !== null &&
+                                    this.state.expert.youtubeURL !==
+                                      undefined &&
+                                    this.state.expert.youtubeURL !== "" && (
+                                      <a
+                                        target="_blank"
+                                        href={
+                                          this.state.expert.youtubeURL
+                                            ? this.state.expert.youtubeURL
+                                            : "#"
+                                        }
+                                        title="youtube"
+                                        rel="noreferrer"
+                                      >
+                                        <i
+                                          className="fa fa-youtube"
+                                          aria-hidden="true"
+                                        ></i>
+                                      </a>
+                                    )}
+                                  {this.state.expert.soundcloudURL &&
+                                    this.state.expert.soundcloudURL != null &&
+                                    this.state.expert.soundcloudURL !==
+                                      undefined &&
+                                    this.state.expert.soundcloudURL !== "" && (
+                                      <a
+                                        target="_blank"
+                                        href={
+                                          this.state.expert.soundcloudURL
+                                            ? this.state.expert.soundcloudURL
+                                            : "#"
+                                        }
+                                        title="soundcloud"
+                                        rel="noreferrer"
+                                      >
+                                        <i
+                                          className="fa fa-soundcloud"
+                                          aria-hidden="true"
+                                        ></i>
+                                      </a>
+                                    )}
+                                  {this.state.expert.facebookURL === "" &&
+                                    this.state.expert.twitterURL === "" &&
+                                    this.state.expert.linkedinURL === "" &&
+                                    this.state.expert.instagramURL === "" &&
+                                    this.state.expert.snapchatURL === "" &&
+                                    this.state.expert.websiteURL === "" &&
+                                    this.state.expert.googleURL === "" &&
+                                    "No Social Links Available Yet"}
+                                </dd>
                               </div>
                               {endorsements_render !== "undefined" &&
                               endorsements_render !== "" &&
@@ -1969,13 +2200,10 @@ class ViewExpert extends Component {
 
                     {/* comments */}
                     <div className="comment list">
-                      
                       {this.state.comments.map((item, index) => (
                         <div key={index}>
                           <img
-                            src={ Image_URL +
-                              item.users[0].profileImage
-                            }
+                            src={Image_URL + item.users[0].profileImage}
                             height="50px"
                             width="50px"
                             alt=""

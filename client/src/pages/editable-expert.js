@@ -138,7 +138,9 @@ class ViewExpert extends Component {
       profile_image: "",
       editable: "true",
       file: "",
+      resumeFile: "",
       base64_image: "",
+      base64_file: "",
       submit_disabled: "",
       comments: [],
       instagramURL: "",
@@ -265,6 +267,19 @@ class ViewExpert extends Component {
     );
   };
 
+    getBase64Second = (file) => {
+    var reader = new FileReader();
+    reader.readAsDataURL(file);
+    var temp = "";
+    reader.onload = function () {
+      temp = reader.result;
+    };
+    setTimeout(
+      () => this.setState({ base64_file: temp }),
+      1500
+    );
+  };
+
   handleInputChange = (event) => {
     let newState = { ...this.state };
     newState[event.target.name] = event.target.value;
@@ -279,9 +294,13 @@ class ViewExpert extends Component {
   };
 
   onChangeFile(e) {
-    this.setState({ submit_disabled: true });
-    this.getBase64(e.target.files[0]);
-    this.setState({ file: e.target.files[0] });
+    const name = e.target.name;
+    if (name === "file") {
+      this.getBase64(e.target.files[0]);
+    } else {
+      this.getBase64Second(e.target.files[0]);
+    }
+    this.setState({ [e.target.name]: e.target.files[0] });
   }
 
   upload = () => {
@@ -470,6 +489,7 @@ class ViewExpert extends Component {
   };
 
   saveChanges = () => {
+
     if (this.state.submit_disabled === true) {
       console.log("submit is disabled");
       return false;
@@ -506,6 +526,11 @@ class ViewExpert extends Component {
       updated_focus_of_experties: updated_focus_of_experties,
       profileImage: profileImage,
       file: this.state.base64_image,
+      resume: this.state.base64_file,
+      files: {
+        profile: this.state.file,
+        resume: this.state.resumeFile,
+      },
       instagramURL: this.state.instagramURL,
       linkedinURL: this.state.linkedinURL,
       twitterURL: this.state.twitterURL,
@@ -513,6 +538,7 @@ class ViewExpert extends Component {
       websiteURL: this.state.websiteURL,
       youtubeURL: this.state.youtubeURL,
     };
+
 
     return axios
       .post(`${API_URL}/userExpertUpdate`, request_array, {
@@ -538,7 +564,7 @@ class ViewExpert extends Component {
           console.log("----here in success ---");
           console.log(response.data);
           console.log("----here in success 2---");
-
+          this.props.history.push("/profile")
           this.setState({
             updated_name:
               response.data.first_name + " " + response.data.last_name,
@@ -575,7 +601,6 @@ class ViewExpert extends Component {
 
           console.log("-----------reached here-----------");
 
-          window.location.href = final_url;
 
           this.setState({
             responseMsg:
@@ -679,6 +704,12 @@ class ViewExpert extends Component {
         this.setState({ expertEmail: res.data[0].email });
         this.setState({ onlineStatus: res.data[0].onlineStatus });
         this.setState({ profileImage: res.data[0].profileImage });
+        this.setState({ instagramURL: res.data[0].instagramURL });
+        this.setState({ linkedinURL: res.data[0].linkedinURL });
+        this.setState({ facebookURL: res.data[0].facebookURL });
+        this.setState({ twitterURL: res.data[0].twitterURL });
+        this.setState({ youtubeURL: res.data[0].youtubeURL });
+        this.setState({ websiteURL: res.data[0].websiteURL });
         this.setState({ resume_path: res.data[0].resume_path });
         this.setState({ university: res.data[0].university });
         this.setState({ expert, loading: true, error: null });
@@ -1113,7 +1144,7 @@ class ViewExpert extends Component {
                           type="file"
                           style={{ display: "none" }}
                           ref={(fileInput) => (this.fileInput = fileInput)}
-                          name="image"
+                          name="file"
                           className="form-control"
                           onChange={this.onChangeFile}
                         />
@@ -1359,7 +1390,7 @@ class ViewExpert extends Component {
                         </div>
                       </div>
                       <div className="col-md-9 col-sm-8">
-                        {this.state.editable === true ? (
+                        {true ? (
                           <div className="profile-detail">
                             <div className="name">
                               <dl className="dl-horizontal">
@@ -1789,16 +1820,18 @@ class ViewExpert extends Component {
                                 <div className="profile-bor-detail expert-endorsements">
                                   <dt>Upload Resume </dt>
                                   <dd>
-                                    {" "}
-                                    <input type="file" />{" "}
+                                    <input
+                                      type="file"
+                                      name="resumeFile"
+                                      className="form-control"
+                                      onChange={this.onChangeFile}
+                                    />
                                   </dd>
                                 </div>
                               </dl>
                               <button
                                 className="btn btn-info"
-                                onClick={() => {
-                                  this.saveChanges();
-                                }}
+                                onClick={this.saveChanges}
                               >
                                 Save Changes
                               </button>
@@ -2543,9 +2576,6 @@ class ViewExpert extends Component {
                     <div className="button-holder">
                       <button
                         className="btn btn-danger"
-                        onClick={() => {
-                          this.saveChanges();
-                        }}
                       >
                         Delete Account
                       </button>

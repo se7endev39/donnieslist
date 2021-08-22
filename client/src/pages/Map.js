@@ -27,7 +27,7 @@ var geojson = {
         title: "Los Angeles",
         state: "California",
         image:
-          "http://upload.wikimedia.org/wikipedia/commons/thumb/5/57/LA_Skyline_Mountains2.jpg/240px-LA_Skyline_Mountains2.jpg",
+          "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/LA_Skyline_Mountains2.jpg/240px-LA_Skyline_Mountains2.jpg",
         message: "Bar",
         iconSize: [35, 35],
       },
@@ -42,7 +42,7 @@ var geojson = {
         title: "Chicago",
         state: "Illinois",
         image:
-          "http://upload.wikimedia.org/wikipedia/commons/thumb/8/85/2008-06-10_3000x1000_chicago_skyline.jpg/240px-2008-06-10_3000x1000_chicago_skyline.jpg",
+          "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/2008-06-10_3000x1000_chicago_skyline.jpg/240px-2008-06-10_3000x1000_chicago_skyline.jpg",
         message: "Baz",
         iconSize: [35, 35],
       },
@@ -57,7 +57,7 @@ var geojson = {
         title: "San Francisco",
         state: "California",
         image:
-          "http://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/San_Francisco_skyline_from_Coit_Tower.jpg/240px-San_Francisco_skyline_from_Coit_Tower.jpg",
+          "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/San_Francisco_skyline_from_Coit_Tower.jpg/240px-San_Francisco_skyline_from_Coit_Tower.jpg",
         message: "Baz",
         iconSize: [35, 35],
       },
@@ -72,7 +72,7 @@ var geojson = {
         title: "Charlotte",
         state: "North Carolina",
         image:
-          "http://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Charlotte_skyline45647.jpg/222px-Charlotte_skyline45647.jpg",
+          "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Charlotte_skyline45647.jpg/222px-Charlotte_skyline45647.jpg",
         message: "Baz",
         iconSize: [35, 35],
       },
