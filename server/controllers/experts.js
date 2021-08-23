@@ -20,7 +20,7 @@ const ExpertStory = require('../models/expertstory');
 const User = require('../models/user');
 const UserReview = require('../models/userreview');
 const ExpertSignupToken = require('../models/expertsignuptoken');
-
+const path = require("path")
 const opentok = new OpenTok(config.opentok_apiKey, config.opentok_apiSecret);
 
 const transporter = nodemailer.createTransport({
@@ -1196,7 +1196,6 @@ exports.getExpertEmailFromToken = function (req, res, next) {
 
 exports.userExpertUpdate = async function (req, res, next) {
   let user_obj;
-  console.log(req.body);
   await User.findOne({ email: req.body.user_email }, (error, result) => {
     if (error) {
       console.log(error);
@@ -1208,7 +1207,25 @@ exports.userExpertUpdate = async function (req, res, next) {
   let filename = '';
   const d = new Date();
   const name = d.getTime();
+  const resumeName = d.getTime();
 
+  if (req.body.resume_path) {
+    filename = `${resumeName}.${"pdf"}`;
+    let base64Data = req.body.resume_path.replace(/^data:application\/pdf;base64,/, "");
+    let resume = req.body.files.resume;
+       fs.writeFile(
+         `../client/public/profile_images/${filename}`,
+         base64Data,
+         "base64",
+
+         (err, data) => {
+           if (err) {
+             console.log(err);
+           }
+           console.log(data);
+         }
+       );
+  }
   if (req.body.file) {
     let base64Data = '';
     let extension = '';
@@ -1248,6 +1265,8 @@ exports.userExpertUpdate = async function (req, res, next) {
     }
   }
 
+  console.log("reached")
+
   const firstName = req.body.updated_name.split(' ')[0] !== 'undefined' ? req.body.updated_name.split(' ')[0] : '';
   const lastName = req.body.updated_name.split(' ')[1] !== 'undefined' ? req.body.updated_name.split(' ')[1] : '';
 
@@ -1281,6 +1300,7 @@ exports.userExpertUpdate = async function (req, res, next) {
   updateuser.twitterURL = req.body.twitterURL;
   updateuser.websiteURL = req.body.websiteURL;
   updateuser.youtubeURL = req.body.youtubeURL;
+  updateuser.resume_path = resumeName + ".pdf";
   if (filename !== '') {
     updateuser.profileImage = filename;
   }

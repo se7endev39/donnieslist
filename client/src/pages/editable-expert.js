@@ -298,12 +298,28 @@ class ViewExpert extends Component {
 
   onChangeFile(e) {
     const name = e.target.name;
+    const getFileBase64 = async () => {
+      let reader = new FileReader();
+      reader.readAsDataURL(e.target.files[0]);
+      reader.onload = () => {
+        if (reader.result) {
+          this.setState({
+            resume_path: reader.result,
+          });
+      }
+      };
+      reader.onerror = function (error) {
+        console.log("Error: ", error);
+        return;
+      };
+    }
     if (name === "file") {
       this.getBase64(e.target.files[0]);
     } else {
-      this.getBase64Second(e.target.files[0]);
+       getFileBase64(e.target.files[0]);
     }
     this.setState({ [e.target.name]: e.target.files[0] });
+    
   }
 
   upload = () => {
@@ -497,7 +513,7 @@ class ViewExpert extends Component {
     }
   }
 
-  saveChanges = () => {
+  saveChanges = async () => {
 
     if (this.state.submit_disabled === true) {
       console.log("submit is disabled");
@@ -526,6 +542,7 @@ class ViewExpert extends Component {
       return false;
     }
 
+    
     const request_array = {
       user_email: this.state.currentUser.email,
       updated_name: updated_name,
@@ -546,9 +563,8 @@ class ViewExpert extends Component {
       twitterURL: this.state.twitterURL,
       facebookURL: this.state.facebookURL,
       websiteURL: this.state.websiteURL,
+      resume_path: this.state.resume_path
     };
-
-    console.log(this.state.youtubeURL)
 
     return axios
       .post(`${API_URL}/userExpertUpdate`, request_array, {
@@ -1173,14 +1189,23 @@ class ViewExpert extends Component {
                             // this.triggerFileUpload();
                           }}
                         >
-                          {
-                            this.state.editable &&
-                            <img 
-                              style={{position:"absolute", left: 40, bottom: 10, width: 30, height: 30, opacity: '80%', background: 'grey', borderRadius: '4px', padding: '1px 3px'}} 
+                          {this.state.editable && (
+                            <img
+                              style={{
+                                position: "absolute",
+                                left: 40,
+                                bottom: 10,
+                                width: 30,
+                                height: 30,
+                                opacity: "80%",
+                                background: "grey",
+                                borderRadius: "4px",
+                                padding: "1px 3px",
+                              }}
                               src="/img/camera-icon.png"
                               onClick={this.triggerFileUpload}
                             />
-                          }
+                          )}
                           {this.state.profileImage &&
                           this.state.profileImage !== null &&
                           this.state.profileImage !== undefined &&
@@ -1578,62 +1603,62 @@ class ViewExpert extends Component {
                                 <div className="profile-bor-detail expert-social-links">
                                   <dt>Social link </dt>
                                   <dd>
-                                      <div className="input-holder">
-                                        <input
-                                          onChange={this.handleInputChange}
-                                          name="facebookURL"
-                                          value={this.state.facebookURL}
-                                          placeholder="facebook"
-                                          className="form-control mt-10"
-                                        />
-                                      </div>
-                                      <div className="input-holder">
-                                        <input
-                                          onChange={this.handleInputChange}
-                                          name="twitterURL"
-                                          value={this.state.twitterURL}
-                                          placeholder="twitter"
-                                          className="form-control mt-10"
-                                        />
-                                      </div>
-                                      <div className="input-holder">
-                                        <input
-                                          onChange={this.handleInputChange}
-                                          name="linkedinURL"
-                                          value={this.state.linkedinURL}
-                                          placeholder="linkedin"
-                                          className="form-control mt-10"
-                                        />
-                                      </div>
-                                      <div className="input-holder">
-                                        <input
-                                          onChange={this.handleInputChange}
-                                          name="instagramURL"
-                                          value={this.state.instagramURL}
-                                          placeholder="instagram"
-                                          className="form-control mt-10"
-                                        />
-                                      </div>
-                                      <div className="input-holder">
-                                        <input
-                                          onChange={this.handleInputChange}
-                                          name="websiteURL"
-                                          value={this.state.websiteURL}
-                                          placeholder="website"
-                                          className="form-control mt-10"
-                                        />
-                                      </div>
-                                   
-                                      <div className="input-holder">
-                                        <input
-                                          onChange={this.handleInputChange}
-                                          name="youtubeURL"
-                                          value={this.state.youtubeURL}
-                                          placeholder="youtube"
-                                          className="form-control mt-10"
-                                        />
-                                      </div>
-                                      {/* <div className="input-holder">
+                                    <div className="input-holder">
+                                      <input
+                                        onChange={this.handleInputChange}
+                                        name="facebookURL"
+                                        value={this.state.facebookURL}
+                                        placeholder="facebook"
+                                        className="form-control mt-10"
+                                      />
+                                    </div>
+                                    <div className="input-holder">
+                                      <input
+                                        onChange={this.handleInputChange}
+                                        name="twitterURL"
+                                        value={this.state.twitterURL}
+                                        placeholder="twitter"
+                                        className="form-control mt-10"
+                                      />
+                                    </div>
+                                    <div className="input-holder">
+                                      <input
+                                        onChange={this.handleInputChange}
+                                        name="linkedinURL"
+                                        value={this.state.linkedinURL}
+                                        placeholder="linkedin"
+                                        className="form-control mt-10"
+                                      />
+                                    </div>
+                                    <div className="input-holder">
+                                      <input
+                                        onChange={this.handleInputChange}
+                                        name="instagramURL"
+                                        value={this.state.instagramURL}
+                                        placeholder="instagram"
+                                        className="form-control mt-10"
+                                      />
+                                    </div>
+                                    <div className="input-holder">
+                                      <input
+                                        onChange={this.handleInputChange}
+                                        name="websiteURL"
+                                        value={this.state.websiteURL}
+                                        placeholder="website"
+                                        className="form-control mt-10"
+                                      />
+                                    </div>
+
+                                    <div className="input-holder">
+                                      <input
+                                        onChange={this.handleInputChange}
+                                        name="youtubeURL"
+                                        value={this.state.youtubeURL}
+                                        placeholder="youtube"
+                                        className="form-control mt-10"
+                                      />
+                                    </div>
+                                    {/* <div className="input-holder">
                                         <input
                                           onChange={this.handleInputChange}
                                           name="soundcloudLink"
@@ -1651,8 +1676,21 @@ class ViewExpert extends Component {
                                 <div className="profile-bor-detail expert-endorsements">
                                   <dt>Upload Resume </dt>
                                   <dd>
+                                    { this.state.expert?.resume_path &&
+                                      <a
+                                        href={
+                                          `${Image_URL}` +
+                                          this.state.expert?.resume_path
+                                        }
+                                        title="Download"
+                                        target="_blank"
+                                        download
+                                        className="fa fa-file-pdf-o"
+                                      ></a>
+                                    }
                                     <input
                                       type="file"
+                                      accept=".pdf"
                                       name="resumeFile"
                                       className="form-control"
                                       onChange={this.onChangeFile}
@@ -2405,10 +2443,14 @@ class ViewExpert extends Component {
                       ))}
                     </div>
                     {/* comments */}
-                    <div style={{paddingTop: '10px', display: 'flex'}}>
+                    <div style={{ paddingTop: "10px", display: "flex" }}>
                       <button
                         className="btn btn-danger"
-                        style={{width: '25vw', margin: 'auto', padding: "10px 20px"}}
+                        style={{
+                          width: "25vw",
+                          margin: "auto",
+                          padding: "10px 20px",
+                        }}
                       >
                         Delete Account
                       </button>
