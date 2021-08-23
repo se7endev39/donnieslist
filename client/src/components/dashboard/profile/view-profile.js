@@ -2168,7 +2168,7 @@ class ViewExpert extends Component {
                         <div key={index}>
                           <LazyImage
                             src={Image_URL + item.users[0].profileImage}
-                            placeholder="/img/person.jpg"
+                            placeholder="/img/profile.png"
                             height="50px"
                             width="50px"
                             alt=""

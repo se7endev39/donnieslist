@@ -2569,7 +2569,7 @@ class ViewExpert extends Component {
                               "/expertCategorieses/" +
                               item.users[0].profileImage
                             }
-                            placeholder="/img/person.jpg"
+                            placeholder="/img/profile.png"
                             height="50px"
                             width="50px"
                             alt=""
