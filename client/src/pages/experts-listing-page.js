@@ -222,7 +222,7 @@ class ExpertsListingPage extends Component {
     }
     let imageStyle = {
       background: "#ffffff",
-      padding: 15,
+      padding: 0,
     };
 
     return (

@@ -229,6 +229,7 @@ exports.twitterSendJWTtoken = (req, res) => {
 //= =======================================
 exports.register = (req, res, next) => {
   // Check for registration errors
+  console.log(req.body)
   const { email } = req.body;
   const { firstName } = req.body;
   // const firstName = email.split('@')[0];
@@ -477,6 +478,7 @@ exports.verifyToken = function (req, res, next) {
 // Signup Expert Send Signup Link Route
 //= =======================================
 exports.signupExpertSendSignupLink = function (req, res, next) {
+  console.log(req.body)
   // Check for registration errors
   const { email } = req.body;
   const { expertemail } = req.body;

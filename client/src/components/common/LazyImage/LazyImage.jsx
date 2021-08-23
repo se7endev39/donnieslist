@@ -16,7 +16,9 @@ const LazyImage = ({ src, placeholder, ...restProps }) => {
         }
     }, [])
     return (
-        <img 
+        <img
+            width="400x"
+            style={{padding: 0}}
             src={currentSrc}
             { ...restProps }
         />

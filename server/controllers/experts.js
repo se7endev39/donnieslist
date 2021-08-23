@@ -1205,24 +1205,28 @@ exports.userExpertUpdate = async function (req, res, next) {
   });
 
   let filename = '';
+  let resumefilename;
   const d = new Date();
   const name = d.getTime();
-  const resumeName = d.getTime();
 
-  if (req.body.resume_path) {
-    let base64Data = req.body.resume_path.replace(/^data:application\/pdf;base64,/, "");
-       fs.writeFile(
-         `../client/public/profile_images/${resumeName}.pdf`,
-         base64Data,
-         "base64",
+  if (req.body.resume_path && req.body.files.resume !== "" && req.body.resume_path !== "") {
+    resumefilename = name + ".pdf";
+    let base64Data = req.body.resume_path.replace(
+      /^data:application\/pdf;base64,/,
+      ""
+    );
+    fs.writeFile(
+      `../client/public/profile_images/${resumefilename}`,
+      base64Data,
+      "base64",
 
-         (err, data) => {
-           if (err) {
-             console.log(err);
-           }
-           console.log(data);
-         }
-       );
+      (err, data) => {
+        if (err) {
+          console.log(err);
+        }
+        console.log(data);
+      }
+    );
   }
   if (req.body.file) {
     let base64Data = '';
@@ -1298,7 +1302,9 @@ exports.userExpertUpdate = async function (req, res, next) {
   updateuser.twitterURL = req.body.twitterURL;
   updateuser.websiteURL = req.body.websiteURL;
   updateuser.youtubeURL = req.body.youtubeURL;
-  updateuser.resume_path = resumeName + ".pdf";
+  if (resumefilename && req.body.resume_path && resumefilename !== "") {
+    updateuser.resume_path = resumefilename;
+  }
   if (filename !== '') {
     updateuser.profileImage = filename;
   }

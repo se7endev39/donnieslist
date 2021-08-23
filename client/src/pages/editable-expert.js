@@ -84,7 +84,6 @@ class ViewExpert extends Component {
       expert: "",
       firstName: "",
       lastName: "",
-      resume_path: "",
       expertEmail: "",
       sessionBtnText: "",
       loading: false,
@@ -553,7 +552,7 @@ class ViewExpert extends Component {
       twitterURL: this.state.twitterURL,
       facebookURL: this.state.facebookURL,
       websiteURL: this.state.websiteURL,
-      resume_path: this.state.resume_path,
+      resume_path: this.state?.resume_path,
     };
 
     return axios

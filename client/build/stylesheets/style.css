@@ -151,7 +151,7 @@ color: #494949;
 .comment-review p { margin: 0; }
 /**************/
 .view-all-wrap a { color: #3e9bf4; cursor: pointer; font-size: 16px; font-weight: 500; padding: 0; }
-.expert-img img { max-width: 100%; width: 100%; }.expert-img { position: relative; padding: 0 25px;}
+.expert-img img { max-width: 100%; width: 100%; }.expert-img { position: relative; padding: 0 0;}
 .review-outside { margin-bottom: 20px; }
 .expertise-inner ul.nav.nav-tabs li a { border: medium none; }
 .view-all-wrap { float: left; padding: 20px 0; width: 100%; }
