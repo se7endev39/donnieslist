@@ -541,13 +541,14 @@ class ViewExpert extends Component {
         resume: this.state.resumeFile,
       },
       instagramURL: this.state.instagramURL,
+      youtubeURL: this.state.youtubeURL,
       linkedinURL: this.state.linkedinURL,
       twitterURL: this.state.twitterURL,
       facebookURL: this.state.facebookURL,
       websiteURL: this.state.websiteURL,
-      youtubeURL: this.state.youtubeURL,
     };
 
+    console.log(this.state.youtubeURL)
 
     return axios
       .post(`${API_URL}/userExpertUpdate`, request_array, {

@@ -763,6 +763,21 @@ exports.createExpert = function (req, res, next) {
   });
 };
 
+exports.deleteExpertProfile = function (req, res, next) {
+  const { id } = req.params;
+  if (!req.params.id) {
+    res.status(422).send({
+      error: "Please choose expert slug",
+    });
+    return next();
+  }
+
+  user.findOneAndDelete({ _id: id }, () => {
+    res.status(200).json({
+      message: "deleted account "
+    })
+  })
+}
 /* API endpoint to render expert details */
 exports.getExpertDetail = function (req, res, next) {
   const { slug } = req.params;
@@ -790,8 +805,7 @@ exports.getExpertDetail = function (req, res, next) {
   },
     (err, expertsList) => {
       if (expertsList) {
-        // console.log('found');
-        // console.log(expertsList);
+        console.log(expertsList);
         res.json(expertsList);
       } else {
         // console.log('not found');
