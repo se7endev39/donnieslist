@@ -6,8 +6,4 @@ node_modules
 .vscode
 build/
 public/
-<<<<<<< HEAD
 *.zip
-=======
-*.zip
->>>>>>> b314f1d28aedf97b031dc35e8a7bbb6db526614f

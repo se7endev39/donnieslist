@@ -771,10 +771,10 @@ exports.deleteExpertProfile = function (req, res, next) {
     });
     return next();
   }
-
-  user.findOneAndDelete({ _id: id }, () => {
+  User.findByIdAndDelete({ _id: id }, () => {
     res.status(200).json({
-      message: "deleted account "
+      message: "deleted account ",
+      success: true
     })
   })
 }
@@ -1320,6 +1320,14 @@ exports.userExpertUpdate = async function (req, res, next) {
       profile_image: company_obj.profileImage,
       user_data: company_obj,
       message: 'Data updated Successfully'
+    });
+  });
+};
+
+exports.userExpertDelete = async function (req, res, next) {
+  User.findByIdAndDelete({ _id: req.params.id }, () => {
+    return res.status(200).json({
+      success: true,
     });
   });
 };

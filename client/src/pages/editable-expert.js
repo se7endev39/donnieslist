@@ -268,28 +268,25 @@ class ViewExpert extends Component {
     );
   };
 
-    getBase64Second = (file) => {
+  getBase64Second = (file) => {
     var reader = new FileReader();
     reader.readAsDataURL(file);
     var temp = "";
     reader.onload = function () {
       temp = reader.result;
     };
-    setTimeout(
-      () => this.setState({ base64_file: temp }),
-      1500
-    );
+    setTimeout(() => this.setState({ base64_file: temp }), 1500);
   };
 
   handleInputChange = (event) => {
     let newState = { ...this.state };
     newState[event.target.name] = event.target.value;
-    console.log(newState)
+    console.log(newState);
     this.setState(newState);
   };
 
   triggerFileUpload = () => {
-    console.log(this.state)
+    console.log(this.state);
     if (this.state.editable === true) {
       this.fileInput.click();
     }
@@ -306,20 +303,19 @@ class ViewExpert extends Component {
           this.setState({
             resume_path: reader.result,
           });
-      }
+        }
       };
       reader.onerror = function (error) {
         console.log("Error: ", error);
         return;
       };
-    }
+    };
     if (name === "file") {
       this.getBase64(e.target.files[0]);
     } else {
-       getFileBase64(e.target.files[0]);
+      getFileBase64(e.target.files[0]);
     }
     this.setState({ [e.target.name]: e.target.files[0] });
-    
   }
 
   upload = () => {
@@ -507,14 +503,9 @@ class ViewExpert extends Component {
       });
   };
 
-  deleteAccount = () => {
-    if( global.confirm('Do you really want to delete your account?') ){
-
-    }
-  }
+ 
 
   saveChanges = async () => {
-
     if (this.state.submit_disabled === true) {
       console.log("submit is disabled");
       return false;
@@ -542,7 +533,6 @@ class ViewExpert extends Component {
       return false;
     }
 
-    
     const request_array = {
       user_email: this.state.currentUser.email,
       updated_name: updated_name,
@@ -563,7 +553,7 @@ class ViewExpert extends Component {
       twitterURL: this.state.twitterURL,
       facebookURL: this.state.facebookURL,
       websiteURL: this.state.websiteURL,
-      resume_path: this.state.resume_path
+      resume_path: this.state.resume_path,
     };
 
     return axios
@@ -590,7 +580,7 @@ class ViewExpert extends Component {
           console.log("----here in success ---");
           console.log(response.data);
           console.log("----here in success 2---");
-          this.props.history.push("/profile")
+          this.props.history.push("/profile");
           this.setState({
             updated_name:
               response.data.first_name + " " + response.data.last_name,
@@ -627,7 +617,6 @@ class ViewExpert extends Component {
 
           console.log("-----------reached here-----------");
 
-
           this.setState({
             responseMsg:
               "<div class='alert alert-success text-center'>" +
@@ -644,6 +633,41 @@ class ViewExpert extends Component {
         });
       });
   };
+
+deleteAccount = async () => {
+ if (global.confirm("Do you really want to delete your account?")) {
+    return axios
+      .delete(`${API_URL}/userExpert/${this.state.currentUser._id}`, {
+        // headers: { Authorization: cookie.load('token') },
+      })
+      .then((response) => {
+        if (!response.data.success) {
+          this.setState({
+            responseMsg:
+              "<div class='alert alert-danger text-center'>" +
+              response.data.error +
+              "</div>",
+          });
+
+          window.$(".form-control").val("");
+          window.$("form").each(function () {
+            this.reset();
+          });
+        }
+
+        if (response.data.success) {
+          this.props.history.push("/logout");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        this.setState({
+          responseMsg:
+            "<div class='alert alert-danger text-center'>" + error + "</div>",
+        });
+      });
+  
+  }};
 
   // for image upload
 
@@ -692,10 +716,10 @@ class ViewExpert extends Component {
       });
     } else {
       // if (localStorage.getItem("editable") === "true") {
-        this.setState({
-          editable: true,
-        });
-        // localStorage.setItem("editable", "");
+      this.setState({
+        editable: true,
+      });
+      // localStorage.setItem("editable", "");
       // } else {
       //   this.setState({
       //     editable: "",
@@ -1676,7 +1700,7 @@ class ViewExpert extends Component {
                                 <div className="profile-bor-detail expert-endorsements">
                                   <dt>Upload Resume </dt>
                                   <dd>
-                                    { this.state.expert?.resume_path &&
+                                    {this.state.expert?.resume_path && (
                                       <a
                                         href={
                                           `${Image_URL}` +
@@ -1687,7 +1711,7 @@ class ViewExpert extends Component {
                                         download
                                         className="fa fa-file-pdf-o"
                                       ></a>
-                                    }
+                                    )}
                                     <input
                                       type="file"
                                       accept=".pdf"
@@ -2451,6 +2475,7 @@ class ViewExpert extends Component {
                           margin: "auto",
                           padding: "10px 20px",
                         }}
+                        onClick={this.deleteAccount}
                       >
                         Delete Account
                       </button>

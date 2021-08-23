@@ -192,6 +192,7 @@ module.exports = (app) => {
 
   apiRoutes.post('/userExpert/', ExpertsController.userExpert);
   apiRoutes.post('/userExpertUpdate/', ExpertsController.userExpertUpdate);
+  apiRoutes.delete('/userExpert/:id', ExpertsController.userExpertDelete);
 
   apiRoutes.post('/upload/', ExpertsController.upload);
   apiRoutes.get(
