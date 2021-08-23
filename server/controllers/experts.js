@@ -1210,11 +1210,9 @@ exports.userExpertUpdate = async function (req, res, next) {
   const resumeName = d.getTime();
 
   if (req.body.resume_path) {
-    filename = `${resumeName}.${"pdf"}`;
     let base64Data = req.body.resume_path.replace(/^data:application\/pdf;base64,/, "");
-    let resume = req.body.files.resume;
        fs.writeFile(
-         `../client/public/profile_images/${filename}`,
+         `../client/public/profile_images/${resumeName}.pdf`,
          base64Data,
          "base64",
 
