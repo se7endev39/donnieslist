@@ -17,3 +17,5 @@
     font-size: 20px;
     margin-left: 10px;
 }
+
+.expert-image img { max-width: 100%; width: 100%; }.expert-image { position: relative; padding: 0 0;}

@@ -1091,7 +1091,7 @@ class ViewExpert extends Component {
                           Upload
                         </button>
 
-                        <div className="expert-img change_image">
+                        <div className="expert-image change_image">
                           {this.state.profileImage &&
                           this.state.profileImage !== null &&
                           this.state.profileImage !== undefined &&

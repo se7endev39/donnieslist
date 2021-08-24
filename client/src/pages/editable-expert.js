@@ -1207,7 +1207,7 @@ deleteAccount = async () => {
                         </button>
 
                         <div
-                          className="expert-img change_image"
+                          className="expert-image change_image"
                           onClick={() => {
                             // this.triggerFileUpload();
                           }}
