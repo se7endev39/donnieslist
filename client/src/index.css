@@ -19,3 +19,5 @@
 }
 
 .expert-image img { max-width: 100%; width: 100%; }.expert-image { position: relative; padding: 0 0;}
+.expert-image { margin-bottom: 20px; }
+.expert-image i { position: absolute; bottom: 10px; right: 35px;}
