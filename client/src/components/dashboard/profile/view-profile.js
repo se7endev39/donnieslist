@@ -661,6 +661,7 @@ class ViewExpert extends Component {
         this.setState({ resume_path: res.data[0].resume_path });
         this.setState({ university: res.data[0].university });
         this.setState({ expert, loading: true, error: null });
+        this.setState({ portfolio: res.data[0].portfolio });
 
         this.setState({
           first_name:

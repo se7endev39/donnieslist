@@ -5,10 +5,12 @@ import axios from 'axios'
 import { API_URL, Image_URL } from '../../../constants/api';
 import { getBase64 } from '../../../utils'
 import LazyImage from '../LazyImage';
+import {useDropzone} from 'react-dropzone';
 
 const Media = ({ type, src, width, height, goPrev, goNext, choosePhoto, chooseYoutube, chooseVideo, editable }) => {
+    const [dropZone, setDropZone] = useState(false)
     return (
-        <div style={{position: 'relative'}}>
+        <div style={{position: 'relative'}} onDragEnter={() => setDropZone(true)} onDrop={() => setDropZone(false)}>
             {
                 type == "img" ?
                     (
@@ -44,6 +46,13 @@ const Media = ({ type, src, width, height, goPrev, goNext, choosePhoto, chooseYo
                     )
                 :
                 (<div></div>)
+            }
+            {
+                dropZone && (
+                    <div className="overlay">
+                        Drop file here.
+                    </div>
+                )
             }
             <button className="control_btn prev_btn" onClick={goPrev}>{"<"}</button>
             <button className="control_btn next_btn" onClick={goNext}>{">"}</button>
@@ -93,11 +102,37 @@ const Carousel = React.forwardRef(({ sources: sources_orig, width, height, edita
     const file_img_ref = useRef(null)
     const file_video_ref = useRef(null)
     const pageCount = 3
+    const {
+        acceptedFiles,
+        fileRejections,
+        getRootProps,
+        getInputProps
+    } = useDropzone({
+    accept: 'image/jpeg, image/png, video/mp4',
+    maxFiles: 1
+    });
+
     useEffect(() => {
         if(sources_orig != sources){
             setSources(sources_orig)
         }
     }, [sources_orig])
+    
+
+    useEffect(async () => {
+        if(acceptedFiles.length == 0) return
+        const file = acceptedFiles[0]
+        let type = "img"
+        if(file.name.endsWith(".mp4")){
+            type = "video"
+        }
+        let src = await uploadFile(file)
+        if(!src) return
+        let newSources = [...sources]
+        newSources[index] = {type, src}
+        setSources(newSources)
+    }, [acceptedFiles])
+
     const goNext = () => {
         setIndex((index+1) % pageCount)
     }    
@@ -145,18 +180,20 @@ const Carousel = React.forwardRef(({ sources: sources_orig, width, height, edita
 
     return (
         <div style={{position: 'relative'}}>
-            <Media 
-                { ...sources2draw }
-                width={width ?? "100%"}
-                height={height}
-                goNext={goNext}
-                goPrev={goPrev}
-                choosePhoto={choosePhoto}
-                chooseVideo={chooseVideo}
-                chooseYoutube={chooseYoutube}
-                editable={editable}
-            >
-            </Media>
+            <div {...getRootProps({ className: 'dropzone' })}>
+                <Media 
+                    { ...sources2draw }
+                    width={width ?? "100%"}
+                    height={height}
+                    goNext={goNext}
+                    goPrev={goPrev}
+                    choosePhoto={choosePhoto}
+                    chooseVideo={chooseVideo}
+                    chooseYoutube={chooseYoutube}
+                    editable={editable}
+                >
+                </Media>
+            </div>
             <input ref={file_img_ref} style={{display: 'none'}} type='file' onChange={updatePhoto} accept="image/*"/>
             <input ref={file_video_ref} style={{display: 'none'}} type='file' onChange={updateVideo} accept="video/mp4"/>
         </div>
