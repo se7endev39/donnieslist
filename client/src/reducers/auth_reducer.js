@@ -12,6 +12,8 @@ const INITIAL_STATE = {
   error: "",
   message: "",
   content: "",
+  resetMessage: "",
+  resetErrorMessage: "",
   authenticated: false,
 };
 
@@ -43,7 +45,8 @@ export default function authReducer(state = INITIAL_STATE, action) {
     case RESET_PASSWORD_REQUEST:
       return {
         ...state,
-        message: action.payload.message,
+        resetMessage: action.payload.message,
+        resetErrorMessage: action.payload.error,
       };
     case PROTECTED_TEST:
       return {

@@ -11,7 +11,7 @@ const form = reduxForm({
 
 const renderField = (field) => (
   <div>
-    <input className="form-control" {...field.input} />
+    <input type="password" className="form-control" {...field.input} />
     {field.touched && field.error && <div className="error">{field.error}</div>}
   </div>
 );
@@ -58,35 +58,41 @@ class ResetPassword extends Component {
     const { handleSubmit } = this.props;
 
     return (
-      <form
-        id="reset_form"
-        onSubmit={handleSubmit(this.handleFormSubmit.bind(this))}
-      >
-        <fieldset className="form-group">
-          <label>New Password:</label>
-          <Field name="password" component={renderField} type="password" />
-        </fieldset>
-        <fieldset className="form-group">
-          <label>Confirm New Password:</label>
-          <Field
-            name="passwordConfirm"
-            component={renderField}
-            type="password"
-          />
-          {/* {passwordConfirm.touched && passwordConfirm.error && <div className="error">{passwordConfirm.error}</div>} */}
-        </fieldset>
+      <div className="reset_form">
+        <form
+          id="reset_form"
+          onSubmit={handleSubmit(this.handleFormSubmit.bind(this))}
+        >
+          <fieldset className="form-group">
+            <label>New Password:</label>
+            <Field name="password" component={renderField} type="password" />
+          </fieldset>
+          <fieldset className="form-group">
+            <label>Confirm New Password:</label>
+            <Field
+              name="passwordConfirm"
+              component={renderField}
+              type="password"
+            />
+            {/* {passwordConfirm.touched && passwordConfirm.error && <div className="error">{passwordConfirm.error}</div>} */}
+          </fieldset>
 
-        {this.renderAlert()}
-        <button action="submit" className="btn btn-primary">
-          Change Password
-        </button>
-      </form>
+          {this.renderAlert()}
+          <button action="submit" className="btn btn-primary">
+            Change Password
+          </button>
+        </form>
+      </div>
     );
   }
 }
 
 function mapStateToProps(state) {
-  return { errorMessage: state.auth.error, message: state.auth.resetMessage };
+  console.log(state);
+  return {
+    errorMessage: state.auth.resetErrorMessage,
+    message: state.auth.resetMessage,
+  };
 }
 
 export default connect(mapStateToProps, { resetPassword })(withRouter(form(ResetPassword)));

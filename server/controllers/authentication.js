@@ -346,7 +346,7 @@ exports.forgotPassword = (req, res, next) => {
     // If user is not found, return error
     if (err || existingUser == null) {
       console.log(`\nerr: ${err}\n existingUser: ${JSON.stringify(existingUser)}`);
-      res.status(422).json({ error: 'Your request could not be processed as entered. Please try again.' });
+      res.status(422).json({ succcess: false,  error: 'Your request could not be processed as entered. Please try again.' });
       return next(err);
     }
 
@@ -409,7 +409,13 @@ exports.forgotPassword = (req, res, next) => {
         // send mail with node mailer testing..
 
         console.log('1st controller forgot password');
-        return res.status(200).json({ message: 'Please check your email for the link to reset your password.' });
+        return res
+          .status(200)
+          .json({
+            succcess: true,
+            message:
+              "Please check your email for the link to reset your password.",
+          });
       });
     });
   });
@@ -424,7 +430,7 @@ exports.verifyToken = function (req, res, next) {
   User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, async (err, resetUser) => {
     // If query returned no results, token expired or was invalid. Return error.
     if (!resetUser) {
-      res.status(422).json({ error: 'Your token has expired. Please attempt to reset your password again.' });
+      res.status(422).json({ success: false, error: 'Your token has expired. Please attempt to reset your password again.' });
     }
     else {
       // Otherwise, save new password and clear resetToken from database
