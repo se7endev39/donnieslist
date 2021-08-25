@@ -91,7 +91,8 @@ const UserSchema = new Schema({
   audioCallAvailability: { type: Boolean, default: true },
   videoSessionAvailability: { type: Boolean, default: true },
   expertSessionAvailability: { type: Boolean, default: false },
-  isUserJoinVideoSession: { type: Boolean, default: false }
+  isUserJoinVideoSession: { type: Boolean, default: false },
+  portfolio: { type: Array, default: [] }
 },
   {
     timestamps: true

@@ -8,6 +8,7 @@ const router = require('./router');
 
 const socketEvents = require('./socketEvents');
 const config = require('./config/main');
+const path = require('path')
 
 // Database Setup
 
@@ -50,6 +51,8 @@ socketEvents(io);
 // Set static file location for production
 // app.use(express.static(__dirname + '/public'));
 app.use(express.static('public'));
+app.use('/public', express.static(path.join(__dirname, '../client/public')));
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.set('view engine', 'ejs');
 
 // Setting up basic middleware for all Express requests

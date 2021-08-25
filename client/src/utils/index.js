@@ -3,7 +3,7 @@ import {
     DEVELOPMENT_URL, 
     PRODUCTION_URL, 
     STAGING_URL, TEST_URL
-} from './constants/apis';
+} from '../constants/api';
 
 const environmentUrl = {
     test: TEST_URL,
@@ -84,3 +84,13 @@ export const CreateAxios = () => new Promise(resolve => {
         resolve(axios);
     });
 });
+
+export const getBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+        var reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function () {
+          resolve(reader.result)
+        };
+    })
+  };

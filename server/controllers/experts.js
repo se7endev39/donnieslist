@@ -1180,9 +1180,29 @@ exports.getExpertEmailFromToken = function (req, res, next) {
   });
 };
 
+function base64ToFile(base64){
+  if(!base64) return null
+  const name = (new Date()).getTime();
+  let base64Data = '';
+  let extension = '';  
+  if (base64.split(',')[0].includes('png') === true) {
+    extension = 'png';
+  } else if (base64.split(',')[0].includes('jpg') === true) {
+    extension = 'jpg';
+  } else if (base64.split(',')[0].includes('jpeg') === true) {
+    extension = 'jpeg';    
+  } else {
+    return null
+  }
+  base64Data = base64.replace(/^data:image\/[a-z]+;base64,/, '');
+  filename = `${name}.${extension}`;
+  fs.writeFileSync(`../client/public/profile_images/${filename}`, base64Data, 'base64');
+  return filename
+}
+
 exports.userExpertUpdate = async function (req, res, next) {
   let user_obj;
-  console.log(req.body);
+  //console.log(req.body);
   await User.findOne({ email: req.body.user_email }, (error, result) => {
     if (error) {
       console.log(error);
@@ -1191,48 +1211,7 @@ exports.userExpertUpdate = async function (req, res, next) {
     }
   });
 
-  let filename = '';
-  const d = new Date();
-  const name = d.getTime();
-
-  if (req.body.file) {
-    let base64Data = '';
-    let extension = '';
-    if (req.body.file.split(',')[0].includes('png') === true) {
-      extension = 'png';
-      base64Data = req.body.file.replace(/^data:image\/png;base64,/, '');
-
-      filename = `${name}.${extension}`;
-      fs.writeFile(`../client/public/profile_images/${filename}`, base64Data, 'base64', (err, data) => {
-        if (err) {
-          console.log(err);
-        }
-        console.log(data);
-      });
-    } else if (req.body.file.split(',')[0].includes('jpg') === true) {
-      extension = 'jpg';
-      base64Data = req.body.file.replace(/^data:image\/jpg;base64,/, '');
-
-      filename = `${name}.${extension}`;
-      fs.writeFile(`../client/public/profile_images/${filename}`, base64Data, 'base64', (err, data) => {
-        if (err) {
-          console.log(err);
-        }
-        console.log(data);
-      });
-    } else if (req.body.file.split(',')[0].includes('jpeg') === true) {
-      base64Data = req.body.file.replace(/^data:image\/jpeg;base64,/, '');
-      extension = 'jpeg';
-
-      filename = `${name}.${extension}`;
-      fs.writeFile(`../client/public/profile_images/${filename}`, base64Data, 'base64', (err, data) => {
-        if (err) {
-          console.log(err);
-        }
-        console.log(data);
-      });
-    }
-  }
+  let filename = base64ToFile(req.body.file)
 
   const firstName = req.body.updated_name.split(' ')[0] !== 'undefined' ? req.body.updated_name.split(' ')[0] : '';
   const lastName = req.body.updated_name.split(' ')[1] !== 'undefined' ? req.body.updated_name.split(' ')[1] : '';
@@ -1270,6 +1249,12 @@ exports.userExpertUpdate = async function (req, res, next) {
   if (filename !== '') {
     updateuser.profileImage = filename;
   }
+  updateuser.portfolio = req.body.portfolio.map((media => (
+    media.type == "youtube" || media.type == "video"
+      ? media
+      : { type: media.type, src: base64ToFile(media.src) ?? media.src }
+  )))
+  console.log(updateuser)
 
   User.findOneAndUpdate({ _id: user_obj._id }, updateuser, { new: true }, (err4, company_obj) => {
     if (err4) {
@@ -1653,3 +1638,9 @@ exports.upload = function (req, res, next) {
     });
   });
 };
+
+exports.uploadFile = (req, resp) => {
+  const fileinfo = req.file
+  console.log(fileinfo, "uploaded")
+  resp.send({type: "success", filename: fileinfo.filename})
+}

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 
-const LazyImage = ({ src, placeholder, ...restProps }) => {
+const LazyImage = ({ src, placeholder, background, ...restProps }) => {
     const [currentSrc, setCurrentSrc] = useState(placeholder || src)
 
     const onLoad = useCallback(() => {
@@ -14,10 +14,20 @@ const LazyImage = ({ src, placeholder, ...restProps }) => {
         return () => {
             img.removeEventListener('load', onLoad)
         }
-    }, [])
+    }, [src])
+    if( !placeholder && !currentSrc  && background )
+        return (
+            <div
+                style={{background}}
+                {...restProps}
+            >
+                This is placeholder
+            </div>
+        )
     return (
         <img 
             src={currentSrc}
+            style={{objectFit: 'cover'}}
             { ...restProps }
         />
     )

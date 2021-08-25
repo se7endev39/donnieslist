@@ -43,6 +43,9 @@ const storage = multer.diskStorage({
   }
 });
 
+const uploader = multer({ dest: '../client/public/profile_images' })
+// const uploader = multer({ dest: '../uploads' })
+
 // var upload = multer({ storage : storage}).array('ProfileImage',2);
 const upload = multer({ storage }).fields([{ name: 'RelatedImages1', maxCount: 1 }]); // upload Midleware
 
@@ -193,7 +196,7 @@ module.exports = (app) => {
   apiRoutes.post('/userExpert/', ExpertsController.userExpert);
   apiRoutes.post('/userExpertUpdate/', ExpertsController.userExpertUpdate);
 
-  apiRoutes.post('/upload/', ExpertsController.upload);
+  apiRoutes.post('/uploadFile', uploader.single("file"), ExpertsController.uploadFile);
   apiRoutes.get(
     '/getExpertStoriesBasedOnRole/:expertRole',
     ExpertsController.getExpertStoriesBasedOnRole
@@ -204,6 +207,8 @@ module.exports = (app) => {
   apiRoutes.post('/addEndorsements', ExpertsController.addEndorsements);
   apiRoutes.post('/getEndorsements', ExpertsController.getEndorsements);
   apiRoutes.post('/getMyExpertsListing', ExpertsController.getMyExpertsListing);
+
+  apiRoutes.post('/upload')
   //= ========================
   // Session Routes
   //= ========================

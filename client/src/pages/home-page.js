@@ -103,7 +103,7 @@ class HomePage extends Component {
                                     alt=""
                                   />
                                 ) : (
-                                  <img src="/img/pro1.png" alt="" />
+                                  <img width="100" src="/img/profile.png" alt="" />
                                 )}
                                 {this.getOnlineStatus(post.onlineStatus) && (
                                   <i

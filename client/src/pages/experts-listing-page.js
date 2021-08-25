@@ -9,6 +9,7 @@ import { API_URL, Image_URL } from "../constants/api";
 import { sendEmail, isLoggedIn } from "../actions/expert";
 import NotificationModal from "./notification-modal";
 import { setPage } from "../actions/setPage";
+import LazyImage from '../components/common/LazyImage'
 
 class ExpertsListingPage extends Component {
   /**
@@ -291,18 +292,19 @@ class ExpertsListingPage extends Component {
                             <div className="row">
                               <div className="col-sm-2" style={imageStyle}>
                                 <div className="img-exper">
-                                  {/*post.profileImage && post.profileImage!=null && post.profileImage!=undefined && post.profileImage!=""?<img width="100" height="64" src={"http://localhost:3000"+post.profileImage} />:<img src="/img/pro1.png"/>*/}
+                                  {/*post.profileImage && post.profileImage!=null && post.profileImage!=undefined && post.profileImage!=""?<img width="100" height="64" src={"http://localhost:3000"+post.profileImage} />:<img src="/img/profile.png"/>*/}
                                   {post.profileImage &&
                                   post.profileImage !== null &&
                                   post.profileImage !== undefined &&
                                   post.profileImage !== "" ? (
-                                    <img
+                                    <LazyImage
                                       width="100"
                                       alt=""
                                       src={`${Image_URL}` + post.profileImage}
+                                      placeholder="/img/profile.png"
                                     />
                                   ) : (
-                                    <img src="/img/pro1.png" alt="" />
+                                    <img width="100" src="/img/profile.png" alt="" />
                                   )}
                                   {post.onlineStatus === "ONLINE" && (
                                     <i
@@ -423,7 +425,7 @@ class ExpertsListingPage extends Component {
                             <div className="row">
                               <div className="col-sm-2" style={imageStyle}>
                                 <div className="img-exper">
-                                  {/*post.profileImage && post.profileImage!=null && post.profileImage!=undefined && post.profileImage!=""?<img width="100" height="64" src={"http://localhost:3000"+post.profileImage} />:<img src="/img/pro1.png"/>*/}
+                                  {/*post.profileImage && post.profileImage!=null && post.profileImage!=undefined && post.profileImage!=""?<img width="100" height="64" src={"http://localhost:3000"+post.profileImage} />:<img src="/img/profile.png"/>*/}
                                   {post.profileImage &&
                                   post.profileImage != null &&
                                   post.profileImage !== undefined &&
@@ -434,7 +436,7 @@ class ExpertsListingPage extends Component {
                                       alt=""
                                     />
                                   ) : (
-                                    <img src="/img/pro1.png" alt="" />
+                                    <img width="100" src="/img/profile.png" alt="" />
                                   )}
                                   {this.getOnlineStatus(post.onlineStatus) && (
                                     <i
@@ -563,7 +565,7 @@ class ExpertsListingPage extends Component {
                             <div className="row">
                               <div className="col-sm-2" style={imageStyle}>
                                 <div className="img-exper">
-                                  {/*post.profileImage && post.profileImage!=null && post.profileImage!=undefined && post.profileImage!=""?<img width="100" height="64" src={"http://localhost:3000"+post.profileImage} />:<img src="/img/pro1.png"/>*/}
+                                  {/*post.profileImage && post.profileImage!=null && post.profileImage!=undefined && post.profileImage!=""?<img width="100" height="64" src={"http://localhost:3000"+post.profileImage} />:<img src="/img/profile.png"/>*/}
                                   {post.profileImage &&
                                   post.profileImage !== null &&
                                   post.profileImage !== undefined &&
@@ -574,7 +576,7 @@ class ExpertsListingPage extends Component {
                                       alt=""
                                     />
                                   ) : (
-                                    <img src="/img/pro1.png" alt="" />
+                                    <img width="100" src="/img/profile.png" alt="" />
                                   )}
                                   {this.getOnlineStatus(post.onlineStatus) && (
                                     <i

@@ -1,10 +1,11 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { Component } from "react";
+import React, { Component, createRef } from "react";
 import { NavLink, withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import axios from "axios";
 import { Field, reduxForm } from "redux-form";
-import Carousel from "react-image-carousel";
+// import Carousel from "react-image-carousel";
+import Carousel from "../components/common/Carousel";
 import { Cookies, withCookies } from "react-cookie";
 import { Modal, Button } from "react-bootstrap";
 import { instanceOf } from "prop-types";
@@ -150,6 +151,7 @@ class ViewExpert extends Component {
       youtubeURL: "",
       websiteURL: "",
       twitterURL: "",
+      portfolio: []
     };
 
     this.onChangeFile = this.onChangeFile.bind(this);
@@ -179,6 +181,7 @@ class ViewExpert extends Component {
         );
       }
     }
+    this.carousel_ref = createRef()
   }
   selectMins(e) {
     this.setState({
@@ -526,6 +529,9 @@ class ViewExpert extends Component {
       return false;
     }
 
+    // Carousel Portfolio Sources
+    const portfolio = this.carousel_ref.current.getSources()
+
     const request_array = {
       user_email: this.state.currentUser.email,
       updated_name: updated_name,
@@ -546,6 +552,7 @@ class ViewExpert extends Component {
       facebookURL: this.state.facebookURL,
       websiteURL: this.state.websiteURL,
       youtubeURL: this.state.youtubeURL,
+      portfolio
     };
 
 
@@ -722,6 +729,8 @@ class ViewExpert extends Component {
         this.setState({ resume_path: res.data[0].resume_path });
         this.setState({ university: res.data[0].university });
         this.setState({ expert, loading: true, error: null });
+
+        this.setState({ portfolio: res.data[0].portfolio });
 
         this.setState({
           first_name:
@@ -1076,7 +1085,7 @@ class ViewExpert extends Component {
         const url = Image_URL + endorsement.profileImage;
         const default_url = "/img/profile.png";
         return (
-          <img
+          <LazyImage
             key={`IMG_${index}`}
             className="endorsement-image"
             height="50"
@@ -1090,6 +1099,7 @@ class ViewExpert extends Component {
                 : default_url
             }
             alt=""
+            placeholder={default_url}
           />
         );
       }
@@ -1099,9 +1109,9 @@ class ViewExpert extends Component {
       return this.renderError();
     }
     let images = [
-      "https://grace951.github.io/react-image-carousel/img/landing1.jpg",
-      "https://grace951.github.io/react-image-carousel/img/landing3.jpg",
-      "https://grace951.github.io/react-image-carousel/img/landing5.jpg",
+      {src:"https://grace951.github.io/react-image-carousel/img/landing3.jpg", type:"img"},
+      {src:"https://www.youtube.com/embed/GEgSBuYlSoA", type:"youtube"},
+      {src:"https://grace951.github.io/react-image-carousel/img/landing5.jpg", type:"img"},
     ];
     const { handleSubmit } = this.props;
     const { showCallLink } = this.state;
@@ -1144,7 +1154,7 @@ class ViewExpert extends Component {
         <div className="expert-list-wrap">
           <div className="container">
             <div className="row">
-              <div className="expert-list-inner-wrap">
+              <div className="expert-list-inner-wrap" style={{display: 'flex', flexDirection: 'column'}}>
                 <div className="col-sm-12">
                   <div className="expert-detail-wrap">
                     <div className="row">
@@ -1177,6 +1187,7 @@ class ViewExpert extends Component {
                             <img 
                               style={{position:"absolute", left: 40, bottom: 10, width: 30, height: 30, opacity: '80%', background: 'grey', borderRadius: '4px', padding: '1px 3px'}} 
                               src="/img/camera-icon.png"
+                              alt=""
                               onClick={this.triggerFileUpload}
                             />
                           }
@@ -2547,10 +2558,14 @@ class ViewExpert extends Component {
 
                   <div className="col-md-8">
                     <Carousel
-                      images={images}
-                      thumb={true}
-                      loop={true}
-                      autoplay={0 /* 5000 */}
+                      ref={this.carousel_ref}
+                      // images={images}
+                      // thumb={true}
+                      // loop={true}
+                      // autoplay={0 /* 5000 */}
+                      editable={true}
+                      height={400}
+                      sources={this.state.portfolio}
                     />
                     <div className="comment">
                       <CommentBox

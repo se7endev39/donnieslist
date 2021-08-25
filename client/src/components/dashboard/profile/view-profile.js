@@ -4,7 +4,7 @@ import { NavLink, withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import axios from "axios";
 import { Field, reduxForm } from "redux-form";
-import Carousel from "react-image-carousel";
+import Carousel from "../../common/Carousel";
 import { Cookies, withCookies } from "react-cookie";
 import { Modal, Button } from "react-bootstrap";
 import { instanceOf } from "prop-types";
@@ -2149,10 +2149,9 @@ class ViewExpert extends Component {
 
                   <div className="col-md-8">
                     <Carousel
-                      images={images}
-                      thumb={true}
-                      loop={true}
-                      autoplay={0 /* 5000 */}
+                      ref={this.carousel_ref}
+                      height={400}
+                      sources={this.state.portfolio}
                     />
                     <div className="comment">
                       <CommentBox

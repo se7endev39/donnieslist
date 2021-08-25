@@ -7,5 +7,10 @@ export const API_URL = 'https://api.donnieslist.com';
 export const Image_URL = 'https://images.donnieslist.com/';
 
 // export const CLIENT_ROOT_URL = "http://localhost:3001";
-// export const API_URL = "http://localhost:3000";
-// export const Image_URL = "http://127.0.0.1:5500/public/profile_images/";
+// export const API_URL = "http://localhost:4000";
+// export const Image_URL = "http://127.0.0.1:4000/uploads/";
+
+export const DEVELOPMENT_URL = ''
+export const PRODUCTION_URL = ''
+export const STAGING_URL = ''
+export const TEST_URL = ''
