@@ -139,17 +139,23 @@ class MapContainer extends Component {
             lat: locate?.geometry.coordinates[1],
             lng: locate?.geometry.coordinates[0],
           }}
+          style
         />
       );
     });
   };
 
   render() {
+    const mapStyles = {
+      width: "100%",
+      height: "85%",
+    };
     return (
       <Map
         google={this.props.google}
         zoom={13}
         center={{ lat: this.state.lat, lng: this.state.lng }}
+        style={mapStyles}
       >
         {this.displayMarkers()}
       </Map>

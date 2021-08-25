@@ -227,7 +227,7 @@ const CommentBox = (props) => {
               <LazyImage
                 alt=""
                 src={Image_URL + comments.users[0]?.profileImage}
-                placeholder="/img/person.jpg"
+                placeholder="/img/profile.png"
                 height="50px"
                 width="50px"
               />
