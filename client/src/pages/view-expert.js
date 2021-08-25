@@ -15,7 +15,6 @@ import AudioRecording from "./AudioRecording";
 import CommentBox from "../components/comment/CommentBox";
 import NotificationModal from "./notification-modal";
 // import LoginModal from './login-modal';
-
 import * as actions from "../actions/messaging";
 import {
   sendEmail,
@@ -33,7 +32,8 @@ import {
   Image_URL,
   tokBoxApikey,
 } from "../constants/api";
-import LazyImage from "../components/common/LazyImage";
+import Image from "../components/common/ImageHandler/Image";
+import LazyImage from "../components/common/LazyImage"
 
 const socket = actions.socket;
 const OT = require("@opentok/client");
@@ -1011,11 +1011,12 @@ class ViewExpert extends Component {
         const url = Image_URL + endorsement.profileImage;
         const default_url = "/img/profile.png";
         return (
-          <img
+          <Image
             key={`IMG_${index}`}
             className="endorsement-image"
             height="50"
             width="50"
+            placeholder={default_url}
             src={
               endorsement.profileImage &&
               endorsement.profileImage !== null &&
@@ -1101,7 +1102,7 @@ class ViewExpert extends Component {
                             <LazyImage
                               className="image_view"
                               height=""
-                              width=""
+                              width="400px"
                               src={Image_URL + this.state.profileImage}
                               placeholder="/img/profile.png"
                               alt=""
@@ -2206,7 +2207,7 @@ class ViewExpert extends Component {
                     <div className="comment list">
                       {this.state.comments.map((item, index) => (
                         <div key={index}>
-                          <LazyImage
+                          <Image
                             src={Image_URL + item.users[0].profileImage}
                             placeholder="/img/person.jpg"
                             height="50px"
