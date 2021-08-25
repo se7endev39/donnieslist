@@ -43,8 +43,8 @@ const storage = multer.diskStorage({
   }
 });
 
-// const uploader = multer({ dest: '../client/public/profile_images' })
-const uploader = multer({ dest: '../uploads' })
+const uploader = multer({ dest: '../client/public/profile_images' })
+// const uploader = multer({ dest: '../uploads' })
 
 // var upload = multer({ storage : storage}).array('ProfileImage',2);
 const upload = multer({ storage }).fields([{ name: 'RelatedImages1', maxCount: 1 }]); // upload Midleware
