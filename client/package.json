@@ -9,6 +9,7 @@
     "@testing-library/user-event": "^12.1.10",
     "axios": "^0.21.1",
     "classnames": "^2.3.1",
+    "google-maps-react": "^2.0.6",
     "jquery": "^3.6.0",
     "jquery-validation": "^1.19.3",
     "jsonwebtoken": "^8.5.1",

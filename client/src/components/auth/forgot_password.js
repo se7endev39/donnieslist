@@ -31,7 +31,6 @@ class ForgotPassword extends Component {
 
   // specifying verify callback function
   verifyCallback = function (response) {
-    console.log("verifyCallback " + response);
     window.$("#hiddenRecaptcha").val(response);
     var recaptcha_value = response;
     this.setState({
@@ -71,7 +70,6 @@ class ForgotPassword extends Component {
   handleFormSubmit(formProps) {
     if (window.$("#forgot_form").valid()) {
       //this.props.getForgotPasswordToken(formProps);
-
       try {
         this.props.getForgotPasswordToken(formProps).then(
           (response) => {
@@ -118,49 +116,58 @@ class ForgotPassword extends Component {
           <div className="page-title text-center">
             <h2>Forget Password</h2>
           </div>
-          <p className="text-center">
-            Please enter your email to get new password.
-          </p>
-          <div
-            dangerouslySetInnerHTML={{ __html: this.state.responseEmailMsg }}
-          ></div>
-          <form
-            id="forgot_form"
-            onSubmit={handleSubmit(this.handleFormSubmit.bind(this))}
-          >
-            <div className="form-group">
-              {this.renderAlert()}
-              <label>Email</label>
-              <Field
-                name="email"
-                className="form-control"
-                component="input"
-                type="text"
-              />
-            </div>
-            <div className="form-group text-center">
-              <Recaptcha
-                sitekey="6LeMERsUAAAAACSYqxDZEOOicHM8pG023iDHZiH5"
-                render="explicit"
-                onloadCallback={callback}
-                verifyCallback={this.verifyCallback.bind(this)}
-              />
-              <div>
-                <input
-                  type="text"
-                  class="form-control g-recaptcha"
-                  id="hiddenRecaptcha"
-                  name="hiddenRecaptcha"
-                  value={this.state.recaptcha_value}
-                />
-              </div>
-            </div>
-            <div className="form-group text-center">
-              <button type="submit" className="btn btn-primary">
-                Reset Password
-              </button>
-            </div>
-          </form>
+
+          {this.props.message && this.props.message !== "" ? (
+            <h3> {this.props.message} </h3>
+          ) : (
+            <>
+              <p className="text-center">
+                Please enter your email to get new password.
+              </p>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: this.state.responseEmailMsg,
+                }}
+              ></div>
+              <form
+                id="forgot_form"
+                onSubmit={handleSubmit(this.handleFormSubmit.bind(this))}
+              >
+                <div className="form-group">
+                  {this.renderAlert()}
+                  <label>Email</label>
+                  <Field
+                    name="email"
+                    className="form-control"
+                    component="input"
+                    type="text"
+                  />
+                </div>
+                <div className="form-group text-center">
+                  <Recaptcha
+                    sitekey="6LeMERsUAAAAACSYqxDZEOOicHM8pG023iDHZiH5"
+                    render="explicit"
+                    onloadCallback={callback}
+                    verifyCallback={this.verifyCallback.bind(this)}
+                  />
+                  <div>
+                    <input
+                      type="text"
+                      class="form-control g-recaptcha"
+                      id="hiddenRecaptcha"
+                      name="hiddenRecaptcha"
+                      value={this.state.recaptcha_value}
+                    />
+                  </div>
+                </div>
+                <div className="form-group text-center">
+                  <button type="submit" className="btn btn-primary">
+                    Reset Password
+                  </button>
+                </div>
+              </form>
+            </>
+          )}
         </div>
       </div>
     );

@@ -13,7 +13,7 @@ import { instanceOf } from "prop-types";
 import ExpertReviews from "./ExpertReviews";
 import AudioRecording from "./AudioRecording";
 import CommentBox from "../components/comment/CommentBox";
-import LazyImage from '../components/common/LazyImage';
+import Image from '../components/common/ImageHandler/Image';
 import NotificationModal from "./notification-modal";
 // import LoginModal from './login-modal';
 
@@ -34,6 +34,7 @@ import {
   Image_URL,
   tokBoxApikey,
 } from "../constants/api";
+import LazyImage from "../components/common/LazyImage"
 
 const socket = actions.socket;
 const OT = require("@opentok/client");
@@ -505,6 +506,7 @@ class ViewExpert extends Component {
  
 
   saveChanges = async () => {
+    this.setState({loading: true})
     if (this.state.submit_disabled === true) {
       console.log("submit is disabled");
       return false;
@@ -1725,7 +1727,15 @@ deleteAccount = async () => {
                                 className="btn btn-primary"
                                 onClick={this.saveChanges}
                               >
-                                Save Changes
+                                {this.state.loading ? (
+                                  <div className="spinner">
+                                    <div className="bounce1"></div>
+                                    <div className="bounce2"></div>
+                                    <div className="bounce3"></div>
+                                  </div>
+                                ) : (
+                                  "save changes"
+                                )}
                               </button>
                             </div>
                           </div>
@@ -2438,7 +2448,7 @@ deleteAccount = async () => {
                     <div className="comment list">
                       {this.state.comments.map((item, index) => (
                         <div key={index}>
-                          <LazyImage
+                          <Image
                             src={
                               "/expertCategorieses/" +
                               item.users[0].profileImage

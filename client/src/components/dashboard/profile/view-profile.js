@@ -33,10 +33,10 @@ import {
   Image_URL,
   tokBoxApikey,
 } from "../../../constants/api";
-import LazyImage from "../../common/LazyImage";
+import Image from "../../common/ImageHandler/Image"
+import LazyImage from "../../common/LazyImage"
 
 const cookies = new Cookies();
-
 
 const socket = actions.socket;
 const OT = require("@opentok/client");
@@ -1015,11 +1015,12 @@ class ViewExpert extends Component {
         const url = Image_URL + endorsement.profileImage;
         const default_url = "/img/profile.png";
         return (
-          <img
+          <Image
             key={`IMG_${index}`}
             className="endorsement-image"
             height="50"
             width="50"
+            placeholder={default_url}
             src={
               endorsement.profileImage &&
               endorsement.profileImage !== null &&
@@ -1099,7 +1100,7 @@ class ViewExpert extends Component {
                             <LazyImage
                               className="image_view"
                               height=""
-                              width=""
+                              width="400px"
                               src={Image_URL + this.state.profileImage}
                               placeholder="/img/profile.png"
                               alt=""
@@ -2166,7 +2167,7 @@ class ViewExpert extends Component {
                     <div className="comment list">
                       {this.state.comments.map((item, index) => (
                         <div key={index}>
-                          <LazyImage
+                          <Image
                             src={Image_URL + item.users[0].profileImage}
                             placeholder="/img/person.jpg"
                             height="50px"
