@@ -34,3 +34,14 @@
 .reset_form form {
     min-width: 300px;
 }
+.map-container {
+    display: flex;
+    margin-top: 0;
+}
+
+@media(max-width: 768px) {
+    .map-container {
+        margin-top: -30px;
+    }
+
+}

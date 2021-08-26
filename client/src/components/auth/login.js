@@ -56,21 +56,27 @@ const Login = props => {
 
     useEffect(() => {
       if (cookies.user) {
-        history.push('/');
+        history.push("/profile");
       }
     }, [cookies, history]);
 
     const renderRequiredLogin_for_session = () => {
-        const requiredLogin_msg = cookies.requiredLogin_for_session;
-        cookies.removeCookie("requireLogin_for_session", {path: "/"});
-        return(
-            <div className="alert alert-warning">
-                <strong>{requiredLogin_msg}</strong>
-                <a className="close" data-dismiss="alert" aria-label="close" title="close">
-                    x
-                </a>
-            </div>
-        );
+      const requiredLogin_msg = cookies.requiredLogin_for_session;
+      cookies.removeCookie("requireLogin_for_session", { path: "/" });
+
+      return (
+        <div className="alert alert-warning">
+          <strong>{requiredLogin_msg}</strong>
+          <a
+            className="close"
+            data-dismiss="alert"
+            aria-label="close"
+            title="close"
+          >
+            x
+          </a>
+        </div>
+      );
     };
 
     return(

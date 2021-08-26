@@ -348,7 +348,7 @@ p.cta-sub-title { font-size: 20px; }
 /***********/
 .session-page { padding: 20px 0 0; }
 .mainContainer .Right_Panel { background: transparent none repeat scroll 0 0; display: inline-block; padding: 0 15px; width: 100%; }
-body.OpenChatList .mainContainer .Left_Panel { width: 100%; }
+body.OpenChatList .mainContainer .Left_Panel { width: 400PX; }
 body .mainContainer { display: inline-block; width: 100%; }
 .Left_Panel .Chat_Main_section { left: 10px; min-width: auto; }
 div.footer_action_btns ul li.Chat_Trigger { left: 0; }

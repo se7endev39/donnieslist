@@ -148,21 +148,23 @@ class MapContainer extends Component {
   render() {
     const mapStyles = {
       width: "100%",
-      height: "85%",
+      height: "90vh",
     };
     return (
-      <Map
-        google={this.props.google}
-        zoom={13}
-        center={{ lat: this.state.lat, lng: this.state.lng }}
-        style={mapStyles}
-      >
-        {this.displayMarkers()}
-      </Map>
+      <div className="map-container">
+        <Map
+          google={this.props.google}
+          zoom={13}
+          center={{ lat: this.state.lat, lng: this.state.lng }}
+          style={mapStyles}
+        >
+          {this.displayMarkers()}
+        </Map>
+      </div>
     );
   }
 }
 
 export default GoogleApiWrapper({
-  apiKey: process.env.REACT_APP_MAP_API_KEY,
+  apiKey: "AIzaSyDNszdid48tnWp6LVgxpWwLS_FbFFZyj7Y",
 })(MapContainer);
