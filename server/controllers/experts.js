@@ -1225,7 +1225,7 @@ exports.userExpertUpdate = async function (req, res, next) {
   });
 
   let filename = base64ToFile(req.body.file)
-  
+  let resumefilename
   if (req.body.resume_path && req.body.files.resume !== "" && req.body.resume_path !== "") {
     resumefilename = (new Date()).getTime() + ".pdf";
     let base64Data = req.body.resume_path.replace(

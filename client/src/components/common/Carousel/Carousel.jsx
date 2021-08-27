@@ -6,6 +6,7 @@ import { API_URL, Image_URL } from '../../../constants/api';
 import { getBase64 } from '../../../utils'
 import LazyImage from '../LazyImage';
 import {useDropzone} from 'react-dropzone';
+import WifiLoader from '../WifiLoader'
 
 const Media = ({ type, src, width, height, goPrev, goNext, choosePhoto, chooseYoutube, chooseVideo, editable }) => {
     const [dropZone, setDropZone] = useState(false)
@@ -82,23 +83,10 @@ const defaultSources =
     {src:"https://grace951.github.io/react-image-carousel/img/landing5.jpg", type:"img"},
 ]
 
-const uploadFile = async (file) => {
-    const formData = new FormData
-    formData.set("file", file)
-    try{
-        const request = axios.post(`${API_URL}/uploadFile`, formData)
-        const response = await request
-        console.log("upload completed", file.name, response.data)
-        return response.data.filename
-    }catch(e){
-
-    }
-    return false
-}
-
 const Carousel = React.forwardRef(({ sources: sources_orig, width, height, editable }, ref) => {
     const [index, setIndex] = useState(0)
     const [sources, setSources] = useState(sources_orig)
+    const [isUploading, setUploading] = useState(false)
     const file_img_ref = useRef(null)
     const file_video_ref = useRef(null)
     const pageCount = 3
@@ -117,20 +105,35 @@ const Carousel = React.forwardRef(({ sources: sources_orig, width, height, edita
             setSources(sources_orig)
         }
     }, [sources_orig])
+
+    const uploadFile = async (file) => {
+        if(file == null) return
+        setUploading(true)
+        let type = "img"
+        if(file.name.endsWith(".mp4")){
+            type = "video"
+        }
+        const formData = new FormData
+        formData.set("file", file)
+        try{
+            const request = axios.post(`${API_URL}/uploadFile`, formData)
+            const response = await request
+            console.log("upload completed", file.name, response.data)            
+            setUploading(false)
+            let newSources = [...sources]
+            newSources[index] = {type, src: response.data.filename}
+            setSources(newSources)
+        }catch(e){
+            alert("upload failed")
+            setUploading(false)
+        }
+    }
     
 
     useEffect(async () => {
         if(acceptedFiles.length == 0) return
         const file = acceptedFiles[0]
-        let type = "img"
-        if(file.name.endsWith(".mp4")){
-            type = "video"
-        }
-        let src = await uploadFile(file)
-        if(!src) return
-        let newSources = [...sources]
-        newSources[index] = {type, src}
-        setSources(newSources)
+        uploadFile(file)
     }, [acceptedFiles])
 
     const goNext = () => {
@@ -139,22 +142,11 @@ const Carousel = React.forwardRef(({ sources: sources_orig, width, height, edita
     const goPrev = () => {
         setIndex((index+pageCount-1)%pageCount)
     }
-    const updatePhoto = async () => {
-        const file = file_img_ref.current.files[0]
-        if(file == null) return
-        let src_img = await uploadFile(file)
-        let newSources = [...sources]
-        newSources[index] = {type: "img", src: src_img}
-        setSources(newSources)
+    const updatePhoto = () => {
+        uploadFile(file_img_ref.current.files[0])
     }   
     const updateVideo = async () => {
-        const file = file_video_ref.current.files[0]
-        if(file == null) return
-        let src_video = await uploadFile(file)
-        if(!src_video) return
-        let newSources = [...sources]
-        newSources[index] = {type: "video", src: src_video}
-        setSources(newSources)
+        uploadFile(file_video_ref.current.files[0])        
     }     
     const choosePhoto = () => {
         file_img_ref.current.click()
@@ -196,6 +188,7 @@ const Carousel = React.forwardRef(({ sources: sources_orig, width, height, edita
             </div>
             <input ref={file_img_ref} style={{display: 'none'}} type='file' onChange={updatePhoto} accept="image/*"/>
             <input ref={file_video_ref} style={{display: 'none'}} type='file' onChange={updateVideo} accept="video/mp4"/>
+            { isUploading && <WifiLoader text="Uploading ..."/> }
         </div>
     )
 })
