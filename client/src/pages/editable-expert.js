@@ -14,7 +14,7 @@ import { instanceOf } from "prop-types";
 import ExpertReviews from "./ExpertReviews";
 import AudioRecording from "./AudioRecording";
 import CommentBox from "../components/comment/CommentBox";
-import LazyImage from '../components/common/LazyImage';
+import Image from '../components/common/ImageHandler/Image';
 import NotificationModal from "./notification-modal";
 // import LoginModal from './login-modal';
 
@@ -35,6 +35,7 @@ import {
   Image_URL,
   tokBoxApikey,
 } from "../constants/api";
+import LazyImage from "../components/common/LazyImage"
 
 const socket = actions.socket;
 const OT = require("@opentok/client");
@@ -85,7 +86,6 @@ class ViewExpert extends Component {
       expert: "",
       firstName: "",
       lastName: "",
-      resume_path: "",
       expertEmail: "",
       sessionBtnText: "",
       loading: false,
@@ -271,28 +271,25 @@ class ViewExpert extends Component {
     );
   };
 
-    getBase64Second = (file) => {
+  getBase64Second = (file) => {
     var reader = new FileReader();
     reader.readAsDataURL(file);
     var temp = "";
     reader.onload = function () {
       temp = reader.result;
     };
-    setTimeout(
-      () => this.setState({ base64_file: temp }),
-      1500
-    );
+    setTimeout(() => this.setState({ base64_file: temp }), 1500);
   };
 
   handleInputChange = (event) => {
     let newState = { ...this.state };
     newState[event.target.name] = event.target.value;
-    console.log(newState)
+    console.log(newState);
     this.setState(newState);
   };
 
   triggerFileUpload = () => {
-    console.log(this.state)
+    console.log(this.state);
     if (this.state.editable === true) {
       this.fileInput.click();
     }
@@ -301,10 +298,25 @@ class ViewExpert extends Component {
 
   onChangeFile(e) {
     const name = e.target.name;
+    const getFileBase64 = async () => {
+      let reader = new FileReader();
+      reader.readAsDataURL(e.target.files[0]);
+      reader.onload = () => {
+        if (reader.result) {
+          this.setState({
+            resume_path: reader.result,
+          });
+        }
+      };
+      reader.onerror = function (error) {
+        console.log("Error: ", error);
+        return;
+      };
+    };
     if (name === "file") {
       this.getBase64(e.target.files[0]);
     } else {
-      this.getBase64Second(e.target.files[0]);
+      getFileBase64(e.target.files[0]);
     }
     this.setState({ [e.target.name]: e.target.files[0] });
   }
@@ -494,14 +506,10 @@ class ViewExpert extends Component {
       });
   };
 
-  deleteAccount = () => {
-    if( global.confirm('Do you really want to delete your account?') ){
+ 
 
-    }
-  }
-
-  saveChanges = () => {
-
+  saveChanges = async () => {
+    this.setState({loading: true})
     if (this.state.submit_disabled === true) {
       console.log("submit is disabled");
       return false;
@@ -547,14 +555,14 @@ class ViewExpert extends Component {
         resume: this.state.resumeFile,
       },
       instagramURL: this.state.instagramURL,
+      youtubeURL: this.state.youtubeURL,
       linkedinURL: this.state.linkedinURL,
       twitterURL: this.state.twitterURL,
       facebookURL: this.state.facebookURL,
       websiteURL: this.state.websiteURL,
-      youtubeURL: this.state.youtubeURL,
+      resume_path: this.state?.resume_path,
       portfolio
     };
-
 
     return axios
       .post(`${API_URL}/userExpertUpdate`, request_array, {
@@ -580,7 +588,7 @@ class ViewExpert extends Component {
           console.log("----here in success ---");
           console.log(response.data);
           console.log("----here in success 2---");
-          this.props.history.push("/profile")
+          this.props.history.push("/profile");
           this.setState({
             updated_name:
               response.data.first_name + " " + response.data.last_name,
@@ -617,7 +625,6 @@ class ViewExpert extends Component {
 
           console.log("-----------reached here-----------");
 
-
           this.setState({
             responseMsg:
               "<div class='alert alert-success text-center'>" +
@@ -634,6 +641,41 @@ class ViewExpert extends Component {
         });
       });
   };
+
+deleteAccount = async () => {
+ if (global.confirm("Do you really want to delete your account?")) {
+    return axios
+      .delete(`${API_URL}/userExpert/${this.state.currentUser._id}`, {
+        // headers: { Authorization: cookie.load('token') },
+      })
+      .then((response) => {
+        if (!response.data.success) {
+          this.setState({
+            responseMsg:
+              "<div class='alert alert-danger text-center'>" +
+              response.data.error +
+              "</div>",
+          });
+
+          window.$(".form-control").val("");
+          window.$("form").each(function () {
+            this.reset();
+          });
+        }
+
+        if (response.data.success) {
+          this.props.history.push("/logout");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        this.setState({
+          responseMsg:
+            "<div class='alert alert-danger text-center'>" + error + "</div>",
+        });
+      });
+  
+  }};
 
   // for image upload
 
@@ -682,10 +724,10 @@ class ViewExpert extends Component {
       });
     } else {
       // if (localStorage.getItem("editable") === "true") {
-        this.setState({
-          editable: true,
-        });
-        // localStorage.setItem("editable", "");
+      this.setState({
+        editable: true,
+      });
+      // localStorage.setItem("editable", "");
       // } else {
       //   this.setState({
       //     editable: "",
@@ -1177,20 +1219,29 @@ class ViewExpert extends Component {
                         </button>
 
                         <div
-                          className="expert-img change_image"
+                          className="expert-image change_image"
                           onClick={() => {
                             // this.triggerFileUpload();
                           }}
                         >
-                          {
-                            this.state.editable &&
-                            <img 
-                              style={{position:"absolute", left: 40, bottom: 10, width: 30, height: 30, opacity: '80%', background: 'grey', borderRadius: '4px', padding: '1px 3px'}} 
+                          {this.state.editable && (
+                            <img
+                              style={{
+                                position: "absolute",
+                                left: 40,
+                                bottom: 10,
+                                width: 30,
+                                height: 30,
+                                opacity: "80%",
+                                background: "grey",
+                                borderRadius: "4px",
+                                padding: "1px 3px",
+                              }}
                               src="/img/camera-icon.png"
                               alt=""
                               onClick={this.triggerFileUpload}
                             />
-                          }
+                          )}
                           {this.state.profileImage &&
                           this.state.profileImage !== null &&
                           this.state.profileImage !== undefined &&
@@ -1430,6 +1481,7 @@ class ViewExpert extends Component {
                                     <div className="text-left-detail">
                                       <input
                                         className="form-control"
+                                        disabled
                                         onChange={(e) => {
                                           this.setState({
                                             updated_name: e.target.value,
@@ -1587,259 +1639,70 @@ class ViewExpert extends Component {
                                 <div className="profile-bor-detail expert-social-links">
                                   <dt>Social link </dt>
                                   <dd>
-                                    {this.state.expert.facebookURL &&
-                                    this.state.expert.facebookURL !== null &&
-                                    this.state.expert.facebookURL !==
-                                      undefined &&
-                                    this.state.expert.facebookURL !== "" ? (
-                                      <a
-                                        target="_blank"
-                                        href={
-                                          this.state.expert.facebookURL
-                                            ? this.state.expert.facebookURL
-                                            : "#"
-                                        }
-                                        title="facebook"
-                                        rel="noreferrer"
-                                      >
-                                        <i
-                                          className="fa fa-facebook-official"
-                                          aria-hidden="true"
-                                        ></i>
-                                      </a>
-                                    ) : (
-                                      <div className="input-holder">
+                                    <div className="input-holder">
+                                      <input
+                                        onChange={this.handleInputChange}
+                                        name="facebookURL"
+                                        value={this.state.facebookURL}
+                                        placeholder="facebook"
+                                        className="form-control mt-10"
+                                      />
+                                    </div>
+                                    <div className="input-holder">
+                                      <input
+                                        onChange={this.handleInputChange}
+                                        name="twitterURL"
+                                        value={this.state.twitterURL}
+                                        placeholder="twitter"
+                                        className="form-control mt-10"
+                                      />
+                                    </div>
+                                    <div className="input-holder">
+                                      <input
+                                        onChange={this.handleInputChange}
+                                        name="linkedinURL"
+                                        value={this.state.linkedinURL}
+                                        placeholder="linkedin"
+                                        className="form-control mt-10"
+                                      />
+                                    </div>
+                                    <div className="input-holder">
+                                      <input
+                                        onChange={this.handleInputChange}
+                                        name="instagramURL"
+                                        value={this.state.instagramURL}
+                                        placeholder="instagram"
+                                        className="form-control mt-10"
+                                      />
+                                    </div>
+                                    <div className="input-holder">
+                                      <input
+                                        onChange={this.handleInputChange}
+                                        name="websiteURL"
+                                        value={this.state.websiteURL}
+                                        placeholder="website"
+                                        className="form-control mt-10"
+                                      />
+                                    </div>
+
+                                    <div className="input-holder">
+                                      <input
+                                        onChange={this.handleInputChange}
+                                        name="youtubeURL"
+                                        value={this.state.youtubeURL}
+                                        placeholder="youtube"
+                                        className="form-control mt-10"
+                                      />
+                                    </div>
+                                    {/* <div className="input-holder">
                                         <input
                                           onChange={this.handleInputChange}
-                                          name="facebookURL"
-                                          placeholder="facebook"
+                                          name="soundcloudLink"
+                                          value={this.state.soundcloudLink}
+                                          placeholder="soundcloud"
                                           className="form-control mt-10"
                                         />
-                                      </div>
-                                    )}
-                                    {this.state.expert.twitterURL &&
-                                    this.state.expert.twitterURL !== null &&
-                                    this.state.expert.twitterURL !==
-                                      undefined &&
-                                    this.state.expert.twitterURL !== "" ? (
-                                      <a
-                                        target="_blank"
-                                        href={
-                                          this.state.expert.twitterURL
-                                            ? this.state.expert.twitterURL
-                                            : "#"
-                                        }
-                                        title="twitter"
-                                        rel="noreferrer"
-                                      >
-                                        <i
-                                          className="fa fa-twitter"
-                                          aria-hidden="true"
-                                        ></i>
-                                      </a>
-                                    ) : (
-                                      <div className="input-holder">
-                                        <input
-                                          onChange={this.handleInputChange}
-                                          name="twitterURL"
-                                          placeholder="twitter"
-                                          className="form-control mt-10"
-                                        />
-                                      </div>
-                                    )}
-                                    {this.state.expert.linkedinURL &&
-                                    this.state.expert.linkedinURL !== null &&
-                                    this.state.expert.linkedinURL !==
-                                      undefined &&
-                                    this.state.expert.linkedinURL !== "" ? (
-                                      <a
-                                        target="_blank"
-                                        href={
-                                          this.state.expert.linkedinURL
-                                            ? this.state.expert.linkedinURL
-                                            : "#"
-                                        }
-                                        title="linkedin"
-                                        rel="noreferrer"
-                                      >
-                                        <i
-                                          className="fa fa-linkedin"
-                                          aria-hidden="true"
-                                        ></i>
-                                      </a>
-                                    ) : (
-                                      <div className="input-holder">
-                                        <input
-                                          onChange={this.handleInputChange}
-                                          name="linkedinURL"
-                                          placeholder="linkedin"
-                                          className="form-control mt-10"
-                                        />
-                                      </div>
-                                    )}
-                                    {this.state.expert.instagramURL &&
-                                    this.state.expert.instagramURL !== null &&
-                                    this.state.expert.instagramURL !==
-                                      undefined &&
-                                    this.state.expert.instagramURL !== "" ? (
-                                      <a
-                                        target="_blank"
-                                        href={
-                                          this.state.expert.instagramURL
-                                            ? this.state.expert.instagramURL
-                                            : "#"
-                                        }
-                                        title="instagram"
-                                        rel="noreferrer"
-                                      >
-                                        <i
-                                          className="fa fa-instagram"
-                                          aria-hidden="true"
-                                        ></i>
-                                      </a>
-                                    ) : (
-                                      <div className="input-holder">
-                                        <input
-                                          onChange={this.handleInputChange}
-                                          name="instagramURL"
-                                          placeholder="instagram"
-                                          className="form-control mt-10"
-                                        />
-                                      </div>
-                                    )}
-                                    {this.state.expert.snapchatURL &&
-                                      this.state.expert.snapchatURL !== null &&
-                                      this.state.expert.snapchatURL !==
-                                        undefined &&
-                                      this.state.expert.snapchatURL !== "" && (
-                                        <a
-                                          target="_blank"
-                                          href={
-                                            this.state.expert.snapchatURL
-                                              ? this.state.expert.snapchatURL
-                                              : "#"
-                                          }
-                                          title="snapchat"
-                                          rel="noreferrer"
-                                        >
-                                          <i
-                                            className="fa fa-snapchat"
-                                            aria-hidden="true"
-                                          ></i>
-                                        </a>
-                                      )}
-                                    {this.state.expert.websiteURL &&
-                                    this.state.expert.websiteURL !== null &&
-                                    this.state.expert.websiteURL !==
-                                      undefined &&
-                                    this.state.expert.websiteURL !== "" ? (
-                                      <a
-                                        target="_blank"
-                                        href={
-                                          this.state.expert.websiteURL
-                                            ? this.state.expert.websiteURL
-                                            : "#"
-                                        }
-                                        title="website"
-                                        rel="noreferrer"
-                                      >
-                                        <i
-                                          className="fa fa-anchor"
-                                          aria-hidden="true"
-                                        ></i>
-                                      </a>
-                                    ) : (
-                                      <div className="input-holder">
-                                        <input
-                                          onChange={this.handleInputChange}
-                                          name="websiteURL"
-                                          placeholder="website"
-                                          className="form-control mt-10"
-                                        />
-                                      </div>
-                                    )}
-                                    {this.state.expert.googleURL &&
-                                      this.state.expert.googleURL !== null &&
-                                      this.state.expert.googleURL !==
-                                        undefined &&
-                                      this.state.expert.googleURL !== "" && (
-                                        <a
-                                          target="_blank"
-                                          href={
-                                            this.state.expert.googleURL
-                                              ? this.state.expert.googleURL
-                                              : "#"
-                                          }
-                                          title="google"
-                                          rel="noreferrer"
-                                        >
-                                          <i
-                                            className="fa fa-google"
-                                            aria-hidden="true"
-                                          ></i>
-                                        </a>
-                                      )}
-                                    {this.state.expert.youtubeURL &&
-                                    this.state.expert.youtubeURL !== null &&
-                                    this.state.expert.youtubeURL !==
-                                      undefined &&
-                                    this.state.expert.youtubeURL !== "" ? (
-                                      <a
-                                        target="_blank"
-                                        href={
-                                          this.state.expert.youtubeURL
-                                            ? this.state.expert.youtubeURL
-                                            : "#"
-                                        }
-                                        title="youtube"
-                                        rel="noreferrer"
-                                      >
-                                        <i
-                                          className="fa fa-youtube"
-                                          aria-hidden="true"
-                                        ></i>
-                                      </a>
-                                    ) : (
-                                      <div className="input-holder">
-                                        <input
-                                          onChange={this.handleInputChange}
-                                          name="youtubeURL"
-                                          placeholder="youtube"
-                                          className="form-control mt-10"
-                                        />
-                                      </div>
-                                    )}
-                                    {this.state.expert.soundcloudURL &&
-                                      this.state.expert.soundcloudURL !==
-                                        null &&
-                                      this.state.expert.soundcloudURL !==
-                                        undefined &&
-                                      this.state.expert.soundcloudURL !==
-                                        "" && (
-                                        <a
-                                          target="_blank"
-                                          href={
-                                            this.state.expert.soundcloudURL
-                                              ? this.state.expert.soundcloudURL
-                                              : "#"
-                                          }
-                                          title="soundcloud"
-                                          rel="noreferrer"
-                                        >
-                                          <i
-                                            className="fa fa-soundcloud"
-                                            aria-hidden="true"
-                                          ></i>
-                                        </a>
-                                      )}
-                                    {this.state.expert.facebookURL === "" &&
-                                      this.state.expert.twitterURL === "" &&
-                                      this.state.expert.linkedinURL === "" &&
-                                      this.state.expert.instagramURL === "" &&
-                                      this.state.expert.snapchatURL === "" &&
-                                      this.state.expert.websiteURL === "" &&
-                                      this.state.expert.googleURL === "" &&
-                                      "No Social Links Available Yet"}
+                                      </div> */}
                                   </dd>
                                 </div>
                                 <div className="profile-bor-detail expert-endorsements">
@@ -1849,8 +1712,21 @@ class ViewExpert extends Component {
                                 <div className="profile-bor-detail expert-endorsements">
                                   <dt>Upload Resume </dt>
                                   <dd>
+                                    {this.state.expert?.resume_path && (
+                                      <a
+                                        href={
+                                          `${Image_URL}` +
+                                          this.state.expert?.resume_path
+                                        }
+                                        title="Download"
+                                        target="_blank"
+                                        download
+                                        className="fa fa-file-pdf-o"
+                                      ></a>
+                                    )}
                                     <input
                                       type="file"
+                                      accept=".pdf"
                                       name="resumeFile"
                                       className="form-control"
                                       onChange={this.onChangeFile}
@@ -1862,7 +1738,15 @@ class ViewExpert extends Component {
                                 className="btn btn-primary"
                                 onClick={this.saveChanges}
                               >
-                                Save Changes
+                                {this.state.loading ? (
+                                  <div className="spinner">
+                                    <div className="bounce1"></div>
+                                    <div className="bounce2"></div>
+                                    <div className="bounce3"></div>
+                                  </div>
+                                ) : (
+                                  "save changes"
+                                )}
                               </button>
                             </div>
                           </div>
@@ -2579,7 +2463,7 @@ class ViewExpert extends Component {
                     <div className="comment list">
                       {this.state.comments.map((item, index) => (
                         <div key={index}>
-                          <LazyImage
+                          <Image
                             src={
                               "/expertCategorieses/" +
                               item.users[0].profileImage
@@ -2607,10 +2491,15 @@ class ViewExpert extends Component {
                       ))}
                     </div>
                     {/* comments */}
-                    <div style={{paddingTop: '10px', display: 'flex'}}>
+                    <div style={{ paddingTop: "10px", display: "flex" }}>
                       <button
                         className="btn btn-danger"
-                        style={{width: '25vw', margin: 'auto', padding: "10px 20px"}}
+                        style={{
+                          width: "25vw",
+                          margin: "auto",
+                          padding: "10px 20px",
+                        }}
+                        onClick={this.deleteAccount}
                       >
                         Delete Account
                       </button>

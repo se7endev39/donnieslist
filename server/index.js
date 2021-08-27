@@ -56,8 +56,8 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.set('view engine', 'ejs');
 
 // Setting up basic middleware for all Express requests
-app.use(express.urlencoded({ extended: true, limit: '50mb' })); // Parses urlencoded bodies
-app.use(express.json({ limit: '50mb' })); // Send JSON responses
+app.use(express.urlencoded({ extended: true, limit: '500mb' })); // Parses urlencoded bodies
+app.use(express.json({ limit: '500mb' })); // Send JSON responses
 app.use(logger('dev')); // Log requests to API using morgan
 
 // Enable CORS from client-side

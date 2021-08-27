@@ -4,3 +4,7 @@ node_modules
 **/node_modules
 .idea/
 .vscode
+**/build/
+public/profile_images
+*.zip
+.env

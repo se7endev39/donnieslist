@@ -15,7 +15,6 @@ import AudioRecording from "./AudioRecording";
 import CommentBox from "../components/comment/CommentBox";
 import NotificationModal from "./notification-modal";
 // import LoginModal from './login-modal';
-
 import * as actions from "../actions/messaging";
 import {
   sendEmail,
@@ -33,7 +32,8 @@ import {
   Image_URL,
   tokBoxApikey,
 } from "../constants/api";
-import LazyImage from "../components/common/LazyImage";
+import Image from "../components/common/ImageHandler/Image";
+import LazyImage from "../components/common/LazyImage"
 
 const socket = actions.socket;
 const OT = require("@opentok/client");
@@ -1017,6 +1017,7 @@ class ViewExpert extends Component {
             className="endorsement-image"
             height="50"
             width="50"
+            placeholder={default_url}
             src={
               endorsement.profileImage &&
               endorsement.profileImage !== null &&
@@ -1103,7 +1104,7 @@ class ViewExpert extends Component {
                             <LazyImage
                               className="image_view"
                               height=""
-                              width=""
+                              width="400px"
                               src={Image_URL + this.state.profileImage}
                               placeholder="/img/profile.png"
                               alt=""
@@ -1512,21 +1513,21 @@ class ViewExpert extends Component {
                                         undefined &&
                                       this.state.expert.facebookURL !== "" && (
                                         <div className="social-link">
-                                        <a
-                                        target="_blank"
-                                          href={
-                                            this.state.expert.facebookURL
-                                              ? this.state.expert.facebookURL
-                                              : "#"
-                                          }
-                                          title="facebook"
-                                          rel="noreferrer"
-                                        >
-                                          <i
-                                            className="fa fa-facebook-official"
-                                            aria-hidden="true"
-                                          ></i>
-                                        </a>
+                                          <a
+                                            target="_blank"
+                                            href={
+                                              this.state.expert.facebookURL
+                                                ? this.state.expert.facebookURL
+                                                : "#"
+                                            }
+                                            title="facebook"
+                                            rel="noreferrer"
+                                          >
+                                            <i
+                                              className="fa fa-facebook-official"
+                                              aria-hidden="true"
+                                            ></i>
+                                          </a>
                                         </div>
                                       )}
                                     {this.state.expert.twitterURL &&
@@ -1535,21 +1536,21 @@ class ViewExpert extends Component {
                                         undefined &&
                                       this.state.expert.twitterURL !== "" && (
                                         <div className="social-link">
-                                        <a
-                                        target="_blank"
-                                          href={
-                                            this.state.expert.twitterURL
-                                              ? this.state.expert.twitterURL
-                                              : "#"
-                                          }
-                                          title="twitter"
-                                          rel="noreferrer"
-                                        >
-                                          <i
-                                            className="fa fa-twitter"
-                                            aria-hidden="true"
-                                          ></i>
-                                        </a>
+                                          <a
+                                            target="_blank"
+                                            href={
+                                              this.state.expert.twitterURL
+                                                ? this.state.expert.twitterURL
+                                                : "#"
+                                            }
+                                            title="twitter"
+                                            rel="noreferrer"
+                                          >
+                                            <i
+                                              className="fa fa-twitter"
+                                              aria-hidden="true"
+                                            ></i>
+                                          </a>
                                         </div>
                                       )}
                                     {this.state.expert.linkedinURL &&
@@ -1558,21 +1559,21 @@ class ViewExpert extends Component {
                                         undefined &&
                                       this.state.expert.linkedinURL !== "" && (
                                         <div className="social-link">
-                                        <a
-                                        target="_blank"
-                                          href={
-                                            this.state.expert.linkedinURL
-                                              ? this.state.expert.linkedinURL
-                                              : "#"
-                                          }
-                                          title="linkedin"
-                                          rel="noreferrer"
-                                        >
-                                          <i
-                                            className="fa fa-linkedin"
-                                            aria-hidden="true"
-                                          ></i>
-                                        </a>
+                                          <a
+                                            target="_blank"
+                                            href={
+                                              this.state.expert.linkedinURL
+                                                ? this.state.expert.linkedinURL
+                                                : "#"
+                                            }
+                                            title="linkedin"
+                                            rel="noreferrer"
+                                          >
+                                            <i
+                                              className="fa fa-linkedin"
+                                              aria-hidden="true"
+                                            ></i>
+                                          </a>
                                         </div>
                                       )}
                                     {this.state.expert.instagramURL &&
@@ -1581,21 +1582,21 @@ class ViewExpert extends Component {
                                         undefined &&
                                       this.state.expert.instagramURL !== "" && (
                                         <div className="social-link">
-                                        <a
-                                        target="_blank"
-                                          href={
-                                            this.state.expert.instagramURL
-                                              ? this.state.expert.instagramURL
-                                              : "#"
-                                          }
-                                          title="instagram"
-                                          rel="noreferrer"
-                                        >
-                                          <i
-                                            className="fa fa-instagram"
-                                            aria-hidden="true"
-                                          ></i>
-                                        </a>
+                                          <a
+                                            target="_blank"
+                                            href={
+                                              this.state.expert.instagramURL
+                                                ? this.state.expert.instagramURL
+                                                : "#"
+                                            }
+                                            title="instagram"
+                                            rel="noreferrer"
+                                          >
+                                            <i
+                                              className="fa fa-instagram"
+                                              aria-hidden="true"
+                                            ></i>
+                                          </a>
                                         </div>
                                       )}
                                     {this.state.expert.snapchatURL &&
@@ -1604,21 +1605,21 @@ class ViewExpert extends Component {
                                         undefined &&
                                       this.state.expert.snapchatURL !== "" && (
                                         <div className="social-link">
-                                        <a
-                                        target="_blank"
-                                          href={
-                                            this.state.expert.snapchatURL
-                                              ? this.state.expert.snapchatURL
-                                              : "#"
-                                          }
-                                          title="snapchat"
-                                          rel="noreferrer"
-                                        >
-                                          <i
-                                            className="fa fa-snapchat"
-                                            aria-hidden="true"
-                                          ></i>
-                                        </a>
+                                          <a
+                                            target="_blank"
+                                            href={
+                                              this.state.expert.snapchatURL
+                                                ? this.state.expert.snapchatURL
+                                                : "#"
+                                            }
+                                            title="snapchat"
+                                            rel="noreferrer"
+                                          >
+                                            <i
+                                              className="fa fa-snapchat"
+                                              aria-hidden="true"
+                                            ></i>
+                                          </a>
                                         </div>
                                       )}
                                     {this.state.expert.websiteURL &&
@@ -1627,21 +1628,21 @@ class ViewExpert extends Component {
                                         undefined &&
                                       this.state.expert.websiteURL !== "" && (
                                         <div className="social-link">
-                                        <a
-                                        target="_blank"
-                                          href={
-                                            this.state.expert.websiteURL
-                                              ? this.state.expert.websiteURL
-                                              : "#"
-                                          }
-                                          title="website"
-                                          rel="noreferrer"
-                                        >
-                                          <i
-                                            className="fa fa-anchor"
-                                            aria-hidden="true"
-                                          ></i>
-                                        </a>
+                                          <a
+                                            target="_blank"
+                                            href={
+                                              this.state.expert.websiteURL
+                                                ? this.state.expert.websiteURL
+                                                : "#"
+                                            }
+                                            title="website"
+                                            rel="noreferrer"
+                                          >
+                                            <i
+                                              className="fa fa-anchor"
+                                              aria-hidden="true"
+                                            ></i>
+                                          </a>
                                         </div>
                                       )}
                                     {this.state.expert.googleURL &&
@@ -1650,21 +1651,21 @@ class ViewExpert extends Component {
                                         undefined &&
                                       this.state.expert.googleURL !== "" && (
                                         <div className="social-link">
-                                        <a
-                                        target="_blank"
-                                          href={
-                                            this.state.expert.googleURL
-                                              ? this.state.expert.googleURL
-                                              : "#"
-                                          }
-                                          title="google"
-                                          rel="noreferrer"
-                                        >
-                                          <i
-                                            className="fa fa-google"
-                                            aria-hidden="true"
-                                          ></i>
-                                        </a>
+                                          <a
+                                            target="_blank"
+                                            href={
+                                              this.state.expert.googleURL
+                                                ? this.state.expert.googleURL
+                                                : "#"
+                                            }
+                                            title="google"
+                                            rel="noreferrer"
+                                          >
+                                            <i
+                                              className="fa fa-google"
+                                              aria-hidden="true"
+                                            ></i>
+                                          </a>
                                         </div>
                                       )}
                                     {this.state.expert.youtubeURL &&
@@ -1673,21 +1674,21 @@ class ViewExpert extends Component {
                                         undefined &&
                                       this.state.expert.youtubeURL !== "" && (
                                         <div className="social-link">
-                                        <a
-                                        target="_blank"
-                                          href={
-                                            this.state.expert.youtubeURL
-                                              ? this.state.expert.youtubeURL
-                                              : "#"
-                                          }
-                                          title="youtube"
-                                          rel="noreferrer"
-                                        >
-                                          <i
-                                            className="fa fa-youtube"
-                                            aria-hidden="true"
-                                          ></i>
-                                        </a>
+                                          <a
+                                            target="_blank"
+                                            href={
+                                              this.state.expert.youtubeURL
+                                                ? this.state.expert.youtubeURL
+                                                : "#"
+                                            }
+                                            title="youtube"
+                                            rel="noreferrer"
+                                          >
+                                            <i
+                                              className="fa fa-youtube"
+                                              aria-hidden="true"
+                                            ></i>
+                                          </a>
                                         </div>
                                       )}
                                     {this.state.expert.soundcloudURL &&
@@ -1697,21 +1698,22 @@ class ViewExpert extends Component {
                                       this.state.expert.soundcloudURL !==
                                         "" && (
                                         <div className="social-link">
-                                        <a
-                                        target="_blank"
-                                          href={
-                                            this.state.expert.soundcloudURL
-                                              ? this.state.expert.soundcloudURL
-                                              : "#"
-                                          }
-                                          title="soundcloud"
-                                          rel="noreferrer"
-                                        >
-                                          <i
-                                            className="fa fa-soundcloud"
-                                            aria-hidden="true"
-                                          ></i>
-                                        </a>
+                                          <a
+                                            target="_blank"
+                                            href={
+                                              this.state.expert.soundcloudURL
+                                                ? this.state.expert
+                                                    .soundcloudURL
+                                                : "#"
+                                            }
+                                            title="soundcloud"
+                                            rel="noreferrer"
+                                          >
+                                            <i
+                                              className="fa fa-soundcloud"
+                                              aria-hidden="true"
+                                            ></i>
+                                          </a>
                                         </div>
                                       )}
                                     {this.state.expert.facebookURL === "" &&
@@ -1734,21 +1736,21 @@ class ViewExpert extends Component {
                                         undefined &&
                                       this.state.expert.facebookURL !== "" && (
                                         <div className="social-link">
-                                        <a
-                                        target="_blank"
-                                          href={
-                                            this.state.expert.facebookURL
-                                              ? this.state.expert.facebookURL
-                                              : "#"
-                                          }
-                                          title="facebook"
-                                          rel="noreferrer"
-                                        >
-                                          <i
-                                            className="fa fa-facebook-official"
-                                            aria-hidden="true"
-                                          ></i>
-                                        </a>
+                                          <a
+                                            target="_blank"
+                                            href={
+                                              this.state.expert.facebookURL
+                                                ? this.state.expert.facebookURL
+                                                : "#"
+                                            }
+                                            title="facebook"
+                                            rel="noreferrer"
+                                          >
+                                            <i
+                                              className="fa fa-facebook-official"
+                                              aria-hidden="true"
+                                            ></i>
+                                          </a>
                                         </div>
                                       )}
                                     {this.state.expert.twitterURL &&
@@ -1757,21 +1759,21 @@ class ViewExpert extends Component {
                                         undefined &&
                                       this.state.expert.twitterURL !== "" && (
                                         <div className="social-link">
-                                        <a
-                                        target="_blank"
-                                          href={
-                                            this.state.expert.twitterURL
-                                              ? this.state.expert.twitterURL
-                                              : "#"
-                                          }
-                                          title="twitter"
-                                          rel="noreferrer"
-                                        >
-                                          <i
-                                            className="fa fa-twitter"
-                                            aria-hidden="true"
-                                          ></i>
-                                        </a>
+                                          <a
+                                            target="_blank"
+                                            href={
+                                              this.state.expert.twitterURL
+                                                ? this.state.expert.twitterURL
+                                                : "#"
+                                            }
+                                            title="twitter"
+                                            rel="noreferrer"
+                                          >
+                                            <i
+                                              className="fa fa-twitter"
+                                              aria-hidden="true"
+                                            ></i>
+                                          </a>
                                         </div>
                                       )}
                                     {this.state.expert.linkedinURL &&
@@ -1780,21 +1782,21 @@ class ViewExpert extends Component {
                                         undefined &&
                                       this.state.expert.linkedinURL !== "" && (
                                         <div className="social-link">
-                                        <a
-                                        target="_blank"
-                                          href={
-                                            this.state.expert.linkedinURL
-                                              ? this.state.expert.linkedinURL
-                                              : "#"
-                                          }
-                                          title="linkedin"
-                                          rel="noreferrer"
-                                        >
-                                          <i
-                                            className="fa fa-linkedin"
-                                            aria-hidden="true"
-                                          ></i>
-                                        </a>
+                                          <a
+                                            target="_blank"
+                                            href={
+                                              this.state.expert.linkedinURL
+                                                ? this.state.expert.linkedinURL
+                                                : "#"
+                                            }
+                                            title="linkedin"
+                                            rel="noreferrer"
+                                          >
+                                            <i
+                                              className="fa fa-linkedin"
+                                              aria-hidden="true"
+                                            ></i>
+                                          </a>
                                         </div>
                                       )}
                                     {this.state.expert.instagramURL &&
@@ -1803,21 +1805,21 @@ class ViewExpert extends Component {
                                         undefined &&
                                       this.state.expert.instagramURL !== "" && (
                                         <div className="social-link">
-                                        <a
-                                        target="_blank"
-                                          href={
-                                            this.state.expert.instagramURL
-                                              ? this.state.expert.instagramURL
-                                              : "#"
-                                          }
-                                          title="instagram"
-                                          rel="noreferrer"
-                                        >
-                                          <i
-                                            className="fa fa-instagram"
-                                            aria-hidden="true"
-                                          ></i>
-                                        </a>
+                                          <a
+                                            target="_blank"
+                                            href={
+                                              this.state.expert.instagramURL
+                                                ? this.state.expert.instagramURL
+                                                : "#"
+                                            }
+                                            title="instagram"
+                                            rel="noreferrer"
+                                          >
+                                            <i
+                                              className="fa fa-instagram"
+                                              aria-hidden="true"
+                                            ></i>
+                                          </a>
                                         </div>
                                       )}
                                     {this.state.expert.snapchatURL &&
@@ -1826,21 +1828,21 @@ class ViewExpert extends Component {
                                         undefined &&
                                       this.state.expert.snapchatURL !== "" && (
                                         <div className="social-link">
-                                        <a
-                                        target="_blank"
-                                          href={
-                                            this.state.expert.snapchatURL
-                                              ? this.state.expert.snapchatURL
-                                              : "#"
-                                          }
-                                          title="snapchat"
-                                          rel="noreferrer"
-                                        >
-                                          <i
-                                            className="fa fa-snapchat"
-                                            aria-hidden="true"
-                                          ></i>
-                                        </a>
+                                          <a
+                                            target="_blank"
+                                            href={
+                                              this.state.expert.snapchatURL
+                                                ? this.state.expert.snapchatURL
+                                                : "#"
+                                            }
+                                            title="snapchat"
+                                            rel="noreferrer"
+                                          >
+                                            <i
+                                              className="fa fa-snapchat"
+                                              aria-hidden="true"
+                                            ></i>
+                                          </a>
                                         </div>
                                       )}
                                     {this.state.expert.websiteURL &&
@@ -1849,21 +1851,21 @@ class ViewExpert extends Component {
                                         undefined &&
                                       this.state.expert.websiteURL !== "" && (
                                         <div className="social-link">
-                                        <a
-                                        target="_blank"
-                                          href={
-                                            this.state.expert.websiteURL
-                                              ? this.state.expert.websiteURL
-                                              : "#"
-                                          }
-                                          title="website"
-                                          rel="noreferrer"
-                                        >
-                                          <i
-                                            className="fa fa-anchor"
-                                            aria-hidden="true"
-                                          ></i>
-                                        </a>
+                                          <a
+                                            target="_blank"
+                                            href={
+                                              this.state.expert.websiteURL
+                                                ? this.state.expert.websiteURL
+                                                : "#"
+                                            }
+                                            title="website"
+                                            rel="noreferrer"
+                                          >
+                                            <i
+                                              className="fa fa-anchor"
+                                              aria-hidden="true"
+                                            ></i>
+                                          </a>
                                         </div>
                                       )}
                                     {this.state.expert.googleURL &&
@@ -1872,21 +1874,21 @@ class ViewExpert extends Component {
                                         undefined &&
                                       this.state.expert.googleURL !== "" && (
                                         <div className="social-link">
-                                        <a
-                                        target="_blank"
-                                          href={
-                                            this.state.expert.googleURL
-                                              ? this.state.expert.googleURL
-                                              : "#"
-                                          }
-                                          title="google"
-                                          rel="noreferrer"
-                                        >
-                                          <i
-                                            className="fa fa-google"
-                                            aria-hidden="true"
-                                          ></i>
-                                        </a>
+                                          <a
+                                            target="_blank"
+                                            href={
+                                              this.state.expert.googleURL
+                                                ? this.state.expert.googleURL
+                                                : "#"
+                                            }
+                                            title="google"
+                                            rel="noreferrer"
+                                          >
+                                            <i
+                                              className="fa fa-google"
+                                              aria-hidden="true"
+                                            ></i>
+                                          </a>
                                         </div>
                                       )}
                                     {this.state.expert.youtubeURL &&
@@ -1895,21 +1897,21 @@ class ViewExpert extends Component {
                                         undefined &&
                                       this.state.expert.youtubeURL !== "" && (
                                         <div className="social-link">
-                                        <a
-                                        target="_blank"
-                                          href={
-                                            this.state.expert.youtubeURL
-                                              ? this.state.expert.youtubeURL
-                                              : "#"
-                                          }
-                                          title="youtube"
-                                          rel="noreferrer"
-                                        >
-                                          <i
-                                            className="fa fa-youtube"
-                                            aria-hidden="true"
-                                          ></i>
-                                        </a>
+                                          <a
+                                            target="_blank"
+                                            href={
+                                              this.state.expert.youtubeURL
+                                                ? this.state.expert.youtubeURL
+                                                : "#"
+                                            }
+                                            title="youtube"
+                                            rel="noreferrer"
+                                          >
+                                            <i
+                                              className="fa fa-youtube"
+                                              aria-hidden="true"
+                                            ></i>
+                                          </a>
                                         </div>
                                       )}
                                     {this.state.expert.soundcloudURL &&
@@ -1919,21 +1921,22 @@ class ViewExpert extends Component {
                                       this.state.expert.soundcloudURL !==
                                         "" && (
                                         <div className="social-link">
-                                        <a
-                                        target="_blank"
-                                          href={
-                                            this.state.expert.soundcloudURL
-                                              ? this.state.expert.soundcloudURL
-                                              : "#"
-                                          }
-                                          title="soundcloud"
-                                          rel="noreferrer"
-                                        >
-                                          <i
-                                            className="fa fa-soundcloud"
-                                            aria-hidden="true"
-                                          ></i>
-                                        </a>
+                                          <a
+                                            target="_blank"
+                                            href={
+                                              this.state.expert.soundcloudURL
+                                                ? this.state.expert
+                                                    .soundcloudURL
+                                                : "#"
+                                            }
+                                            title="soundcloud"
+                                            rel="noreferrer"
+                                          >
+                                            <i
+                                              className="fa fa-soundcloud"
+                                              aria-hidden="true"
+                                            ></i>
+                                          </a>
                                         </div>
                                       )}
                                     {this.state.expert.facebookURL === "" &&
@@ -2205,7 +2208,7 @@ class ViewExpert extends Component {
                     <div className="comment list">
                       {this.state.comments.map((item, index) => (
                         <div key={index}>
-                          <LazyImage
+                          <Image
                             src={Image_URL + item.users[0].profileImage}
                             placeholder="/img/profile.png"
                             height="50px"

@@ -72,15 +72,30 @@ const Routes = () => {
       <Route path="/tokbox/:slug" component={TokboxPage} />
       <Route path="/tokbox/join/:slug" component={TokboxPage} />
       <Route path="/mysession-list" component={MysessionList} />
-      <Route path="/component-samples" component={RequireAuth(ComponentSamplesPage)} />
+      <Route
+        path="/component-samples"
+        component={RequireAuth(ComponentSamplesPage)}
+      />
       <Route path="/checkout/:plan" component={RequireAuth(InitialCheckout)} />
-      <Route path="/billing/settings" component={RequireAuth(BillingSettings)} />
+      <Route
+        path="/billing/settings"
+        component={RequireAuth(BillingSettings)}
+      />
       <Route path="/profile" component={RequireAuth(ViewProfile)} />
-      <Route path="/update-profile" component={RequireAuth(UserProfileUpdation)} />
+      <Route
+        path="/update-profile"
+        component={RequireAuth(UserProfileUpdation)}
+      />
       <Route path="/expert/:category/:slug" component={ViewExpert} />
-      <Route path="/edit/expert/:category/:slug" component={EditExpert} />
+      <Route
+        path="/edit/expert/:category/:slug"
+        component={RequireAuth(EditExpert)}
+      />
       <Route path="/session/:slug" component={RequireAuth(UserSessionPage)} />
-      <Route path="/mysession/:slug" component={RequireAuth(ExpertSessionPage)} />
+      <Route
+        path="/mysession/:slug"
+        component={RequireAuth(ExpertSessionPage)}
+      />
       <Route path="/recordings" component={RequireAuth(Recordings)} />
       <Route path="/admin" component={RequireAuth(AdminDashboard)} />
       <Route path="/account-info" component={RequireAuth(AccountInformation)} />

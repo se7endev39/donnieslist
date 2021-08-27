@@ -25,7 +25,7 @@ const LazyImage = ({ src, placeholder, background, ...restProps }) => {
             </div>
         )
     return (
-        <img 
+        <img
             src={currentSrc}
             style={{objectFit: 'cover'}}
             { ...restProps }

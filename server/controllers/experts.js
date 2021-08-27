@@ -20,7 +20,7 @@ const ExpertStory = require('../models/expertstory');
 const User = require('../models/user');
 const UserReview = require('../models/userreview');
 const ExpertSignupToken = require('../models/expertsignuptoken');
-
+const path = require("path")
 const opentok = new OpenTok(config.opentok_apiKey, config.opentok_apiSecret);
 
 const transporter = nodemailer.createTransport({
@@ -763,6 +763,21 @@ exports.createExpert = function (req, res, next) {
   });
 };
 
+exports.deleteExpertProfile = function (req, res, next) {
+  const { id } = req.params;
+  if (!req.params.id) {
+    res.status(422).send({
+      error: "Please choose expert slug",
+    });
+    return next();
+  }
+  User.findByIdAndDelete({ _id: id }, () => {
+    res.status(200).json({
+      message: "deleted account ",
+      success: true
+    })
+  })
+}
 /* API endpoint to render expert details */
 exports.getExpertDetail = function (req, res, next) {
   const { slug } = req.params;
@@ -790,8 +805,7 @@ exports.getExpertDetail = function (req, res, next) {
   },
     (err, expertsList) => {
       if (expertsList) {
-        // console.log('found');
-        // console.log(expertsList);
+        console.log(expertsList);
         res.json(expertsList);
       } else {
         // console.log('not found');
@@ -1202,7 +1216,6 @@ function base64ToFile(base64){
 
 exports.userExpertUpdate = async function (req, res, next) {
   let user_obj;
-  //console.log(req.body);
   await User.findOne({ email: req.body.user_email }, (error, result) => {
     if (error) {
       console.log(error);
@@ -1212,6 +1225,27 @@ exports.userExpertUpdate = async function (req, res, next) {
   });
 
   let filename = base64ToFile(req.body.file)
+  
+  if (req.body.resume_path && req.body.files.resume !== "" && req.body.resume_path !== "") {
+    resumefilename = (new Date()).getTime() + ".pdf";
+    let base64Data = req.body.resume_path.replace(
+      /^data:application\/pdf;base64,/,
+      ""
+    );
+    fs.writeFile(
+      `../client/public/profile_images/${resumefilename}`,
+      base64Data,
+      "base64",
+
+      (err, data) => {
+        if (err) {
+          console.log(err);
+        }
+        console.log(data);
+      }
+    );
+  }
+  console.log("reached")
 
   const firstName = req.body.updated_name.split(' ')[0] !== 'undefined' ? req.body.updated_name.split(' ')[0] : '';
   const lastName = req.body.updated_name.split(' ')[1] !== 'undefined' ? req.body.updated_name.split(' ')[1] : '';
@@ -1246,6 +1280,9 @@ exports.userExpertUpdate = async function (req, res, next) {
   updateuser.twitterURL = req.body.twitterURL;
   updateuser.websiteURL = req.body.websiteURL;
   updateuser.youtubeURL = req.body.youtubeURL;
+  if (resumefilename && req.body.resume_path && resumefilename !== "") {
+    updateuser.resume_path = resumefilename;
+  }
   if (filename !== '') {
     updateuser.profileImage = filename;
   }
@@ -1271,6 +1308,14 @@ exports.userExpertUpdate = async function (req, res, next) {
       profile_image: company_obj.profileImage,
       user_data: company_obj,
       message: 'Data updated Successfully'
+    });
+  });
+};
+
+exports.userExpertDelete = async function (req, res, next) {
+  User.findByIdAndDelete({ _id: req.params.id }, () => {
+    return res.status(200).json({
+      success: true,
     });
   });
 };

@@ -126,13 +126,13 @@ export function customLogoutUser(browserHistory) {
 }
 
 export function getForgotPasswordToken({ email }) {
-  return function (dispatch) {
+  return (dispatch) => {
     axios
       .post(`${API_URL}/auth/forgot-password`, { email })
       .then((response) => {
         dispatch({
           type: FORGOT_PASSWORD_REQUEST,
-          payload: response.data.message,
+          payload: { message: response.data.message },
         });
       })
       .catch((error) => {
@@ -148,15 +148,17 @@ export function resetPassword(token, { password }) {
       .then((response) => {
         dispatch({
           type: RESET_PASSWORD_REQUEST,
-          payload: response.data.message,
+          payload: { message: response.data.message },
         });
         // Redirect to login page on successful password reset
-        console.log('reset');
         window.location.href = "/login";
       })
       .catch((error) => {
-        console.log(error);
-        // errorHandler(dispatch, error.response, AUTH_ERROR);
+        console.log(error.response);
+        dispatch({
+          type: RESET_PASSWORD_REQUEST,
+          payload: { error: error.response.data.error },
+        });
       });
   };
 }

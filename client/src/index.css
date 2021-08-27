@@ -17,3 +17,31 @@
     font-size: 20px;
     margin-left: 10px;
 }
+
+.expert-image img { max-width: 100%; width: 100%; }.expert-image { position: relative; padding: 0 0;}
+.expert-image { margin-bottom: 20px; }
+.expert-image i { position: absolute; bottom: 10px; right: 35px;}
+
+.reset_form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 80vh;
+
+}
+
+.reset_form form {
+    min-width: 300px;
+}
+.map-container {
+    display: flex;
+    margin-top: 0;
+}
+
+@media(max-width: 768px) {
+    .map-container {
+        margin-top: -30px;
+    }
+
+}
