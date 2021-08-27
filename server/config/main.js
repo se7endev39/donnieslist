@@ -4,7 +4,7 @@ module.exports = {
   // Database connection information
   // database: 'mongodb://db/donnysuserInfolist',
   // Setting port for server
-  port: 3012,
+  port: 3000,
   // Configuring Mailgun API for sending transactional email
   mailgun_priv_key: 'mailgun private key here',
   // Configuring Mailgun domain for sending transactional email
